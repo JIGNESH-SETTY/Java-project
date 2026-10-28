@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { Sparkles, Lock, Mail, User as UserIcon, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { GlassPanelStrong } from '../components/GlassPanel';
+import { GlassButton } from '../components/GlassButton';
 
 export const RegisterPage: React.FC = () => {
   const { register } = useAuth();
@@ -41,117 +43,117 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0f19] flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
         {/* Brand Logo */}
         <div className="text-center space-y-2">
-          <div className="inline-flex h-12 w-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 items-center justify-center text-white shadow-xl shadow-indigo-500/20">
+          <div className="inline-flex h-12 w-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 items-center justify-center text-white shadow-lg shadow-indigo-500/25">
             <Sparkles className="w-6 h-6" />
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Create an Account</h1>
-          <p className="text-xs text-slate-400">Join AI Research Discovery and start synthesizing evidence</p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Create an Account</h1>
+          <p className="text-xs text-slate-500 font-medium">Join AI Research Discovery and start synthesizing evidence</p>
         </div>
 
         {/* Card */}
-        <div className="glass-panel p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-6">
+        <GlassPanelStrong className="p-8 rounded-3xl shadow-glass-hover space-y-6">
           <form onSubmit={handleSubmit} className="space-y-4 text-xs">
             {error && (
-              <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs">
+              <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium">
                 {error}
               </div>
             )}
 
             <div>
-              <label className="block text-slate-300 font-medium mb-1.5">Full Name / Display Name</label>
+              <label className="block text-slate-700 font-semibold mb-1.5">Full Name / Display Name</label>
               <div className="relative flex items-center">
-                <UserIcon className="w-4 h-4 absolute left-3.5 text-slate-500" />
+                <UserIcon className="w-4 h-4 absolute left-3.5 text-slate-400" />
                 <input
                   type="text"
                   required
                   placeholder="e.g. Alex Kumar"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  className="w-full bg-slate-900/60 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  className="w-full glass-input pl-10 pr-3.5 py-2.5 text-slate-900 placeholder-slate-400 font-medium"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-slate-300 font-medium mb-1.5">Email Address</label>
+              <label className="block text-slate-700 font-semibold mb-1.5">Email Address</label>
               <div className="relative flex items-center">
-                <Mail className="w-4 h-4 absolute left-3.5 text-slate-500" />
+                <Mail className="w-4 h-4 absolute left-3.5 text-slate-400" />
                 <input
                   type="email"
                   required
                   placeholder="e.g. student@college.edu"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-slate-900/60 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  className="w-full glass-input pl-10 pr-3.5 py-2.5 text-slate-900 placeholder-slate-400 font-medium"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-slate-300 font-medium mb-1.5">Password</label>
+              <label className="block text-slate-700 font-semibold mb-1.5">Password</label>
               <div className="relative flex items-center">
-                <Lock className="w-4 h-4 absolute left-3.5 text-slate-500" />
+                <Lock className="w-4 h-4 absolute left-3.5 text-slate-400" />
                 <input
                   type="password"
                   required
                   placeholder="Minimum 6 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-slate-900/60 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  className="w-full glass-input pl-10 pr-3.5 py-2.5 text-slate-900 placeholder-slate-400 font-medium"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-slate-300 font-medium mb-1.5">Confirm Password</label>
+              <label className="block text-slate-700 font-semibold mb-1.5">Confirm Password</label>
               <div className="relative flex items-center">
-                <Lock className="w-4 h-4 absolute left-3.5 text-slate-500" />
+                <Lock className="w-4 h-4 absolute left-3.5 text-slate-400" />
                 <input
                   type="password"
                   required
                   placeholder="Repeat your password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full bg-slate-900/60 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  className="w-full glass-input pl-10 pr-3.5 py-2.5 text-slate-900 placeholder-slate-400 font-medium"
                 />
               </div>
             </div>
 
-            <div className="pt-2">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium py-3 rounded-xl transition shadow-lg shadow-indigo-500/25 flex items-center justify-center space-x-2 disabled:opacity-50"
-              >
-                <span>{loading ? 'Creating Account...' : 'Register'}</span>
-                {!loading && <ArrowRight className="w-4 h-4" />}
-              </button>
-            </div>
+            <GlassButton
+              type="submit"
+              variant="primary"
+              size="lg"
+              icon={ArrowRight}
+              disabled={loading}
+              className="w-full mt-2"
+            >
+              {loading ? 'Creating Account...' : 'Register'}
+            </GlassButton>
           </form>
 
           {/* Account benefits */}
-          <div className="pt-4 border-t border-slate-800/80 space-y-2">
-            <div className="flex items-center space-x-2 text-[11px] text-slate-400">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+          <div className="pt-4 border-t border-slate-200/80 space-y-2">
+            <div className="flex items-center space-x-2 text-[11px] text-slate-600">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
               <span>Full access to scholarly PDF chunking & vector search</span>
             </div>
-            <div className="flex items-center space-x-2 text-[11px] text-slate-400">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <div className="flex items-center space-x-2 text-[11px] text-slate-600">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
               <span>Strict provenance separation: Reported vs AI vs Human</span>
             </div>
           </div>
 
-          <div className="text-center text-xs text-slate-400">
+          <div className="text-center text-xs text-slate-600">
             Already have an account?{' '}
-            <Link to="/login" className="text-indigo-400 hover:text-indigo-300 font-medium">
+            <Link to="/login" className="text-indigo-600 hover:text-indigo-800 underline font-semibold">
               Log in here
             </Link>
           </div>
-        </div>
+        </GlassPanelStrong>
       </div>
     </div>
   );

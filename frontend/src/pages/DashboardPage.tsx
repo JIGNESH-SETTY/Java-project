@@ -3,12 +3,30 @@ import { useQuery } from '@tanstack/react-query';
 import { paperApi } from '../api/paperApi';
 import { claimApi } from '../api/claimApi';
 import { reviewApi } from '../api/reviewApi';
-import { Link } from 'react-router-dom';
-import { BookOpen, GitCommit, FileSpreadsheet, Search, Scale, Sparkles, ArrowRight, ShieldAlert, Cpu } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  BookOpen,
+  GitCommit,
+  FileSpreadsheet,
+  Search,
+  Scale,
+  Sparkles,
+  ArrowRight,
+  UploadCloud,
+  CheckCircle2,
+  Clock,
+  Layers,
+  ShieldCheck,
+} from 'lucide-react';
 import { ProvenanceBadge } from '../components/ProvenanceBadge';
 import { RelationBadge, ReviewStatusBadge } from '../components/RelationBadge';
+import { StatusBadge } from '../components/StatusBadge';
+import { GlassPanel, GlassPanelStrong } from '../components/GlassPanel';
+import { GlassButton } from '../components/GlassButton';
 
 export const DashboardPage: React.FC = () => {
+  const navigate = useNavigate();
+
   const { data: papers = [] } = useQuery({
     queryKey: ['papers'],
     queryFn: () => paperApi.listPapers(0, 50),
@@ -29,165 +47,198 @@ export const DashboardPage: React.FC = () => {
     queryFn: () => reviewApi.listReviews(),
   });
 
-  const totalChunks = papers.reduce((acc, p) => acc + p.chunkCount, 0);
+  const totalChunks = papers.reduce((acc, p) => acc + (p.chunkCount || 0), 0);
+  const processedPapers = papers.filter(
+    (p) => p.paper.processingStatus === 'COMPLETED' || p.paper.processingStatus === 'RESOLVED'
+  ).length;
+  const pendingRelations = relations.filter((r) => r.reviewStatus === 'PENDING').length;
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      {/* Hero Welcome Banner */}
-      <div className="glass-panel p-8 rounded-2xl relative overflow-hidden border border-indigo-500/20 bg-gradient-to-r from-indigo-950/40 via-purple-950/20 to-slate-900/60">
+    <div className="p-6 max-w-7xl mx-auto space-y-8">
+      {/* Hero Header */}
+      <GlassPanel className="p-8 relative overflow-hidden bg-gradient-to-br from-indigo-50/90 via-white/80 to-purple-50/60 border-white/80 shadow-md">
         <div className="max-w-3xl relative z-10 space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/30">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Academic B.Tech Capstone Project Architecture</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100/80 text-indigo-800 border border-indigo-200">
+            <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+            <span>Academic Research & Evidence Intelligence</span>
           </div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
             AI Research Discovery & Evidence Engine
           </h1>
-          <p className="text-slate-300 text-sm leading-relaxed">
-            Index scholarly publications, verify research claims against exact chunk-level citations, discover cross-paper contradictions, and generate literature reviews with zero hallucination.
+          <p className="text-slate-600 text-sm leading-relaxed max-w-2xl font-normal">
+            Index academic PDFs, extract structured scientific claims, detect cross-paper contradictions, and generate literature reviews where every factual sentence is grounded in verbatim chunk citations.
           </p>
 
-          <div className="pt-2 flex flex-wrap items-center gap-3">
-            <Link
-              to="/search"
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-indigo-600/30 transition flex items-center gap-2"
+          <div className="pt-3 flex flex-wrap items-center gap-3">
+            <GlassButton
+              variant="primary"
+              onClick={() => navigate('/search')}
+              icon={<Search className="w-4 h-4" />}
             >
-              <Search className="w-4 h-4" />
-              <span>Launch Hybrid Search</span>
-            </Link>
-            <Link
-              to="/library"
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold transition border border-slate-700 flex items-center gap-2"
+              Hybrid Semantic Search
+            </GlassButton>
+            <GlassButton
+              variant="secondary"
+              onClick={() => navigate('/import')}
+              icon={<UploadCloud className="w-4 h-4 text-indigo-600" />}
             >
-              <BookOpen className="w-4 h-4" />
-              <span>Browse Library ({papers.length})</span>
-            </Link>
-            <Link
-              to="/reviews"
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold transition border border-slate-700 flex items-center gap-2"
+              Import Scholarly Paper
+            </GlassButton>
+            <GlassButton
+              variant="secondary"
+              onClick={() => navigate('/reviews')}
+              icon={<FileSpreadsheet className="w-4 h-4 text-purple-600" />}
             >
-              <FileSpreadsheet className="w-4 h-4" />
-              <span>Draft Literature Review</span>
-            </Link>
+              Draft Evidence Review
+            </GlassButton>
           </div>
         </div>
-      </div>
+      </GlassPanel>
 
       {/* Metrics Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="glass-card p-5 rounded-xl border border-slate-800/80">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-medium">
-            <span>Indexed Papers</span>
-            <BookOpen className="w-4 h-4 text-indigo-400" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+        <GlassPanelStrong className="p-5 flex flex-col justify-between">
+          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
+            <span>Total Papers</span>
+            <BookOpen className="w-4 h-4 text-indigo-600" />
           </div>
-          <div className="text-2xl font-bold text-white mt-2">{papers.length}</div>
-          <div className="text-[11px] text-slate-500 mt-1">{totalChunks} semantic chunks vectorized</div>
-        </div>
-
-        <div className="glass-card p-5 rounded-xl border border-slate-800/80">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-medium">
-            <span>Reported Claims</span>
-            <GitCommit className="w-4 h-4 text-emerald-400" />
+          <div className="mt-3">
+            <div className="text-3xl font-bold text-slate-900">{papers.length}</div>
+            <div className="text-xs text-slate-500 mt-1 flex items-center gap-1 font-medium">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              <span>{processedPapers} fully vectorized</span>
+            </div>
           </div>
-          <div className="text-2xl font-bold text-white mt-2">{claims.length}</div>
-          <div className="text-[11px] text-emerald-400/80 mt-1">100% tied to chunk excerpts</div>
-        </div>
+        </GlassPanelStrong>
 
-        <div className="glass-card p-5 rounded-xl border border-slate-800/80">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-medium">
-            <span>Claim Relations</span>
-            <Scale className="w-4 h-4 text-amber-400" />
+        <GlassPanelStrong className="p-5 flex flex-col justify-between">
+          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
+            <span>Extracted Claims</span>
+            <GitCommit className="w-4 h-4 text-emerald-600" />
           </div>
-          <div className="text-2xl font-bold text-white mt-2">{relations.length}</div>
-          <div className="text-[11px] text-amber-400/80 mt-1">Supports / Qualifies / Contradicts</div>
-        </div>
+          <div className="mt-3">
+            <div className="text-3xl font-bold text-slate-900">{claims.length}</div>
+            <div className="text-xs text-emerald-700 mt-1 font-medium">
+              100% grounded in source chunks
+            </div>
+          </div>
+        </GlassPanelStrong>
 
-        <div className="glass-card p-5 rounded-xl border border-slate-800/80">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-medium">
+        <GlassPanelStrong className="p-5 flex flex-col justify-between">
+          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
+            <span>Pending Relations</span>
+            <Clock className="w-4 h-4 text-amber-600" />
+          </div>
+          <div className="mt-3">
+            <div className="text-3xl font-bold text-slate-900">{pendingRelations}</div>
+            <div className="text-xs text-slate-500 mt-1 font-medium">
+              {relations.length} total cross-paper links
+            </div>
+          </div>
+        </GlassPanelStrong>
+
+        <GlassPanelStrong className="p-5 flex flex-col justify-between">
+          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
             <span>Literature Reviews</span>
-            <FileSpreadsheet className="w-4 h-4 text-purple-400" />
+            <FileSpreadsheet className="w-4 h-4 text-purple-600" />
           </div>
-          <div className="text-2xl font-bold text-white mt-2">{reviews.length}</div>
-          <div className="text-[11px] text-purple-400/80 mt-1">Audited paragraph evidence</div>
-        </div>
+          <div className="mt-3">
+            <div className="text-3xl font-bold text-slate-900">{reviews.length}</div>
+            <div className="text-xs text-purple-700 mt-1 font-medium">
+              Audited paragraph provenance
+            </div>
+          </div>
+        </GlassPanelStrong>
       </div>
 
-      {/* Core Highlights Split Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Papers */}
-        <div className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
-          <div className="flex items-center justify-between">
+      {/* Core Split Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Foundational Papers */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between pb-2">
             <div className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-indigo-400" />
-              <h2 className="font-bold text-slate-100 text-sm">Foundational Research Papers</h2>
+              <BookOpen className="w-4 h-4 text-indigo-600" />
+              <h2 className="font-bold text-slate-900 text-sm">Indexed Scientific Literature</h2>
             </div>
-            <Link to="/library" className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
-              <span>View all</span>
+            <Link
+              to="/library"
+              className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1"
+            >
+              <span>View Library ({papers.length})</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           <div className="space-y-3">
             {papers.slice(0, 4).map((p) => (
-              <Link
+              <GlassPanelStrong
                 key={p.paper.id}
-                to={`/papers/${p.paper.id}`}
-                className="block p-3.5 rounded-xl bg-slate-900/50 hover:bg-slate-800/60 border border-slate-800/70 transition"
+                onClick={() => navigate(`/papers/${p.paper.id}`)}
+                className="p-4 cursor-pointer hover:border-indigo-300 hover:shadow-md transition-all space-y-2"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div className="space-y-1">
-                    <h3 className="text-xs font-semibold text-slate-200 line-clamp-1">{p.paper.title}</h3>
-                    <p className="text-[11px] text-slate-400 line-clamp-2">{p.paper.abstractText || 'No abstract available.'}</p>
-                    <div className="flex items-center gap-2 text-[10px] text-slate-500 pt-1">
+                  <div className="space-y-1 min-w-0">
+                    <h3 className="text-sm font-semibold text-slate-900 leading-snug truncate">
+                      {p.paper.title}
+                    </h3>
+                    <p className="text-xs text-slate-500 line-clamp-2 font-normal leading-relaxed">
+                      {p.paper.abstractText || 'No abstract text extracted.'}
+                    </p>
+                    <div className="flex items-center gap-2 text-[11px] text-slate-400 font-medium pt-1">
                       <span>{p.paper.venue || 'Scholarly Publication'}</span>
                       <span>•</span>
                       <span>{p.paper.publicationYear}</span>
                       <span>•</span>
-                      <span>{p.chunkCount} chunks</span>
+                      <span>{p.chunkCount || 0} chunks</span>
                     </div>
                   </div>
-                  <span className="shrink-0 px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    {p.paper.processingStatus}
-                  </span>
+                  <div className="shrink-0">
+                    <StatusBadge status={p.paper.processingStatus} />
+                  </div>
                 </div>
-              </Link>
+              </GlassPanelStrong>
             ))}
           </div>
         </div>
 
-        {/* Recent Claim Relationships */}
-        <div className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
-          <div className="flex items-center justify-between">
+        {/* Claim Relationships */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between pb-2">
             <div className="flex items-center gap-2">
-              <GitCommit className="w-4 h-4 text-emerald-400" />
-              <h2 className="font-bold text-slate-100 text-sm">Discovered Claim Relationships</h2>
+              <GitCommit className="w-4 h-4 text-emerald-600" />
+              <h2 className="font-bold text-slate-900 text-sm">Cross-Paper Claim Relationships</h2>
             </div>
-            <Link to="/claims" className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
-              <span>Explore all</span>
+            <Link
+              to="/claims"
+              className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1"
+            >
+              <span>Claim Explorer</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           <div className="space-y-3">
             {relations.slice(0, 4).map((rel) => (
-              <div
-                key={rel.id}
-                className="p-3.5 rounded-xl bg-slate-900/50 border border-slate-800/70 space-y-2 text-xs"
-              >
+              <GlassPanelStrong key={rel.id} className="p-4 space-y-2.5">
                 <div className="flex items-center justify-between gap-2">
                   <RelationBadge type={rel.relationType} />
                   <ReviewStatusBadge status={rel.reviewStatus} />
                 </div>
-                <p className="text-slate-300 text-xs italic leading-snug">"{rel.rationale}"</p>
-                <div className="flex items-center justify-between pt-1">
+                <p className="text-slate-700 text-xs italic font-serif leading-relaxed">
+                  "{rel.rationale}"
+                </p>
+                <div className="flex items-center justify-between pt-1 border-t border-slate-100">
                   <ProvenanceBadge provenance={rel.provenanceType} confidence={rel.confidence} />
-                  <span className="text-[10px] text-slate-500">{rel.evidenceChunkIds.length} evidence chunks</span>
+                  <span className="text-[11px] text-slate-400 font-medium">
+                    {rel.evidenceChunkIds?.length || 0} evidence chunks
+                  </span>
                 </div>
-              </div>
+              </GlassPanelStrong>
             ))}
+
             {relations.length === 0 && (
-              <div className="text-center py-8 text-xs text-slate-500">
-                No claim relations proposed yet. Index papers to discover cross-paper evidence.
+              <div className="p-8 text-center glass-panel text-xs text-slate-500">
+                No claim relationships recorded yet. Import or compare papers to identify scientific consensus or contradictions.
               </div>
             )}
           </div>

@@ -50,6 +50,18 @@ app:
     base-url: ${GROBID_BASE_URL:http://localhost:8070}
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173}
+  scholarly:
+    crossref:
+      mailto: ${CROSSREF_MAILTO:researcher@airesearch.edu}
+    openalex:
+      mailto: ${OPENALEX_MAILTO:researcher@airesearch.edu}
+      api-key: ${OPENALEX_API_KEY:}
+    semanticscholar:
+      api-key: ${SEMANTIC_SCHOLAR_API_KEY:}
+    unpaywall:
+      email: ${UNPAYWALL_EMAIL:researcher@airesearch.edu}
+    europepmc:
+      api-key: ${EUROPE_PMC_API_KEY:}
 
 springdoc:
   api-docs:

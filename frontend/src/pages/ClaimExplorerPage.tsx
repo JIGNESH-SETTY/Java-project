@@ -15,11 +15,19 @@ import {
   MessageSquare,
   Sparkles,
   User,
-  ArrowRight
+  ArrowRight,
+  ShieldCheck,
+  Quote,
+  Layers,
+  BookOpen,
 } from 'lucide-react';
 import { ProvenanceBadge } from '../components/ProvenanceBadge';
 import { RelationBadge, ReviewStatusBadge } from '../components/RelationBadge';
 import { ChunkViewerModal } from '../components/ChunkViewerModal';
+import { GlassPanel, GlassPanelStrong } from '../components/GlassPanel';
+import { GlassButton } from '../components/GlassButton';
+import { GlassInput, GlassSelect } from '../components/GlassInput';
+import { GlassModal } from '../components/GlassModal';
 
 export const ClaimExplorerPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -27,6 +35,9 @@ export const ClaimExplorerPage: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [typeFilter, setTypeFilter] = useState<string>('ALL');
   const [searchTerm, setSearchTerm] = useState<string>('');
+
+  const [selectedRelation, setSelectedRelation] = useState<ClaimRelation | null>(null);
+  const [selectedClaim, setSelectedClaim] = useState<Claim | null>(null);
 
   const [isProposeOpen, setIsProposeOpen] = useState(false);
   const [isAssertOpen, setIsAssertOpen] = useState(false);
@@ -103,447 +114,492 @@ export const ClaimExplorerPage: React.FC = () => {
   });
 
   const filteredClaims = claims.filter((c) => {
-    if (searchTerm && !c.normalizedText.toLowerCase().includes(searchTerm.toLowerCase()) && !c.sourceText.toLowerCase().includes(searchTerm.toLowerCase())) {
-      return false;
-    }
+    if (typeFilter !== 'ALL' && c.claimType !== typeFilter) return false;
+    const text = c.normalizedText || c.sourceText || '';
+    if (searchTerm && !text.toLowerCase().includes(searchTerm.toLowerCase())) return false;
     return true;
   });
 
-  const getClaimText = (id: string) => {
-    const c = claims.find((item) => item.id === id);
-    return c ? c.normalizedText : 'Unknown claim';
-  };
+  const activeRelation = selectedRelation || (filteredRelations.length > 0 ? filteredRelations[0] : null);
+  const activeClaim = selectedClaim || (filteredClaims.length > 0 ? filteredClaims[0] : null);
 
-  const getClaimPaperTitle = (id: string) => {
-    const c = claims.find((item) => item.id === id);
-    if (!c || !c.paperId) return 'Independent';
-    const p = papers.find((item) => item.paper.id === c.paperId);
-    return p ? p.paper.title : 'Research Paper';
+  const inspectEvidence = async (chunkId: string) => {
+    for (const p of papers) {
+      try {
+        const chunks = await paperApi.getPaperChunks(p.paper.id);
+        const match = chunks.find((c) => c.id === chunkId);
+        if (match) {
+          setSelectedChunk(match);
+          return;
+        }
+      } catch (e) {}
+    }
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="p-6 max-w-7xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-white tracking-tight">Claims & Evidence Explorer</h1>
-          <p className="text-xs text-slate-400">
-            Track reported scientific assertions, verify support vs contradictions, and review AI proposed links
+          <div className="flex items-center gap-2 text-indigo-700 text-xs font-semibold uppercase tracking-wider mb-1">
+            <GitCommit className="w-4 h-4" />
+            <span>Directional Claim Graph & Auditing</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            Claims & Evidence Explorer
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+            Track atomic scientific claims and review directional relationships (Supports, Contradicts, Qualifies, Extends).
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button
+        <div className="flex items-center gap-2.5">
+          <GlassButton
+            variant="secondary"
             onClick={() => setIsAssertOpen(true)}
-            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold border border-slate-700 flex items-center gap-2 transition"
+            icon={<Plus className="w-4 h-4" />}
           >
-            <Plus className="w-4 h-4 text-slate-400" />
-            <span>Assert Human Claim</span>
-          </button>
-          <button
+            Assert Claim
+          </GlassButton>
+          <GlassButton
+            variant="primary"
             onClick={() => setIsProposeOpen(true)}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-indigo-600/30 flex items-center gap-2 transition"
+            icon={<Sparkles className="w-4 h-4" />}
           >
-            <Sparkles className="w-4 h-4" />
-            <span>Propose Claim Relation</span>
-          </button>
+            Propose Relation
+          </GlassButton>
         </div>
       </div>
 
-      {/* Metric Tiles */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="glass-card p-4 rounded-xl border border-slate-800/80">
-          <div className="text-slate-400 text-xs">Total Tracked Claims</div>
-          <div className="text-xl font-bold text-white mt-1">{claims.length}</div>
-          <div className="text-[10px] text-emerald-400 mt-0.5">100% cited to source chunks</div>
-        </div>
-
-        <div className="glass-card p-4 rounded-xl border border-slate-800/80">
-          <div className="text-slate-400 text-xs">Pending AI Proposals</div>
-          <div className="text-xl font-bold text-amber-400 mt-1">
-            {relations.filter((r) => r.reviewStatus === 'PENDING').length}
+      {/* Main Filter & Tabs Header */}
+      <GlassPanel className="p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs font-medium">
+            <button
+              onClick={() => setActiveTab('relations')}
+              className={`px-3 py-1.5 rounded-lg transition-all ${
+                activeTab === 'relations'
+                  ? 'bg-white text-indigo-700 font-semibold shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Cross-Paper Relations ({relations.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('claims')}
+              className={`px-3 py-1.5 rounded-lg transition-all ${
+                activeTab === 'claims'
+                  ? 'bg-white text-indigo-700 font-semibold shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Atomic Claims ({claims.length})
+            </button>
           </div>
-          <div className="text-[10px] text-slate-500 mt-0.5">Requires researcher review</div>
         </div>
 
-        <div className="glass-card p-4 rounded-xl border border-slate-800/80">
-          <div className="text-slate-400 text-xs">Human Confirmed</div>
-          <div className="text-xl font-bold text-emerald-400 mt-1">
-            {relations.filter((r) => r.reviewStatus === 'CONFIRMED').length}
-          </div>
-          <div className="text-[10px] text-emerald-500/80 mt-0.5">Verified cross-paper evidence</div>
-        </div>
-
-        <div className="glass-card p-4 rounded-xl border border-slate-800/80">
-          <div className="text-slate-400 text-xs">Contradictions & Qualifications</div>
-          <div className="text-xl font-bold text-rose-400 mt-1">
-            {relations.filter((r) => r.relationType === 'CONTRADICTS' || r.relationType === 'QUALIFIES').length}
-          </div>
-          <div className="text-[10px] text-rose-400/80 mt-0.5">Empirical disagreements</div>
-        </div>
-      </div>
-
-      {/* Tabs & Search Filter */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-3">
-        <div className="flex gap-4 text-xs font-semibold">
-          <button
-            onClick={() => setActiveTab('relations')}
-            className={`pb-2 border-b-2 transition ${
-              activeTab === 'relations'
-                ? 'border-indigo-500 text-indigo-400 font-bold'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            Claim Relationships ({relations.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('claims')}
-            className={`pb-2 border-b-2 transition ${
-              activeTab === 'claims'
-                ? 'border-indigo-500 text-indigo-400 font-bold'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            All Reported Claims ({claims.length})
-          </button>
-        </div>
-
-        {/* Filter Controls */}
-        <div className="flex flex-wrap items-center gap-3 text-xs">
-          <input
-            type="text"
-            placeholder="Filter rationale or claim..."
+        <div className="flex flex-1 max-w-md w-full">
+          <GlassInput
+            placeholder="Search claims or relation rationales..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+            icon={<Search className="w-4 h-4" />}
           />
+        </div>
 
-          {activeTab === 'relations' && (
-            <>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none"
-              >
-                <option value="ALL">All Review Statuses</option>
-                <option value="PENDING">Pending Review</option>
-                <option value="CONFIRMED">Human Confirmed</option>
-                <option value="REJECTED">Rejected</option>
-              </select>
-
-              <select
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-                className="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none"
-              >
-                <option value="ALL">All Relations</option>
-                <option value="SUPPORTS">Supports</option>
-                <option value="CONTRADICTS">Contradicts</option>
-                <option value="QUALIFIES">Qualifies</option>
-                <option value="EXTENDS">Extends</option>
-              </select>
-            </>
+        <div className="flex items-center gap-2">
+          {activeTab === 'relations' ? (
+            <GlassSelect
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              options={[
+                { value: 'ALL', label: 'All Review Statuses' },
+                { value: 'PENDING', label: 'Proposed (Pending)' },
+                { value: 'CONFIRMED', label: 'Human Reviewed' },
+                { value: 'REJECTED', label: 'Rejected' },
+              ]}
+            />
+          ) : (
+            <GlassSelect
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              options={[
+                { value: 'ALL', label: 'All Claim Types' },
+                { value: 'FINDING', label: 'Findings' },
+                { value: 'HYPOTHESIS', label: 'Hypotheses' },
+                { value: 'METHOD_ASSERTION', label: 'Method Assertions' },
+                { value: 'LIMITATION', label: 'Limitations' },
+              ]}
+            />
           )}
         </div>
-      </div>
+      </GlassPanel>
 
-      {/* Tab 1: Relations */}
+      {/* Side-by-Side Explorer Split */}
       {activeTab === 'relations' && (
-        <div className="space-y-4">
-          {filteredRelations.length === 0 ? (
-            <div className="text-center py-12 text-xs text-slate-500">
-              No claim relationships match your filter.
-            </div>
-          ) : (
-            filteredRelations.map((rel) => (
-              <div
-                key={rel.id}
-                className="glass-card p-5 rounded-2xl border border-slate-800/80 space-y-4"
-              >
-                {/* Header: Relation & Review Status */}
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Left Column: Relation Cards */}
+          <div className="lg:col-span-5 space-y-3 max-h-[75vh] overflow-y-auto pr-1">
+            {filteredRelations.map((rel) => {
+              const isSelected = activeRelation?.id === rel.id;
+              return (
+                <GlassPanelStrong
+                  key={rel.id}
+                  onClick={() => setSelectedRelation(rel)}
+                  className={`p-4 cursor-pointer transition-all space-y-2 border ${
+                    isSelected
+                      ? 'border-indigo-400 bg-white ring-2 ring-indigo-100 shadow-md'
+                      : 'hover:border-slate-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
                     <RelationBadge type={rel.relationType} />
                     <ReviewStatusBadge status={rel.reviewStatus} />
                   </div>
-                  <ProvenanceBadge provenance={rel.provenanceType} confidence={rel.confidence} />
-                </div>
 
-                {/* Claims Comparison Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                  <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1.5">
-                    <div className="text-[10px] uppercase font-bold text-indigo-400">Source Claim</div>
-                    <p className="font-semibold text-slate-200 leading-snug">
-                      {getClaimText(rel.sourceClaimId)}
-                    </p>
-                    <div className="text-[10px] text-slate-500 truncate">
-                      From: {getClaimPaperTitle(rel.sourceClaimId)}
-                    </div>
+                  <p className="text-xs text-slate-800 line-clamp-2 font-serif italic">
+                    "{rel.rationale}"
+                  </p>
+
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                    <ProvenanceBadge provenance={rel.provenanceType} confidence={rel.confidence} />
+                    <span>{rel.evidenceChunkIds?.length || 0} chunks</span>
                   </div>
+                </GlassPanelStrong>
+              );
+            })}
 
-                  <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1.5">
-                    <div className="text-[10px] uppercase font-bold text-purple-400">Target Claim</div>
-                    <p className="font-semibold text-slate-200 leading-snug">
-                      {getClaimText(rel.targetClaimId)}
-                    </p>
-                    <div className="text-[10px] text-slate-500 truncate">
-                      From: {getClaimPaperTitle(rel.targetClaimId)}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Rationale */}
-                <div className="bg-[#0b101d] p-3 rounded-xl border border-slate-800 text-xs space-y-1">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase">Justification & Context:</span>
-                  <p className="text-slate-300 italic leading-relaxed">"{rel.rationale}"</p>
-                </div>
-
-                {/* Review Actions */}
-                <div className="flex items-center justify-between pt-1 border-t border-slate-800/60 text-xs">
-                  <span className="text-[11px] text-slate-500">
-                    {rel.evidenceChunkIds.length} grounded evidence chunk(s)
-                  </span>
-
-                  <div className="flex items-center gap-2">
-                    {rel.reviewStatus !== 'CONFIRMED' && (
-                      <button
-                        onClick={() =>
-                          updateStatusMutation.mutate({ id: rel.id, status: 'CONFIRMED' })
-                        }
-                        className="px-3 py-1 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 rounded-lg text-xs font-medium flex items-center gap-1.5 transition"
-                      >
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Confirm Relationship</span>
-                      </button>
-                    )}
-
-                    {rel.reviewStatus !== 'REJECTED' && (
-                      <button
-                        onClick={() =>
-                          updateStatusMutation.mutate({ id: rel.id, status: 'REJECTED' })
-                        }
-                        className="px-3 py-1 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 rounded-lg text-xs font-medium flex items-center gap-1.5 transition"
-                      >
-                        <XCircle className="w-3.5 h-3.5" />
-                        <span>Reject</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
+            {filteredRelations.length === 0 && (
+              <div className="p-8 text-center glass-panel text-xs text-slate-500">
+                No claim relationships match current filters.
               </div>
-            ))
-          )}
+            )}
+          </div>
+
+          {/* Right Column: Detailed Relation Audit View */}
+          <div className="lg:col-span-7 sticky top-24">
+            {activeRelation ? (
+              <GlassPanelStrong className="p-6 space-y-5 border-white/90 shadow-md">
+                <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-200">
+                  <div className="space-y-1">
+                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                      Selected Relationship
+                    </div>
+                    <div className="flex items-center gap-2 pt-0.5">
+                      <RelationBadge type={activeRelation.relationType} />
+                      <ReviewStatusBadge status={activeRelation.reviewStatus} />
+                    </div>
+                  </div>
+
+                  {/* Human Review Actions */}
+                  <div className="flex items-center gap-2">
+                    <GlassButton
+                      size="sm"
+                      variant="secondary"
+                      disabled={updateStatusMutation.isPending || activeRelation.reviewStatus === 'CONFIRMED'}
+                      onClick={() =>
+                        updateStatusMutation.mutate({ id: activeRelation.id, status: 'CONFIRMED' })
+                      }
+                      icon={<CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
+                    >
+                      Confirm
+                    </GlassButton>
+                    <GlassButton
+                      size="sm"
+                      variant="danger"
+                      disabled={updateStatusMutation.isPending || activeRelation.reviewStatus === 'REJECTED'}
+                      onClick={() =>
+                        updateStatusMutation.mutate({ id: activeRelation.id, status: 'REJECTED' })
+                      }
+                      icon={<XCircle className="w-3.5 h-3.5 text-red-600" />}
+                    >
+                      Reject
+                    </GlassButton>
+                  </div>
+                </div>
+
+                {/* Synthesis Rationale */}
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                    Scientific Synthesis & Rationale
+                  </span>
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-serif leading-relaxed">
+                    "{activeRelation.rationale}"
+                  </div>
+                </div>
+
+                {/* Grounded Evidence Chunks */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                      Verbatim Grounded Evidence ({activeRelation.evidenceChunkIds?.length || 0})
+                    </span>
+                    <ProvenanceBadge provenance={activeRelation.provenanceType} confidence={activeRelation.confidence} />
+                  </div>
+
+                  <div className="space-y-2">
+                    {activeRelation.evidenceChunkIds?.map((chunkId, idx) => (
+                      <div
+                        key={chunkId}
+                        className="p-3 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between text-xs"
+                      >
+                        <div className="flex items-center gap-2 text-slate-700">
+                          <FileText className="w-4 h-4 text-indigo-500" />
+                          <span className="font-mono text-[11px]">Chunk Ref #{idx + 1} ({chunkId.substring(0, 8)}...)</span>
+                        </div>
+                        <button
+                          onClick={() => inspectEvidence(chunkId)}
+                          className="text-xs font-semibold text-indigo-600 hover:text-indigo-800"
+                        >
+                          Open Chunk Text
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </GlassPanelStrong>
+            ) : (
+              <div className="p-12 text-center glass-panel text-xs text-slate-500">
+                Select a claim relation from the list to inspect grounded evidence and audit status.
+              </div>
+            )}
+          </div>
         </div>
       )}
 
-      {/* Tab 2: All Reported Claims */}
+      {/* Side-by-Side Claims Split */}
       {activeTab === 'claims' && (
-        <div className="space-y-3">
-          {filteredClaims.map((claim) => (
-            <div
-              key={claim.id}
-              className="glass-card p-4 rounded-xl border border-slate-800/80 space-y-2 text-xs"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-800 text-slate-300 border border-slate-700">
-                    {claim.claimType}
-                  </span>
-                  <ProvenanceBadge provenance={claim.provenanceType} confidence={claim.extractionConfidence} />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="lg:col-span-5 space-y-3 max-h-[75vh] overflow-y-auto pr-1">
+            {filteredClaims.map((claim) => {
+              const isSelected = activeClaim?.id === claim.id;
+              return (
+                <GlassPanelStrong
+                  key={claim.id}
+                  onClick={() => setSelectedClaim(claim)}
+                  className={`p-4 cursor-pointer transition-all space-y-2 border ${
+                    isSelected
+                      ? 'border-indigo-400 bg-white ring-2 ring-indigo-100 shadow-md'
+                      : 'hover:border-slate-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                      {claim.claimType}
+                    </span>
+                    <ProvenanceBadge provenance={claim.provenanceType} confidence={claim.extractionConfidence} />
+                  </div>
+                  <p className="text-xs text-slate-900 font-semibold line-clamp-2">
+                    "{claim.normalizedText || claim.sourceText}"
+                  </p>
+                </GlassPanelStrong>
+              );
+            })}
+          </div>
+
+          <div className="lg:col-span-7 sticky top-24">
+            {activeClaim ? (
+              <GlassPanelStrong className="p-6 space-y-4">
+                <div className="flex items-start justify-between pb-3 border-b border-slate-200">
+                  <div className="space-y-1">
+                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                      Selected Claim
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                        {activeClaim.claimType}
+                      </span>
+                    </div>
+                  </div>
+                  <ProvenanceBadge provenance={activeClaim.provenanceType} confidence={activeClaim.extractionConfidence} />
                 </div>
-                <span className="text-[10px] text-slate-500">
-                  {claim.sectionName} • Page {claim.pageNumber || 'N/A'}
-                </span>
-              </div>
 
-              <p className="font-semibold text-slate-100 text-sm leading-snug">
-                {claim.normalizedText}
-              </p>
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                    Claim Statement
+                  </span>
+                  <p className="text-sm font-semibold text-slate-900 leading-snug">
+                    "{activeClaim.normalizedText || activeClaim.sourceText}"
+                  </p>
+                </div>
 
-              <div className="bg-slate-900/50 p-2.5 rounded-lg border-l-2 border-emerald-500 text-slate-300 text-xs italic">
-                "{claim.sourceText}"
+                {activeClaim.sourceText && (
+                  <div className="space-y-2">
+                    <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                      Verbatim Source Excerpt
+                    </span>
+                    <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-700 font-serif italic leading-relaxed">
+                      "{activeClaim.sourceText}"
+                    </div>
+                  </div>
+                )}
+              </GlassPanelStrong>
+            ) : (
+              <div className="p-12 text-center glass-panel text-xs text-slate-500">
+                Select a claim to inspect its verbatim source excerpt.
               </div>
-            </div>
-          ))}
+            )}
+          </div>
         </div>
       )}
 
       {/* Propose Relation Modal */}
-      {isProposeOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[#131b2e] border border-slate-700 rounded-2xl w-full max-w-lg p-6 space-y-4">
-            <h3 className="font-semibold text-white text-base">Propose Relationship Between Claims</h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                createRelationMutation.mutate();
-              }}
-              className="space-y-3 text-xs"
-            >
-              <div>
-                <label className="block text-slate-300 mb-1">Source Claim *</label>
-                <select
-                  required
-                  value={sourceClaimId}
-                  onChange={(e) => setSourceClaimId(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-slate-200"
-                >
-                  <option value="">Select source claim...</option>
-                  {claims.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.normalizedText.substring(0, 75)}...
-                    </option>
-                  ))}
-                </select>
-              </div>
+      <GlassModal
+        isOpen={isProposeOpen}
+        onClose={() => setIsProposeOpen(false)}
+        title="Propose Cross-Paper Claim Relation"
+        subtitle="Formally link two scientific claims with supporting or contradicting evidence"
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            createRelationMutation.mutate();
+          }}
+          className="space-y-4"
+        >
+          <GlassSelect
+            label="Source Claim *"
+            required
+            value={sourceClaimId}
+            onChange={(e) => setSourceClaimId(e.target.value)}
+          >
+            <option value="">Select source claim...</option>
+            {claims.map((c) => (
+              <option key={c.id} value={c.id}>
+                [{c.claimType}] {(c.normalizedText || c.sourceText).substring(0, 70)}...
+              </option>
+            ))}
+          </GlassSelect>
 
-              <div>
-                <label className="block text-slate-300 mb-1">Target Claim *</label>
-                <select
-                  required
-                  value={targetClaimId}
-                  onChange={(e) => setTargetClaimId(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-slate-200"
-                >
-                  <option value="">Select target claim...</option>
-                  {claims
-                    .filter((c) => c.id !== sourceClaimId)
-                    .map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.normalizedText.substring(0, 75)}...
-                      </option>
-                    ))}
-                </select>
-              </div>
+          <GlassSelect
+            label="Directional Relationship *"
+            value={relationType}
+            onChange={(e) => setRelationType(e.target.value as RelationType)}
+            options={[
+              { value: 'SUPPORTS', label: 'SUPPORTS (Corroborating findings)' },
+              { value: 'CONTRADICTS', label: 'CONTRADICTS (Direct empirical conflict)' },
+              { value: 'QUALIFIES', label: 'QUALIFIES (True only under conditions)' },
+              { value: 'EXTENDS', label: 'EXTENDS (Builds on foundation)' },
+              { value: 'DISCUSSES', label: 'DISCUSSES (Related topic without stance)' },
+            ]}
+          />
 
-              <div>
-                <label className="block text-slate-300 mb-1">Relation Type *</label>
-                <select
-                  value={relationType}
-                  onChange={(e) => setRelationType(e.target.value as any)}
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-slate-200"
-                >
-                  <option value="SUPPORTS">Supports (Empirical validation)</option>
-                  <option value="CONTRADICTS">Contradicts (Direct conflict under same conditions)</option>
-                  <option value="QUALIFIES">Qualifies (Restricts scope or conditions)</option>
-                  <option value="EXTENDS">Extends (Builds further on method)</option>
-                  <option value="DISCUSSES">Discusses (Theoretical deliberation)</option>
-                </select>
-              </div>
+          <GlassSelect
+            label="Target Claim *"
+            required
+            value={targetClaimId}
+            onChange={(e) => setTargetClaimId(e.target.value)}
+          >
+            <option value="">Select target claim...</option>
+            {claims
+              .filter((c) => c.id !== sourceClaimId)
+              .map((c) => (
+                <option key={c.id} value={c.id}>
+                  [{c.claimType}] {(c.normalizedText || c.sourceText).substring(0, 70)}...
+                </option>
+              ))}
+          </GlassSelect>
 
-              <div>
-                <label className="block text-slate-300 mb-1">Justification Rationale *</label>
-                <textarea
-                  rows={3}
-                  required
-                  value={rationale}
-                  onChange={(e) => setRationale(e.target.value)}
-                  placeholder="Explain why these claims support or contradict each other..."
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-slate-200"
-                />
-              </div>
-
-              <div className="pt-2 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsProposeOpen(false)}
-                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={createRelationMutation.isPending || !sourceClaimId || !targetClaimId}
-                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold"
-                >
-                  Save Relation
-                </button>
-              </div>
-            </form>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-slate-700 tracking-wide uppercase">
+              Scientific Rationale *
+            </label>
+            <textarea
+              rows={3}
+              required
+              placeholder="Explain why this directional relationship exists based on reported data..."
+              value={rationale}
+              onChange={(e) => setRationale(e.target.value)}
+              className="glass-input w-full text-xs font-serif leading-relaxed"
+            />
           </div>
-        </div>
-      )}
+
+          <div className="flex justify-end gap-2 pt-4 border-t border-slate-200">
+            <GlassButton type="button" variant="secondary" onClick={() => setIsProposeOpen(false)}>
+              Cancel
+            </GlassButton>
+            <GlassButton
+              type="submit"
+              variant="primary"
+              disabled={createRelationMutation.isPending || !sourceClaimId || !targetClaimId || !rationale.trim()}
+            >
+              {createRelationMutation.isPending ? 'Proposing...' : 'Submit Proposed Relation'}
+            </GlassButton>
+          </div>
+        </form>
+      </GlassModal>
 
       {/* Assert Claim Modal */}
-      {isAssertOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[#131b2e] border border-slate-700 rounded-2xl w-full max-w-lg p-6 space-y-4">
-            <h3 className="font-semibold text-white text-base">Assert Scientific Claim</h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                createClaimMutation.mutate();
-              }}
-              className="space-y-3 text-xs"
-            >
-              <div>
-                <label className="block text-slate-300 mb-1">Normalized Claim Text *</label>
-                <input
-                  type="text"
-                  required
-                  value={newNormalizedText}
-                  onChange={(e) => setNewNormalizedText(e.target.value)}
-                  placeholder="e.g. Method X reduces latency by 35% on GPU clusters"
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-slate-200"
-                />
-              </div>
+      <GlassModal
+        isOpen={isAssertOpen}
+        onClose={() => setIsAssertOpen(false)}
+        title="Assert New Scientific Claim"
+        subtitle="Manually anchor an atomic claim to document excerpts"
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            createClaimMutation.mutate();
+          }}
+          className="space-y-4"
+        >
+          <GlassInput
+            label="Claim Statement (Normalized) *"
+            required
+            placeholder="e.g. Multi-head attention allows parallel sequence processing"
+            value={newNormalizedText}
+            onChange={(e) => setNewNormalizedText(e.target.value)}
+          />
 
-              <div>
-                <label className="block text-slate-300 mb-1">Source Quotation *</label>
-                <textarea
-                  rows={3}
-                  required
-                  value={newSourceText}
-                  onChange={(e) => setNewSourceText(e.target.value)}
-                  placeholder="Exact quote from paper..."
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-slate-200"
-                />
-              </div>
+          <GlassSelect
+            label="Claim Type *"
+            value={newClaimType}
+            onChange={(e) => setNewClaimType(e.target.value as ClaimType)}
+            options={[
+              { value: 'FINDING', label: 'FINDING (Reported experimental result)' },
+              { value: 'HYPOTHESIS', label: 'HYPOTHESIS (Proposed theory)' },
+              { value: 'METHOD_ASSERTION', label: 'METHOD_ASSERTION (Architecture or algorithm)' },
+              { value: 'LIMITATION', label: 'LIMITATION (Boundaries or failure cases)' },
+              { value: 'DATASET_ASSERTION', label: 'DATASET_ASSERTION (Data distribution)' },
+            ]}
+          />
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-slate-300 mb-1">Claim Type</label>
-                  <select
-                    value={newClaimType}
-                    onChange={(e) => setNewClaimType(e.target.value as any)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-slate-200"
-                  >
-                    <option value="FINDING">Finding</option>
-                    <option value="HYPOTHESIS">Hypothesis</option>
-                    <option value="METHOD_ASSERTION">Method Assertion</option>
-                    <option value="LIMITATION">Limitation</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-slate-300 mb-1">Section</label>
-                  <input
-                    type="text"
-                    value={newSection}
-                    onChange={(e) => setNewSection(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-slate-200"
-                  />
-                </div>
-              </div>
-
-              <div className="pt-2 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsAssertOpen(false)}
-                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={createClaimMutation.isPending || !newNormalizedText.trim()}
-                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold"
-                >
-                  Assert Claim
-                </button>
-              </div>
-            </form>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-slate-700 tracking-wide uppercase">
+              Exact Source Text Excerpt *
+            </label>
+            <textarea
+              rows={3}
+              required
+              placeholder="Verbatim sentence or paragraph from source PDF..."
+              value={newSourceText}
+              onChange={(e) => setNewSourceText(e.target.value)}
+              className="glass-input w-full text-xs font-serif leading-relaxed"
+            />
           </div>
-        </div>
+
+          <div className="flex justify-end gap-2 pt-4 border-t border-slate-200">
+            <GlassButton type="button" variant="secondary" onClick={() => setIsAssertOpen(false)}>
+              Cancel
+            </GlassButton>
+            <GlassButton
+              type="submit"
+              variant="primary"
+              disabled={createClaimMutation.isPending || !newNormalizedText.trim()}
+            >
+              {createClaimMutation.isPending ? 'Saving...' : 'Assert Claim'}
+            </GlassButton>
+          </div>
+        </form>
+      </GlassModal>
+
+      {/* Chunk Viewer Modal */}
+      {selectedChunk && (
+        <ChunkViewerModal
+          chunk={selectedChunk}
+          paperTitle="Claim Evidence Chunk"
+          onClose={() => setSelectedChunk(null)}
+        />
       )}
     </div>
   );

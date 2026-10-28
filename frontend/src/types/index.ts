@@ -58,6 +58,70 @@ export interface Author {
   orcid?: string;
 }
 
+export interface PaperMetadata {
+  title: string;
+  authors: string[];
+  abstractText?: string;
+  doi?: string;
+  publicationYear?: number;
+  venue?: string;
+  provider: string;
+  externalId?: string;
+  externalUrl?: string;
+  externalIds?: Record<string, string>;
+  openAccessPdfUrl?: string;
+  accessStatus: string;
+  licenseName?: string;
+  citationCount?: number;
+  metadataSource: string;
+}
+
+export interface SourceSearchResult {
+  provider: string;
+  query: string;
+  totalEstimatedResults: number;
+  papers: PaperMetadata[];
+}
+
+export interface ScholarlyImportRequest {
+  metadata: PaperMetadata;
+  downloadOpenAccessPdfIfAvailable: boolean;
+}
+
+export interface ScholarlyImportResult {
+  paperId: string;
+  title: string;
+  doi?: string;
+  processingStatus: string;
+  accessStatus: string;
+  documentPath?: string;
+  attribution: string;
+  message: string;
+}
+
+export interface PaperExternalIdentifier {
+  id: string;
+  paperId: string;
+  provider: string;
+  externalId: string;
+  externalUrl?: string;
+  canonicalDoi?: string;
+  metadataSource: string;
+  importedAt: string;
+}
+
+export interface PaperAccessLink {
+  id: string;
+  paperId: string;
+  url: string;
+  linkType: string;
+  accessStatus: string;
+  licenseName?: string;
+  sourceProvider: string;
+  checkedAt: string;
+}
+
+
 export interface DocumentChunk {
   id: string;
   paperId: string;

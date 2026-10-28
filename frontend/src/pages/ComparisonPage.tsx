@@ -3,9 +3,11 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { paperApi } from '../api/paperApi';
 import { comparisonApi } from '../api/comparisonApi';
 import { ComparisonResult, DocumentChunk } from '../types';
-import { Scale, Sparkles, Check, FileText, AlertCircle, Info, ExternalLink } from 'lucide-react';
+import { Scale, Sparkles, Check, FileText, AlertCircle, Info, ExternalLink, BookOpen, Quote } from 'lucide-react';
 import { ProvenanceBadge } from '../components/ProvenanceBadge';
 import { ChunkViewerModal } from '../components/ChunkViewerModal';
+import { GlassPanel, GlassPanelStrong } from '../components/GlassPanel';
+import { GlassButton } from '../components/GlassButton';
 
 export const ComparisonPage: React.FC = () => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -22,7 +24,6 @@ export const ComparisonPage: React.FC = () => {
     onSuccess: (data) => setComparisonResult(data),
   });
 
-  // Default to first 2 papers if available
   useEffect(() => {
     if (papers.length >= 2 && selectedIds.length === 0) {
       const defaultIds = [papers[0].paper.id, papers[1].paper.id];
@@ -34,10 +35,10 @@ export const ComparisonPage: React.FC = () => {
   const toggleSelectPaper = (id: string) => {
     let next: string[];
     if (selectedIds.includes(id)) {
-      if (selectedIds.length <= 2) return; // Minimum 2 papers required
+      if (selectedIds.length <= 2) return;
       next = selectedIds.filter((item) => item !== id);
     } else {
-      if (selectedIds.length >= 5) return; // Maximum 5 papers allowed
+      if (selectedIds.length >= 5) return;
       next = [...selectedIds, id];
     }
     setSelectedIds(next);
@@ -45,7 +46,6 @@ export const ComparisonPage: React.FC = () => {
   };
 
   const handleInspectEvidence = async (chunkId: string) => {
-    // Find in all papers' chunks
     for (const p of papers) {
       try {
         const chunks = await paperApi.getPaperChunks(p.paper.id);
@@ -58,23 +58,39 @@ export const ComparisonPage: React.FC = () => {
     }
   };
 
+  const rows = [
+    { key: 'problem', label: 'Research Problem' },
+    { key: 'methodology', label: 'Methodology & Architecture' },
+    { key: 'datasets', label: 'Evaluated Datasets' },
+    { key: 'metrics', label: 'Reported Metrics' },
+    { key: 'findings', label: 'Key Empirical Results' },
+    { key: 'limitations', label: 'Limitations & Caveats' },
+    { key: 'contributions', label: 'Scientific Contributions' },
+  ];
+
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="p-6 max-w-7xl mx-auto space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold text-white tracking-tight">Paper Comparison Workspace</h1>
-        <p className="text-xs text-slate-400">
-          Side-by-side evidence matrix comparing problems, architectures, metrics, results, and limitations
+        <div className="flex items-center gap-2 text-indigo-700 text-xs font-semibold uppercase tracking-wider mb-1">
+          <Scale className="w-4 h-4" />
+          <span>Structured Multi-Paper Analysis</span>
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+          Cross-Paper Comparison Matrix
+        </h1>
+        <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
+          Side-by-side evidence matrix comparing research problems, architectures, metrics, empirical findings, and limitations. Every cell links directly to chunk citations.
         </p>
       </div>
 
       {/* Paper Selector Card */}
-      <div className="glass-panel p-5 rounded-2xl border border-slate-800 space-y-3">
+      <GlassPanel className="p-5 space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-slate-200">
-            Select 2 to 5 papers to compare ({selectedIds.length} selected):
+          <span className="text-xs font-semibold text-slate-800">
+            Select 2 to 5 papers to compare ({selectedIds.length} active):
           </span>
-          <span className="text-[11px] text-slate-500">Min 2, Max 5 papers</span>
+          <span className="text-[11px] text-slate-500 font-medium">Min 2, Max 5 papers</span>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -84,10 +100,10 @@ export const ComparisonPage: React.FC = () => {
               <button
                 key={p.paper.id}
                 onClick={() => toggleSelectPaper(p.paper.id)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-2 border ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1.5 border ${
                   isSelected
-                    ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
-                    : 'bg-slate-900 text-slate-300 border-slate-800 hover:bg-slate-800'
+                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                    : 'bg-white/80 text-slate-700 border-slate-200 hover:bg-white hover:border-slate-300'
                 }`}
               >
                 {isSelected && <Check className="w-3.5 h-3.5" />}
@@ -97,140 +113,114 @@ export const ComparisonPage: React.FC = () => {
             );
           })}
         </div>
-      </div>
+      </GlassPanel>
 
-      {/* Comparison Loading / Content */}
-      {compareMutation.isPending ? (
-        <div className="text-center py-20 text-slate-500 text-xs">
-          Synthesizing structured comparison matrix from paper chunks...
+      {/* Loading state */}
+      {compareMutation.isPending && (
+        <div className="glass-panel p-12 text-center text-slate-500 text-xs">
+          <div className="w-8 h-8 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p>Synthesizing multi-paper aspect matrix & cross-verifying evidence...</p>
         </div>
-      ) : !comparisonResult ? (
-        <div className="text-center py-16 text-slate-500 text-xs">
-          Select at least 2 papers above to view structured comparison.
-        </div>
-      ) : (
-        <div className="space-y-8">
-          {/* Structured Comparison Table */}
-          <div className="glass-panel rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse text-xs">
-                <thead>
-                  <tr className="bg-slate-900/90 border-b border-slate-800">
-                    <th className="p-4 font-bold text-slate-300 w-48 shrink-0">
-                      Scientific Aspect
-                    </th>
-                    {comparisonResult.papers.map((p) => (
-                      <th key={p.paper.id} className="p-4 font-bold text-slate-100 min-w-[280px]">
-                        <div className="space-y-1">
-                          <div className="text-sm font-semibold text-indigo-300 line-clamp-2">
-                            {p.paper.title}
-                          </div>
-                          <div className="text-[11px] font-normal text-slate-400">
-                            {p.paper.venue} • {p.paper.publicationYear}
-                          </div>
+      )}
+
+      {/* Comparison Matrix Table */}
+      {!compareMutation.isPending && comparisonResult && (
+        <div className="space-y-6">
+          <div className="w-full overflow-x-auto rounded-2xl border border-white/80 shadow-sm bg-white/75 backdrop-blur-md">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-slate-200/80 bg-slate-50/80">
+                  <th className="p-4 w-48 font-bold text-slate-700 uppercase tracking-wider text-[11px]">
+                    Aspect / Dimension
+                  </th>
+                  {comparisonResult.papers.map((p) => (
+                    <th key={p.paper.id} className="p-4 min-w-[280px] font-bold text-slate-900 border-l border-slate-200/60">
+                      <div className="space-y-1">
+                        <div className="text-sm line-clamp-2 leading-snug">{p.paper.title}</div>
+                        <div className="text-[11px] text-slate-500 font-normal">
+                          {p.paper.publicationYear} • {p.paper.venue || 'Scholarly Publication'}
                         </div>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-
-                <tbody className="divide-y divide-slate-800/80">
-                  {comparisonResult.rows.map((row) => (
-                    <tr key={row.aspectKey} className="hover:bg-slate-900/40 transition">
-                      <td className="p-4 font-semibold text-slate-300 align-top bg-slate-900/30">
-                        {row.aspectLabel}
-                      </td>
-                      {comparisonResult.papers.map((p) => {
-                        const cell = row.cells[p.paper.id];
-                        const isMissing =
-                          !cell || cell.content.includes('Not clearly reported');
-
-                        return (
-                          <td key={p.paper.id} className="p-4 align-top space-y-2 leading-relaxed">
-                            <p
-                              className={`text-xs ${
-                                isMissing ? 'text-slate-500 italic' : 'text-slate-200'
-                              }`}
-                            >
-                              {cell?.content || 'Not clearly reported in the available text'}
-                            </p>
-
-                            {cell && cell.evidenceChunkIds.length > 0 && !isMissing && (
-                              <button
-                                onClick={() => handleInspectEvidence(cell.evidenceChunkIds[0])}
-                                className="inline-flex items-center gap-1.5 text-[10px] text-indigo-400 hover:text-indigo-300 pt-1 font-mono"
-                              >
-                                <FileText className="w-3 h-3" />
-                                <span>Evidence Chunk Grounding</span>
-                              </button>
-                            )}
-                          </td>
-                        );
-                      })}
-                    </tr>
+                      </div>
+                    </th>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {(comparisonResult.rows && comparisonResult.rows.length > 0 ? comparisonResult.rows : rows.map(r => ({ aspectKey: r.key, aspectLabel: r.label, cells: {} }))).map((row) => (
+                  <tr key={row.aspectKey} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="p-4 font-bold text-slate-800 bg-slate-50/50 align-top">
+                      {row.aspectLabel}
+                    </td>
+                    {comparisonResult.papers.map((p) => {
+                      const cellsMap = (row.cells || {}) as Record<string, any>;
+                      const cell = cellsMap[p.paper.id];
+                      const hasText = cell && cell.content && cell.content.trim().length > 0;
+                      return (
+                        <td key={p.paper.id} className="p-4 align-top border-l border-slate-100 space-y-2">
+                          <p className="text-slate-800 font-sans leading-relaxed text-xs">
+                            {hasText ? cell.content : (
+                              <span className="text-slate-400 italic">
+                                Not clearly reported in the available text
+                              </span>
+                            )}
+                          </p>
+                          {hasText && (
+                            <div className="flex items-center justify-between pt-1">
+                              <ProvenanceBadge provenance={cell.provenance || 'REPORTED_IN_PAPER'} />
+                              {cell.evidenceChunkIds && cell.evidenceChunkIds.length > 0 && (
+                                <button
+                                  onClick={() => handleInspectEvidence(cell.evidenceChunkIds[0])}
+                                  className="text-[11px] text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1"
+                                >
+                                  <span>View Evidence</span>
+                                  <ExternalLink className="w-3 h-3" />
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
           {/* AI Cross-Paper Synthesis Section */}
-          <div className="glass-panel p-6 rounded-2xl border border-violet-500/30 bg-gradient-to-br from-violet-950/20 via-slate-900/60 to-slate-900/90 space-y-5">
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-violet-500/20 text-violet-300 border border-violet-500/30">
-                  <Sparkles className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-100 text-sm">Cross-Paper AI Synthesis</h3>
-                  <p className="text-xs text-slate-400">
-                    Model-generated pattern discovery, technical consensus, and empirical divergences
-                  </p>
-                </div>
+          <GlassPanelStrong className="p-6 border-indigo-200/80 shadow-md space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-indigo-100">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-purple-600" />
+                <h2 className="font-bold text-slate-900 text-sm">
+                  AI Cross-Paper Comparative Synthesis
+                </h2>
               </div>
               <ProvenanceBadge provenance="AI_INTERPRETATION" />
             </div>
 
-            {/* Markdown Synthesis */}
-            <div className="prose prose-invert max-w-none text-xs leading-relaxed text-slate-300 whitespace-pre-wrap font-sans">
-              {comparisonResult.aiSynthesis.synthesisMarkdown}
+            <div className="p-4 rounded-xl bg-purple-50/40 border border-purple-100 text-xs text-slate-700 leading-relaxed font-sans space-y-3 whitespace-pre-wrap">
+              {comparisonResult.aiSynthesis?.synthesisMarkdown || 'No comparative synthesis generated.'}
             </div>
 
-            {/* Consensus vs Divergence Split */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-              <div className="bg-emerald-950/20 border border-emerald-500/30 rounded-xl p-4 space-y-2">
-                <h4 className="font-semibold text-xs text-emerald-300 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                  <span>Identified Consensus Across Papers</span>
-                </h4>
-                <ul className="list-disc list-inside text-xs text-slate-300 space-y-1">
-                  {comparisonResult.aiSynthesis.consensusPoints.map((pt, i) => (
-                    <li key={i}>{pt}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="bg-amber-950/20 border border-amber-500/30 rounded-xl p-4 space-y-2">
-                <h4 className="font-semibold text-xs text-amber-300 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-                  <span>Methodological & Empirical Divergence</span>
-                </h4>
-                <ul className="list-disc list-inside text-xs text-slate-300 space-y-1">
-                  {comparisonResult.aiSynthesis.divergencePoints.map((pt, i) => (
-                    <li key={i}>{pt}</li>
-                  ))}
-                </ul>
-              </div>
+            <div className="flex items-center gap-2 text-[11px] text-slate-500 font-medium">
+              <Info className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+              <span>
+                Distinction Principle: The synthesis above is an AI interpretation. Always verify factual claims against individual paper chunk excerpts.
+              </span>
             </div>
-          </div>
+          </GlassPanelStrong>
         </div>
       )}
 
-      {/* Chunk Evidence Inspector Modal */}
-      <ChunkViewerModal
-        chunk={selectedChunk}
-        onClose={() => setSelectedChunk(null)}
-      />
+      {/* Chunk Viewer Modal */}
+      {selectedChunk && (
+        <ChunkViewerModal
+          chunk={selectedChunk}
+          paperTitle="Comparison Matrix Source Evidence"
+          onClose={() => setSelectedChunk(null)}
+        />
+      )}
     </div>
   );
 };

@@ -4,6 +4,8 @@ import { graphApi } from '../api/graphApi';
 import cytoscape from 'cytoscape';
 import { GitBranch, Layers, Sliders, Table, Eye, ZoomIn, ZoomOut, RefreshCw, X } from 'lucide-react';
 import { ProvenanceBadge } from '../components/ProvenanceBadge';
+import { GlassPanel, GlassPanelStrong } from '../components/GlassPanel';
+import { GlassButton } from '../components/GlassButton';
 
 export const CitationGraphPage: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -24,7 +26,7 @@ export const CitationGraphPage: React.FC = () => {
       ...graphData.nodes.map((n) => ({
         data: {
           id: n.id,
-          label: n.label.length > 25 ? n.label.substring(0, 25) + '...' : n.label,
+          label: n.label.length > 28 ? n.label.substring(0, 28) + '...' : n.label,
           fullTitle: n.label,
           type: n.type,
           ...n.data,
@@ -50,8 +52,9 @@ export const CitationGraphPage: React.FC = () => {
           style: {
             'background-color': '#4f46e5',
             label: 'data(label)',
-            color: '#f8fafc',
+            color: '#1e293b',
             'font-size': '11px',
+            'font-weight': 600,
             'text-valign': 'bottom',
             'text-margin-y': 6,
             width: 32,
@@ -63,9 +66,10 @@ export const CitationGraphPage: React.FC = () => {
         {
           selector: 'node[type = "UNRESOLVED_PAPER"]',
           style: {
-            'background-color': '#475569',
+            'background-color': '#cbd5e1',
             'border-color': '#94a3b8',
             'border-style': 'dashed',
+            color: '#64748b',
             shape: 'rectangle',
             width: 24,
             height: 24,
@@ -75,27 +79,27 @@ export const CitationGraphPage: React.FC = () => {
           selector: 'edge',
           style: {
             width: 2,
-            'line-color': '#6366f1',
-            'target-arrow-color': '#6366f1',
+            'line-color': '#818cf8',
+            'target-arrow-color': '#818cf8',
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
-            opacity: 0.8,
+            opacity: 0.85,
           },
         },
         {
           selector: 'edge[?isUnresolved]',
           style: {
-            'line-color': '#64748b',
-            'target-arrow-color': '#64748b',
+            'line-color': '#94a3b8',
+            'target-arrow-color': '#94a3b8',
             'line-style': 'dashed',
-            opacity: 0.5,
+            opacity: 0.6,
           },
         },
         {
           selector: ':selected',
           style: {
-            'background-color': '#10b981',
-            'border-color': '#34d399',
+            'background-color': '#0f766e',
+            'border-color': '#14b8a6',
             'border-width': 4,
           },
         },
@@ -135,21 +139,21 @@ export const CitationGraphPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-white tracking-tight">Citation Network Graph</h1>
-          <p className="text-xs text-slate-400">
-            Interactive citation topology mapping resolved library papers and external references
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">Citation Network Graph</h1>
+          <p className="text-xs text-slate-500">
+            Interactive citation topology mapping resolved library papers and external scholarly references
           </p>
         </div>
 
         {/* View mode toggle */}
         <div className="flex items-center gap-3">
-          <div className="flex rounded-xl bg-slate-900 p-0.5 border border-slate-800 text-xs">
+          <div className="flex rounded-xl glass-panel p-1 border border-slate-200/80 text-xs shadow-sm">
             <button
               onClick={() => setViewMode('graph')}
               className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium transition ${
                 viewMode === 'graph'
                   ? 'bg-indigo-600 text-white shadow'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <GitBranch className="w-3.5 h-3.5" />
@@ -160,7 +164,7 @@ export const CitationGraphPage: React.FC = () => {
               className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium transition ${
                 viewMode === 'table'
                   ? 'bg-indigo-600 text-white shadow'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Table className="w-3.5 h-3.5" />
@@ -171,48 +175,48 @@ export const CitationGraphPage: React.FC = () => {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-20 text-slate-500 text-xs">
+        <div className="text-center py-20 text-slate-500 text-xs font-medium">
           Computing citation network graph layout...
         </div>
       ) : viewMode === 'graph' ? (
-        <div className="relative glass-panel rounded-2xl border border-slate-800 overflow-hidden shadow-2xl h-[650px] flex">
+        <div className="relative glass-panel rounded-2xl border border-white/80 overflow-hidden shadow-glass h-[650px] flex">
           {/* Cytoscape Canvas */}
-          <div ref={containerRef} className="w-full h-full bg-[#080d1a]" />
+          <div ref={containerRef} className="w-full h-full bg-[#f8fafc]" />
 
           {/* Floating Controls */}
-          <div className="absolute top-4 left-4 z-10 flex flex-wrap items-center gap-2 bg-slate-900/90 backdrop-blur-md p-1.5 rounded-xl border border-slate-800 text-xs shadow-lg">
-            <span className="text-slate-400 text-[11px] px-2">Layout:</span>
+          <div className="absolute top-4 left-4 z-10 flex flex-wrap items-center gap-2 glass-panel-strong p-1.5 rounded-xl border border-white/80 text-xs shadow-md">
+            <span className="text-slate-500 text-[11px] font-medium px-2">Layout:</span>
             {(['cose', 'concentric', 'circle', 'breadthfirst'] as const).map((l) => (
               <button
                 key={l}
                 onClick={() => setLayoutName(l)}
                 className={`px-2.5 py-1 rounded-lg capitalize text-[11px] font-semibold transition ${
-                  layoutName === l ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-slate-200'
+                  layoutName === l ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {l}
               </button>
             ))}
 
-            <div className="h-4 w-px bg-slate-800 mx-1" />
+            <div className="h-4 w-px bg-slate-300 mx-1" />
 
             <button
               onClick={() => handleZoom('in')}
-              className="p-1.5 rounded-lg text-slate-300 hover:bg-slate-800 transition"
+              className="p-1.5 rounded-lg text-slate-700 hover:bg-slate-200/60 transition"
               title="Zoom In"
             >
               <ZoomIn className="w-4 h-4" />
             </button>
             <button
               onClick={() => handleZoom('out')}
-              className="p-1.5 rounded-lg text-slate-300 hover:bg-slate-800 transition"
+              className="p-1.5 rounded-lg text-slate-700 hover:bg-slate-200/60 transition"
               title="Zoom Out"
             >
               <ZoomOut className="w-4 h-4" />
             </button>
             <button
               onClick={() => handleZoom('fit')}
-              className="p-1.5 rounded-lg text-slate-300 hover:bg-slate-800 transition"
+              className="p-1.5 rounded-lg text-slate-700 hover:bg-slate-200/60 transition"
               title="Fit View"
             >
               <RefreshCw className="w-4 h-4" />
@@ -220,17 +224,17 @@ export const CitationGraphPage: React.FC = () => {
           </div>
 
           {/* Floating Legend */}
-          <div className="absolute bottom-4 left-4 z-10 p-3 rounded-xl bg-slate-900/90 backdrop-blur-md border border-slate-800 text-[10px] space-y-1.5 shadow-lg">
-            <div className="font-semibold text-slate-300">Citation Legend</div>
-            <div className="flex items-center gap-2 text-indigo-400">
-              <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 border border-indigo-400" />
+          <div className="absolute bottom-4 left-4 z-10 p-3 rounded-xl glass-panel-strong border border-white/80 text-[11px] space-y-1.5 shadow-md">
+            <div className="font-semibold text-slate-800">Citation Legend</div>
+            <div className="flex items-center gap-2 text-indigo-700 font-medium">
+              <span className="w-2.5 h-2.5 rounded-full bg-indigo-600 border border-indigo-400" />
               <span>Resolved Indexed Paper</span>
             </div>
-            <div className="flex items-center gap-2 text-slate-400">
-              <span className="w-2.5 h-2.5 rounded-sm bg-slate-600 border border-dashed border-slate-400" />
+            <div className="flex items-center gap-2 text-slate-600">
+              <span className="w-2.5 h-2.5 rounded-sm bg-slate-300 border border-dashed border-slate-500" />
               <span>Unresolved External Reference</span>
             </div>
-            <div className="flex items-center gap-2 text-slate-400">
+            <div className="flex items-center gap-2 text-slate-600">
               <span className="w-4 h-0.5 bg-indigo-500" />
               <span>Direct Citation Edge</span>
             </div>
@@ -238,36 +242,36 @@ export const CitationGraphPage: React.FC = () => {
 
           {/* Node Inspector Drawer */}
           {selectedNode && (
-            <div className="absolute top-4 right-4 z-20 w-80 bg-slate-900/95 backdrop-blur-md border border-slate-700/80 rounded-2xl p-4 shadow-2xl space-y-3 animate-fade-in text-xs">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                <span className="font-bold text-slate-200 text-xs">Node Inspector</span>
+            <div className="absolute top-4 right-4 z-20 w-80 glass-panel-strong border border-white/90 rounded-2xl p-4 shadow-glass-hover space-y-3 animate-fade-in text-xs">
+              <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
+                <span className="font-bold text-slate-900 text-xs">Paper Inspector</span>
                 <button
                   onClick={() => setSelectedNode(null)}
-                  className="p-1 text-slate-400 hover:text-white"
+                  className="p-1 text-slate-400 hover:text-slate-700 transition"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               <div className="space-y-1.5">
-                <h4 className="font-semibold text-white text-sm leading-snug">
+                <h4 className="font-semibold text-slate-900 text-sm leading-snug">
                   {selectedNode.fullTitle || selectedNode.label}
                 </h4>
                 {selectedNode.authors && (
-                  <div className="text-[11px] text-slate-400">
-                    <span className="text-slate-500">Authors: </span>
+                  <div className="text-[11px] text-slate-600">
+                    <span className="text-slate-500 font-medium">Authors: </span>
                     {selectedNode.authors}
                   </div>
                 )}
                 {selectedNode.year && (
-                  <div className="text-[11px] text-slate-400">
-                    <span className="text-slate-500">Year: </span>
+                  <div className="text-[11px] text-slate-600">
+                    <span className="text-slate-500 font-medium">Year: </span>
                     {selectedNode.year}
                   </div>
                 )}
                 {selectedNode.venue && (
-                  <div className="text-[11px] text-slate-400">
-                    <span className="text-slate-500">Venue: </span>
+                  <div className="text-[11px] text-slate-600">
+                    <span className="text-slate-500 font-medium">Venue: </span>
                     {selectedNode.venue}
                   </div>
                 )}
@@ -277,7 +281,7 @@ export const CitationGraphPage: React.FC = () => {
                 <div className="pt-2">
                   <a
                     href={`/papers/${selectedNode.id}`}
-                    className="block w-full py-1.5 text-center bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-semibold transition"
+                    className="block w-full py-2 text-center bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold shadow-sm transition"
                   >
                     Open Paper Workspace
                   </a>
@@ -288,26 +292,26 @@ export const CitationGraphPage: React.FC = () => {
         </div>
       ) : (
         /* Accessible Table Alternative */
-        <div className="glass-panel rounded-2xl border border-slate-800 overflow-hidden shadow-xl text-xs">
-          <div className="p-4 border-b border-slate-800 bg-slate-900/60 font-semibold text-slate-200">
+        <div className="glass-panel-strong rounded-2xl border border-white/80 overflow-hidden shadow-glass text-xs">
+          <div className="p-4 border-b border-slate-200/80 bg-white/60 font-semibold text-slate-800">
             Citation Network Relationships Table
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-900 border-b border-slate-800 text-slate-400">
+                <tr className="bg-slate-50/80 border-b border-slate-200/80 text-slate-600 font-semibold">
                   <th className="p-3.5">Source Paper</th>
                   <th className="p-3.5">Relationship</th>
                   <th className="p-3.5">Target Reference</th>
                   <th className="p-3.5">Provenance</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/80">
+              <tbody className="divide-y divide-slate-200/60">
                 {graphData?.edges.map((e) => (
-                  <tr key={e.id} className="hover:bg-slate-900/40">
-                    <td className="p-3.5 text-slate-200 font-medium">{e.source}</td>
-                    <td className="p-3.5 text-indigo-400 font-semibold">{e.label}</td>
-                    <td className="p-3.5 text-slate-300">{e.target}</td>
+                  <tr key={e.id} className="hover:bg-slate-50/60 transition">
+                    <td className="p-3.5 text-slate-900 font-medium">{e.source}</td>
+                    <td className="p-3.5 text-indigo-700 font-semibold">{e.label}</td>
+                    <td className="p-3.5 text-slate-700">{e.target}</td>
                     <td className="p-3.5">
                       <ProvenanceBadge provenance={e.provenance} />
                     </td>
