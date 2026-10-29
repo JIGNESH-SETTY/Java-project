@@ -1,9 +1,9 @@
 package com.airesearch.discovery.ai;
 
-import com.airesearch.discovery.ai.provider.MockAiProvider;
-import com.airesearch.discovery.ai.provider.OllamaAiProvider;
+import com.airesearch.discovery.ai.provider.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * High-level AI facade providing embeddings and structured generation with graceful fallback.
+ * Unified high-level AI facade providing vector embeddings and structured generation
+ * across pluggable providers: Mock, Ollama, OpenAI, Google Gemini, and Anthropic.
  */
 @Service
 public class AiService {
@@ -22,22 +23,65 @@ public class AiService {
     private final ChatModelProvider chatModelProvider;
     private final String activeProviderName;
 
+    @Autowired
     public AiService(
             @Value("${app.ai.provider:MOCK}") String configuredProvider,
             MockAiProvider mockAiProvider,
-            OllamaAiProvider ollamaAiProvider) {
+            OllamaAiProvider ollamaAiProvider,
+            OpenAiProvider openAiProvider,
+            GeminiAiProvider geminiAiProvider,
+            AnthropicAiProvider anthropicAiProvider) {
 
-        if ("OLLAMA".equalsIgnoreCase(configuredProvider)) {
-            log.info("Configured AI Provider: OLLAMA");
-            this.embeddingProvider = ollamaAiProvider;
-            this.chatModelProvider = ollamaAiProvider;
-            this.activeProviderName = "Ollama (" + ollamaAiProvider.getModelName() + ")";
-        } else {
-            log.info("Configured AI Provider: MOCK (Offline, deterministic high-accuracy simulation)");
-            this.embeddingProvider = mockAiProvider;
-            this.chatModelProvider = mockAiProvider;
-            this.activeProviderName = "Mock AI Engine";
+        String provider = configuredProvider != null ? configuredProvider.trim().toUpperCase() : "MOCK";
+
+        switch (provider) {
+            case "OPENAI" -> {
+                log.info("Configured AI Provider: OPENAI");
+                this.chatModelProvider = openAiProvider != null ? openAiProvider : mockAiProvider;
+                this.embeddingProvider = openAiProvider != null ? openAiProvider : mockAiProvider;
+                this.activeProviderName = openAiProvider != null ? "OpenAI (" + openAiProvider.getModelName() + ")" : "Mock AI Engine";
+            }
+            case "GEMINI" -> {
+                log.info("Configured AI Provider: GEMINI");
+                this.chatModelProvider = geminiAiProvider != null ? geminiAiProvider : mockAiProvider;
+                this.embeddingProvider = geminiAiProvider != null ? geminiAiProvider : mockAiProvider;
+                this.activeProviderName = geminiAiProvider != null ? "Google Gemini (" + geminiAiProvider.getModelName() + ")" : "Mock AI Engine";
+            }
+            case "ANTHROPIC" -> {
+                log.info("Configured AI Provider: ANTHROPIC");
+                this.chatModelProvider = anthropicAiProvider != null ? anthropicAiProvider : mockAiProvider;
+                // Anthropic does not provide embeddings; pair with configured embedding provider or fallback
+                if (geminiAiProvider != null && geminiAiProvider.isConfigured()) {
+                    this.embeddingProvider = geminiAiProvider;
+                } else if (openAiProvider != null && openAiProvider.isConfigured()) {
+                    this.embeddingProvider = openAiProvider;
+                } else if (ollamaAiProvider != null) {
+                    this.embeddingProvider = ollamaAiProvider;
+                } else {
+                    this.embeddingProvider = mockAiProvider;
+                }
+                this.activeProviderName = anthropicAiProvider != null ? "Anthropic Claude (" + anthropicAiProvider.getModelName() + ")" : "Mock AI Engine";
+            }
+            case "OLLAMA" -> {
+                log.info("Configured AI Provider: OLLAMA");
+                this.embeddingProvider = ollamaAiProvider != null ? ollamaAiProvider : mockAiProvider;
+                this.chatModelProvider = ollamaAiProvider != null ? ollamaAiProvider : mockAiProvider;
+                this.activeProviderName = ollamaAiProvider != null ? "Ollama (" + ollamaAiProvider.getModelName() + ")" : "Mock AI Engine";
+            }
+            default -> {
+                log.info("Configured AI Provider: MOCK (Offline deterministic simulation)");
+                this.embeddingProvider = mockAiProvider;
+                this.chatModelProvider = mockAiProvider;
+                this.activeProviderName = "Mock AI Engine";
+            }
         }
+    }
+
+    /**
+     * Overloaded constructor for unit testing without all cloud provider beans.
+     */
+    public AiService(String configuredProvider, MockAiProvider mockAiProvider, OllamaAiProvider ollamaAiProvider) {
+        this(configuredProvider, mockAiProvider, ollamaAiProvider, null, null, null);
     }
 
     public float[] embed(String text) {

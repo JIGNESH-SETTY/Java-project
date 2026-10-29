@@ -16,16 +16,16 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
   ...props
 }) => {
   const sizeStyles = {
-    sm: 'px-3 py-1.5 text-xs rounded-lg gap-1.5',
-    md: 'px-4 py-2 text-sm rounded-xl gap-2',
-    lg: 'px-5 py-2.5 text-base rounded-xl gap-2.5',
+    sm: 'px-3.5 py-1.5 text-xs rounded-full gap-1.5',
+    md: 'px-5 py-2 text-xs rounded-full gap-2',
+    lg: 'px-6 py-2.5 text-sm rounded-full gap-2.5',
   }[size];
 
   const variantStyles = {
     primary: 'glass-button-primary',
     secondary: 'glass-button-secondary',
-    danger: 'bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 shadow-sm transition-all',
-    ghost: 'bg-transparent hover:bg-white/50 text-slate-700 transition-all border border-transparent hover:border-slate-200',
+    danger: 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 rounded-full shadow-xs transition-all',
+    ghost: 'bg-transparent hover:bg-white/60 text-[#29282B] transition-all rounded-full border border-transparent hover:border-white/80',
   }[variant];
 
   const renderIcon = () => {

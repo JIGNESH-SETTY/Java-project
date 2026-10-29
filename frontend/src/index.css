@@ -1,50 +1,58 @@
 @import "tailwindcss";
 
 :root {
-  --bg-base: #f5f8ff;
-  --bg-soft: #edf4ff;
-  --bg-gradient-start: #eff6ff;
-  --bg-gradient-mid: #f8f5ff;
-  --bg-gradient-end: #ecfdf5;
+  /* Warm off-white neutral base matching the reference design */
+  --bg-base: #EAE8E7;
+  --bg-soft: #F2F0EE;
+  --bg-gradient-peach: rgba(255, 205, 190, 0.45);
+  --bg-gradient-pink: rgba(254, 215, 226, 0.40);
+  --bg-gradient-lavender: rgba(228, 202, 255, 0.50);
+  --bg-gradient-mint: rgba(200, 240, 225, 0.35);
 
-  --glass-surface: rgba(255, 255, 255, 0.62);
-  --glass-surface-strong: rgba(255, 255, 255, 0.85);
-  --glass-surface-subtle: rgba(255, 255, 255, 0.42);
-  --glass-border: rgba(255, 255, 255, 0.72);
-  --glass-border-muted: rgba(148, 163, 184, 0.24);
+  /* Translucent frosted glass surfaces with high opacity and blur */
+  --glass-surface: rgba(255, 255, 255, 0.70);
+  --glass-surface-strong: rgba(255, 255, 255, 0.88);
+  --glass-surface-subtle: rgba(255, 255, 255, 0.50);
+  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass-border-muted: rgba(255, 255, 255, 0.65);
 
-  --text-primary: #172033;
-  --text-secondary: #526179;
-  --text-muted: #718096;
+  /* Typography colors: soft charcoal & muted taupe-gray */
+  --text-primary: #29282B;
+  --text-secondary: #615E65;
+  --text-muted: #8E8B92;
   --text-on-accent: #ffffff;
 
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
-  --primary-soft: #e9e7ff;
+  /* Accent colors: Coral, Peach, Lavender, Pale Mint */
+  --primary: #FF6F61;
+  --primary-hover: #E24354;
+  --primary-soft: #FFEAE6;
 
-  --secondary: #0f766e;
-  --secondary-soft: #dff8f3;
+  --secondary: #0D9488;
+  --secondary-soft: #E6FAF6;
 
-  --info: #2563eb;
-  --info-soft: #e5efff;
-  --success: #15803d;
-  --success-soft: #dcfce7;
-  --warning: #b45309;
-  --warning-soft: #fef3c7;
-  --danger: #b91c1c;
-  --danger-soft: #fee2e2;
+  --info: #3B82F6;
+  --info-soft: #EFF6FF;
+  --success: #10B981;
+  --success-soft: #ECFDF5;
+  --warning: #F59E0B;
+  --warning-soft: #FFFBEB;
+  --danger: #EF4444;
+  --danger-soft: #FEF2F2;
 
-  --shadow-glass: 0 16px 45px rgba(45, 55, 72, 0.10);
-  --shadow-glass-hover: 0 20px 55px rgba(45, 55, 72, 0.15);
-  --focus-ring: rgba(79, 70, 229, 0.35);
+  /* Soft diffused low-contrast shadows from reference */
+  --shadow-glass: 0 12px 32px -8px rgba(41, 40, 43, 0.04), 0 2px 6px rgba(0, 0, 0, 0.02);
+  --shadow-glass-hover: 0 16px 40px -8px rgba(41, 40, 43, 0.07), 0 4px 10px rgba(0, 0, 0, 0.03);
+  --focus-ring: rgba(255, 111, 97, 0.30);
 }
 
 body {
-  background:
-    radial-gradient(circle at 12% 8%, rgba(191, 219, 254, 0.75), transparent 32%),
-    radial-gradient(circle at 88% 15%, rgba(221, 214, 254, 0.55), transparent 30%),
-    radial-gradient(circle at 70% 85%, rgba(167, 243, 208, 0.35), transparent 32%),
-    linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-mid), var(--bg-gradient-end));
+  background-color: var(--bg-base);
+  background-image:
+    radial-gradient(circle at 10% 15%, var(--bg-gradient-peach) 0px, transparent 40%),
+    radial-gradient(circle at 85% 10%, rgba(255, 220, 205, 0.35) 0px, transparent 45%),
+    radial-gradient(circle at 50% 90%, var(--bg-gradient-lavender) 0px, transparent 55%),
+    radial-gradient(circle at 20% 85%, var(--bg-gradient-pink) 0px, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(254, 215, 226, 0.35) 0px, transparent 50%);
   background-attachment: fixed;
   color: var(--text-primary);
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -62,129 +70,133 @@ body {
   }
 }
 
-/* Base Glassmorphism Panels */
+/* Base Glassmorphism Panels with Large 26-28px Radii */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.62);
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  box-shadow: 0 16px 45px rgba(45, 55, 72, 0.10);
-  backdrop-filter: blur(18px) saturate(145%);
-  -webkit-backdrop-filter: blur(18px) saturate(145%);
-  border-radius: 20px;
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  background: var(--glass-surface);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-glass);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  border-radius: 26px;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
 }
 
 .glass-panel:hover {
-  box-shadow: 0 20px 55px rgba(45, 55, 72, 0.14);
+  box-shadow: var(--shadow-glass-hover);
 }
 
-/* Opaque readable surface for dense academic text, tables & reviews */
+/* Opaque readable surface for academic text, tables & reviews */
 .glass-panel-strong {
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 16px 45px rgba(45, 55, 72, 0.08);
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border-radius: 20px;
+  background: var(--glass-surface-strong);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: var(--shadow-glass);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border-radius: 26px;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
 }
 
 .glass-panel-subtle {
-  background: rgba(255, 255, 255, 0.42);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 16px;
+  background: var(--glass-surface-subtle);
+  border: 1px solid var(--glass-border-muted);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 20px;
 }
 
 .glass-sidebar {
-  background: rgba(255, 255, 255, 0.72);
-  border-right: 1px solid rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(24px) saturate(150%);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
-  box-shadow: 4px 0 25px rgba(45, 55, 72, 0.05);
+  background: var(--glass-surface);
+  border-right: 1px solid var(--glass-border);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  box-shadow: 4px 0 24px rgba(41, 40, 43, 0.03);
 }
 
 .glass-navbar {
-  background: rgba(255, 255, 255, 0.70);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.75);
+  border-bottom: 1px solid var(--glass-border);
   backdrop-filter: blur(20px) saturate(140%);
   -webkit-backdrop-filter: blur(20px) saturate(140%);
-  box-shadow: 0 4px 20px rgba(45, 55, 72, 0.04);
+  box-shadow: 0 4px 20px rgba(41, 40, 43, 0.03);
 }
 
 .glass-modal {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   border: 1px solid rgba(255, 255, 255, 0.95);
-  box-shadow: 0 25px 65px rgba(45, 55, 72, 0.20);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-radius: 24px;
+  box-shadow: 0 25px 65px rgba(41, 40, 43, 0.12);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border-radius: 28px;
 }
 
-/* Glass Inputs & Controls */
+/* Glass Inputs & Pill Controls */
 .glass-input {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.95);
   color: var(--text-primary);
-  border-radius: 12px;
-  padding: 0.625rem 1rem;
-  font-size: 0.875rem;
-  transition: all 0.15s ease;
+  border-radius: 9999px;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.8125rem;
+  box-shadow: 0 4px 16px rgba(41, 40, 43, 0.03);
+  transition: all 0.2s ease;
 }
 
 .glass-input:focus {
   outline: none;
   background: #ffffff;
-  border-color: var(--primary);
+  border-color: rgba(255, 111, 97, 0.5);
   box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .glass-select {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.95);
   color: var(--text-primary);
-  border-radius: 12px;
-  padding: 0.625rem 1rem;
-  font-size: 0.875rem;
-  transition: all 0.15s ease;
+  border-radius: 9999px;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.8125rem;
+  box-shadow: 0 4px 16px rgba(41, 40, 43, 0.03);
+  transition: all 0.2s ease;
 }
 
 .glass-select:focus {
   outline: none;
   background: #ffffff;
-  border-color: var(--primary);
+  border-color: rgba(255, 111, 97, 0.5);
   box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
-/* Glass Buttons */
+/* Pill Buttons */
 .glass-button-primary {
-  background: linear-gradient(135deg, #4f46e5, #4338ca);
+  background: linear-gradient(135deg, #FF7E6B 0%, #FF6F61 50%, #E24354 100%);
   color: #ffffff;
-  font-weight: 500;
-  border-radius: 12px;
-  padding: 0.625rem 1.25rem;
-  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
-  transition: all 0.15s ease;
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 0.625rem 1.35rem;
+  box-shadow: 0 6px 18px rgba(226, 67, 84, 0.28);
+  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  border: none;
 }
 
 .glass-button-primary:hover {
-  background: linear-gradient(135deg, #4338ca, #3730a3);
-  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35);
+  background: linear-gradient(135deg, #FF6F61 0%, #E24354 100%);
+  box-shadow: 0 8px 22px rgba(226, 67, 84, 0.38);
   transform: translateY(-1px);
 }
 
 .glass-button-secondary {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.95);
   color: var(--text-primary);
-  font-weight: 500;
-  border-radius: 12px;
-  padding: 0.625rem 1.25rem;
-  box-shadow: 0 2px 8px rgba(45, 55, 72, 0.05);
-  transition: all 0.15s ease;
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 0.625rem 1.35rem;
+  box-shadow: 0 2px 10px rgba(41, 40, 43, 0.03);
+  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -193,9 +205,36 @@ body {
 
 .glass-button-secondary:hover {
   background: #ffffff;
-  border-color: rgba(148, 163, 184, 0.5);
-  box-shadow: 0 4px 12px rgba(45, 55, 72, 0.1);
+  box-shadow: 0 4px 14px rgba(41, 40, 43, 0.06);
   transform: translateY(-1px);
+}
+
+/* Dot Matrix Texture for Hero Cards */
+.dot-matrix {
+  background-image: radial-gradient(circle, rgba(120, 110, 125, 0.25) 1.2px, transparent 1.2px);
+  background-size: 16px 16px;
+}
+
+/* 3D Sphere Orb Emblem */
+.sense-orb-icon {
+  background: radial-gradient(circle at 34% 30%, #FFE9E3 0%, #FFAA96 22%, #FF6F59 48%, #E24354 78%, #931832 100%);
+  box-shadow: inset -3px -4px 8px rgba(110, 15, 30, 0.4), inset 3px 3px 6px rgba(255, 255, 255, 0.8), 0 8px 20px -3px rgba(226, 67, 84, 0.35);
+  border-radius: 9999px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.sense-orb-icon::after {
+  content: '';
+  position: absolute;
+  top: 16%;
+  left: 20%;
+  width: 28%;
+  height: 24%;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 80%);
+  transform: rotate(-25deg);
+  border-radius: 9999px;
+  pointer-events: none;
 }
 
 /* Scholarly Provenance & Evidence Badges (Accessible Contrast) */
@@ -209,7 +248,7 @@ body {
   font-weight: 600;
   background-color: var(--success-soft);
   color: var(--success);
-  border: 1px solid rgba(21, 128, 61, 0.25);
+  border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
 .badge-ai {
@@ -220,8 +259,8 @@ body {
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
-  background-color: #f3e8ff;
-  color: #7e22ce;
+  background-color: #FAF5FF;
+  color: #7E22CE;
   border: 1px solid rgba(126, 34, 206, 0.25);
 }
 
@@ -235,7 +274,7 @@ body {
   font-weight: 600;
   background-color: var(--warning-soft);
   color: var(--warning);
-  border: 1px solid rgba(180, 83, 9, 0.25);
+  border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
 .badge-asserted {
@@ -248,7 +287,7 @@ body {
   font-weight: 600;
   background-color: var(--info-soft);
   color: var(--info);
-  border: 1px solid rgba(37, 99, 235, 0.25);
+  border: 1px solid rgba(59, 130, 246, 0.25);
 }
 
 .badge-proposed {
@@ -259,9 +298,9 @@ body {
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
-  background-color: #e0e7ff;
-  color: #4338ca;
-  border: 1px solid rgba(67, 56, 202, 0.25);
+  background-color: #FDF2F8;
+  color: #DB2777;
+  border: 1px solid rgba(219, 39, 119, 0.25);
 }
 
 .badge-human-reviewed {
@@ -274,7 +313,7 @@ body {
   font-weight: 600;
   background-color: var(--secondary-soft);
   color: var(--secondary);
-  border: 1px solid rgba(15, 118, 110, 0.25);
+  border: 1px solid rgba(13, 148, 136, 0.25);
 }
 
 /* Custom Light Scrollbars */
@@ -283,12 +322,12 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(241, 245, 249, 0.5);
+  background: rgba(234, 232, 231, 0.5);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.4);
-  border-radius: 3px;
+  background: rgba(142, 139, 146, 0.35);
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.7);
+  background: rgba(142, 139, 146, 0.6);
 }

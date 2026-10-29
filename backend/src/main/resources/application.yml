@@ -32,7 +32,7 @@ app:
     access-token-expiration-ms: 900000 # 15 minutes
     refresh-token-expiration-ms: 604800000 # 7 days
   ai:
-    provider: ${AI_PROVIDER:MOCK} # Options: MOCK, OLLAMA, OPENAI
+    provider: ${AI_PROVIDER:MOCK} # Options: MOCK, OLLAMA, OPENAI, GEMINI, ANTHROPIC
     embedding:
       model-name: ${EMBEDDING_MODEL:all-minilm-l6-v2}
       dimension: 384
@@ -45,11 +45,20 @@ app:
       base-url: ${OPENAI_BASE_URL:https://api.openai.com/v1}
       chat-model: ${OPENAI_CHAT_MODEL:gpt-4o-mini}
       embedding-model: ${OPENAI_EMBED_MODEL:text-embedding-3-small}
+    gemini:
+      api-key: ${GEMINI_API_KEY:}
+      base-url: ${GEMINI_BASE_URL:https://generativelanguage.googleapis.com/v1beta}
+      chat-model: ${GEMINI_CHAT_MODEL:gemini-1.5-flash}
+      embedding-model: ${GEMINI_EMBED_MODEL:text-embedding-004}
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY:}
+      base-url: ${ANTHROPIC_BASE_URL:https://api.anthropic.com/v1}
+      chat-model: ${ANTHROPIC_CHAT_MODEL:claude-3-5-haiku-20241022}
   grobid:
     enabled: ${GROBID_ENABLED:false}
     base-url: ${GROBID_BASE_URL:http://localhost:8070}
   cors:
-    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173}
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,http://localhost:3001,http://127.0.0.1:5173,http://127.0.0.1:3001,http://127.0.0.1:3000}
   scholarly:
     crossref:
       mailto: ${CROSSREF_MAILTO:researcher@airesearch.edu}

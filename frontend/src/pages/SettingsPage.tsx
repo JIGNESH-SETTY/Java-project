@@ -1,24 +1,23 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Cpu, Database, ShieldCheck, Terminal, BookOpen, Layers, CheckCircle2 } from 'lucide-react';
 import { GlassPanel, GlassPanelStrong } from '../components/GlassPanel';
+import { Cpu, Database, Terminal, Shield, Sparkles } from 'lucide-react';
 
 export const SettingsPage: React.FC = () => {
   const { user } = useAuth();
 
   return (
-    <div className="space-y-6 animate-fade-in max-w-4xl">
+    <div className="p-6 md:p-8 max-w-5xl mx-auto space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold text-slate-900 tracking-tight">System Settings & Engine Status</h1>
-        <p className="text-xs text-slate-500">
-          Environment configuration, AI model provider diagnostics, and production deployment guidelines
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">System & AI Settings</h1>
+        <p className="text-xs text-slate-500 font-medium mt-0.5">
+          Configuration, infrastructure observability, and pluggable AI providers
         </p>
       </div>
 
-      {/* Engine Status Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
-        {/* AI Provider Status Card */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* Pluggable AI Engine Card */}
         <GlassPanel className="p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -26,32 +25,32 @@ export const SettingsPage: React.FC = () => {
                 <Cpu className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-sm">AI Model Provider</h3>
+                <h3 className="font-bold text-slate-900 text-sm">Pluggable AI Inference</h3>
                 <p className="text-[11px] text-slate-500">Embeddings & Structured Aspects</p>
               </div>
             </div>
             <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              Active & Healthy
+              Multi-Model Ready
             </span>
           </div>
 
           <div className="space-y-2 text-[11px] bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono">
             <div className="flex justify-between">
-              <span className="text-slate-500">Active Mode:</span>
-              <span className="text-indigo-700 font-semibold">Mock AI Engine (Offline Safe)</span>
+              <span className="text-slate-500">Supported Providers:</span>
+              <span className="text-indigo-700 font-semibold">Gemini · OpenAI · Claude · Ollama · Mock</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-500">Embedding Model:</span>
-              <span className="text-slate-800">all-MiniLM-L6-v2 (384-d normalized)</span>
+              <span className="text-slate-500">Vector Embeddings:</span>
+              <span className="text-slate-800">384-dimensional cosine space</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-500">Ollama Fallback:</span>
-              <span className="text-emerald-700 font-semibold">Auto-Fallback Enabled</span>
+              <span className="text-slate-500">Structured Parsing:</span>
+              <span className="text-emerald-700 font-semibold">Strict JSON Schema Enforcement</span>
             </div>
           </div>
 
           <p className="text-[11px] text-slate-600 leading-relaxed">
-            The project includes a built-in deterministic academic AI provider, guaranteeing 100% functionality without requiring gigabytes of external model downloads.
+            The platform supports local open-source LLMs via Ollama, production cloud models (Google Gemini, OpenAI, Anthropic Claude), and an offline deterministic simulation engine.
           </p>
         </GlassPanel>
 
@@ -93,29 +92,61 @@ export const SettingsPage: React.FC = () => {
         </GlassPanel>
       </div>
 
-      {/* Ollama Local Setup Terminal Box */}
+      {/* AI Configuration Options Box */}
       <GlassPanelStrong className="p-6 space-y-4">
         <div className="flex items-center gap-2 font-bold text-slate-900 text-sm">
           <Terminal className="w-4 h-4 text-indigo-600" />
-          <span>Production & Self-Hosted AI Options</span>
+          <span>Configuring AI Providers in .env</span>
         </div>
         <p className="text-xs text-slate-600">
-          To switch from the offline Mock engine to local Ollama or hosted OpenAI-compatible inference, configure your environment variables:
+          Switch models by setting <code className="px-1.5 py-0.5 rounded bg-slate-100 text-indigo-700 font-mono text-[11px]">AI_PROVIDER</code> in your <code className="px-1.5 py-0.5 rounded bg-slate-100 text-indigo-700 font-mono text-[11px]">.env</code> file:
         </p>
 
-        <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-200 space-y-2 shadow-inner">
-          <div className="text-slate-400"># 1. Pull lightweight embedding and chat models locally:</div>
-          <div className="text-emerald-400">ollama pull nomic-embed-text</div>
-          <div className="text-emerald-400">ollama pull llama3.2</div>
-          <div className="text-slate-400 pt-1"># 2. In backend application.yml or .env, set:</div>
-          <div className="text-indigo-300">AI_PROVIDER=OLLAMA # or OPENAI_COMPATIBLE</div>
-          <div className="text-indigo-300">OLLAMA_BASE_URL=http://localhost:11434</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-mono">
+          <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 text-slate-200 space-y-1.5">
+            <div className="text-indigo-400 font-bold flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5" /> Option 1: Google Gemini (Free / Fast)
+            </div>
+            <div className="text-slate-400 text-[11px]">AI_PROVIDER=GEMINI</div>
+            <div className="text-emerald-400 text-[11px]">GEMINI_API_KEY=AIzaSy...</div>
+            <div className="text-slate-400 text-[10px]"># Models: gemini-1.5-flash & text-embedding-004</div>
+          </div>
+
+          <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 text-slate-200 space-y-1.5">
+            <div className="text-indigo-400 font-bold flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5" /> Option 2: OpenAI
+            </div>
+            <div className="text-slate-400 text-[11px]">AI_PROVIDER=OPENAI</div>
+            <div className="text-emerald-400 text-[11px]">OPENAI_API_KEY=sk-...</div>
+            <div className="text-slate-400 text-[10px]"># Models: gpt-4o-mini & text-embedding-3-small</div>
+          </div>
+
+          <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 text-slate-200 space-y-1.5">
+            <div className="text-indigo-400 font-bold flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5" /> Option 3: Anthropic Claude
+            </div>
+            <div className="text-slate-400 text-[11px]">AI_PROVIDER=ANTHROPIC</div>
+            <div className="text-emerald-400 text-[11px]">ANTHROPIC_API_KEY=sk-ant-...</div>
+            <div className="text-slate-400 text-[10px]"># Models: claude-3-5-haiku-20241022</div>
+          </div>
+
+          <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 text-slate-200 space-y-1.5">
+            <div className="text-indigo-400 font-bold flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5" /> Option 4: Local Ollama
+            </div>
+            <div className="text-slate-400 text-[11px]">AI_PROVIDER=OLLAMA</div>
+            <div className="text-emerald-400 text-[11px]">APP_AI_OLLAMA_CHAT_MODEL=llama3:latest</div>
+            <div className="text-slate-400 text-[10px]"># ollama pull nomic-embed-text</div>
+          </div>
         </div>
       </GlassPanelStrong>
 
       {/* User Information */}
       <GlassPanel className="p-6 space-y-3 text-xs">
-        <h3 className="font-bold text-slate-900 text-sm">Active Session Information</h3>
+        <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
+          <Shield className="w-4 h-4 text-emerald-600" />
+          <span>Active Session Information</span>
+        </div>
         <div className="space-y-1.5 text-slate-700">
           <div>Display Name: <strong>{user?.displayName}</strong></div>
           <div>Email: <strong>{user?.email}</strong></div>

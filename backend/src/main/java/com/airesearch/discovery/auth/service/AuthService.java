@@ -45,14 +45,15 @@ public class AuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.email())) {
-            throw new IllegalArgumentException("Email already registered: " + request.email());
+        String email = request.email() != null ? request.email().toLowerCase().trim() : "";
+        if (userRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("Email already registered: " + email);
         }
 
         UserRole role = request.role() != null ? request.role() : UserRole.ROLE_USER;
         User newUser = new User(
                 UUID.randomUUID(),
-                request.email().toLowerCase().trim(),
+                email,
                 passwordEncoder.encode(request.password()),
                 request.displayName().trim(),
                 role,

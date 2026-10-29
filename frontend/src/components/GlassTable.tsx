@@ -7,8 +7,8 @@ interface GlassTableProps extends React.TableHTMLAttributes<HTMLTableElement> {
 
 export const GlassTable: React.FC<GlassTableProps> = ({ children, className = '', ...props }) => {
   return (
-    <div className="w-full overflow-x-auto rounded-2xl border border-white/80 shadow-sm bg-white/70 backdrop-blur-md">
-      <table className={`w-full text-left text-sm border-collapse ${className}`} {...props}>
+    <div className="w-full overflow-x-auto rounded-[24px] border border-white/90 shadow-[0_4px_16px_rgba(41,40,43,0.03)] bg-white/80 backdrop-blur-md">
+      <table className={`w-full text-left text-xs border-collapse ${className}`} {...props}>
         {children}
       </table>
     </div>
@@ -20,7 +20,7 @@ export const GlassTableHeader: React.FC<{ children: React.ReactNode; className?:
   className = '',
 }) => {
   return (
-    <thead className={`border-b border-slate-200/80 bg-slate-50/75 text-xs font-semibold text-slate-700 uppercase tracking-wider ${className}`}>
+    <thead className={`border-b border-slate-100 bg-white/60 text-[11px] font-bold text-[#8E8B92] uppercase tracking-wider ${className}`}>
       {children}
     </thead>
   );
@@ -30,7 +30,7 @@ export const GlassTableBody: React.FC<{ children: React.ReactNode; className?: s
   children,
   className = '',
 }) => {
-  return <tbody className={`divide-y divide-slate-100 ${className}`}>{children}</tbody>;
+  return <tbody className={`divide-y divide-slate-100/80 text-xs text-[#29282B] ${className}`}>{children}</tbody>;
 };
 
 export const GlassTableRow: React.FC<React.HTMLAttributes<HTMLTableRowElement>> = ({
@@ -39,7 +39,7 @@ export const GlassTableRow: React.FC<React.HTMLAttributes<HTMLTableRowElement>> 
   ...props
 }) => {
   return (
-    <tr className={`hover:bg-slate-50/60 transition-colors ${className}`} {...props}>
+    <tr className={`hover:bg-white/80 transition-colors ${className}`} {...props}>
       {children}
     </tr>
   );
@@ -51,7 +51,7 @@ export const GlassTableCell: React.FC<React.TdHTMLAttributes<HTMLTableCellElemen
   ...props
 }) => {
   return (
-    <td className={`px-4 py-3.5 text-slate-800 ${className}`} {...props}>
+    <td className={`px-4 py-3.5 text-[#29282B] ${className}`} {...props}>
       {children}
     </td>
   );
