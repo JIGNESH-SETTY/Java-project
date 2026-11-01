@@ -1,324 +1,338 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { graphApi } from '../api/graphApi';
-import cytoscape from 'cytoscape';
-import { GitBranch, Layers, Sliders, Table, Eye, ZoomIn, ZoomOut, RefreshCw, X } from 'lucide-react';
-import { ProvenanceBadge } from '../components/ProvenanceBadge';
-import { GlassPanel, GlassPanelStrong } from '../components/GlassPanel';
-import { GlassButton } from '../components/GlassButton';
+import { graphApi, getUseMockGraphData, setUseMockGraphData } from '../api/graphApi';
+import {
+  CitationGraphFilters,
+  GraphEdge,
+  GraphNode,
+  GraphResponse,
+} from '../types/graph';
+import { ReactFlowGraphCanvas } from '../components/graph/ReactFlowGraphCanvas';
+import { GraphCanvas, GraphCanvasHandle } from '../components/graph/GraphCanvas';
+import { GraphControls } from '../components/graph/GraphControls';
+import { GraphLegend } from '../components/graph/GraphLegend';
+import { GraphFilters } from '../components/graph/GraphFilters';
+import { GraphDetailsPanel } from '../components/graph/GraphDetailsPanel';
+import { GraphEmptyState } from '../components/graph/GraphEmptyState';
+import { GraphLoadingState } from '../components/graph/GraphLoadingState';
+import { GraphListView } from '../components/graph/GraphListView';
+import { GitBranch, Filter, LayoutGrid, Network } from 'lucide-react';
 
 export const CitationGraphPage: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const cyRef = useRef<cytoscape.Core | null>(null);
-  const [layoutName, setLayoutName] = useState<'cose' | 'concentric' | 'circle' | 'breadthfirst'>('cose');
-  const [selectedNode, setSelectedNode] = useState<any | null>(null);
-  const [viewMode, setViewMode] = useState<'graph' | 'table'>('graph');
+  const canvasRef = useRef<GraphCanvasHandle>(null);
 
-  const { data: graphData, isLoading } = useQuery({
-    queryKey: ['citationGraph'],
-    queryFn: () => graphApi.getCitationGraph(),
+  // Engine: 'flow' (React Flow + ELK.js, modern card style) or 'cytoscape' (dense network)
+  const [engine, setEngine] = useState<'flow' | 'cytoscape'>('flow');
+
+  // Layout & View states
+  const [layoutName, setLayoutName] = useState<'cose' | 'concentric' | 'circle' | 'breadthfirst'>('cose');
+  const [viewMode, setViewMode] = useState<'graph' | 'list'>('graph');
+  const [showLabels, setShowLabels] = useState(true);
+  const [showArrows, setShowArrows] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Selection states
+  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
+  const [selectedEdge, setSelectedEdge] = useState<GraphEdge | null>(null);
+
+  // Mobile drawer states
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+  const [isMobileDetailsOpen, setIsMobileDetailsOpen] = useState(false);
+
+  // Filters state
+  const [filters, setFilters] = useState<CitationGraphFilters>({
+    citationDepth: 1,
+    importedOnly: false,
   });
 
-  useEffect(() => {
-    if (!containerRef.current || !graphData || viewMode !== 'graph') return;
+  // Mock vs live data toggle
+  const [isMock, setIsMock] = useState(getUseMockGraphData());
 
-    const elements = [
-      ...graphData.nodes.map((n) => ({
-        data: {
-          id: n.id,
-          label: n.label.length > 28 ? n.label.substring(0, 28) + '...' : n.label,
-          fullTitle: n.label,
-          type: n.type,
-          ...n.data,
-        },
-      })),
-      ...graphData.edges.map((e) => ({
-        data: {
-          id: e.id,
-          source: e.source,
-          target: e.target,
-          label: e.label,
-          isUnresolved: e.relationType === 'CITES_UNRESOLVED',
-        },
-      })),
-    ];
+  const handleToggleMock = () => {
+    const nextVal = !isMock;
+    setIsMock(nextVal);
+    setUseMockGraphData(nextVal);
+    refetch();
+  };
 
-    const cy = cytoscape({
-      container: containerRef.current,
-      elements,
-      style: [
-        {
-          selector: 'node',
-          style: {
-            'background-color': '#4f46e5',
-            label: 'data(label)',
-            color: '#1e293b',
-            'font-size': '11px',
-            'font-weight': 600,
-            'text-valign': 'bottom',
-            'text-margin-y': 6,
-            width: 32,
-            height: 32,
-            'border-width': 2,
-            'border-color': '#818cf8',
-          },
-        },
-        {
-          selector: 'node[type = "UNRESOLVED_PAPER"]',
-          style: {
-            'background-color': '#cbd5e1',
-            'border-color': '#94a3b8',
-            'border-style': 'dashed',
-            color: '#64748b',
-            shape: 'rectangle',
-            width: 24,
-            height: 24,
-          },
-        },
-        {
-          selector: 'edge',
-          style: {
-            width: 2,
-            'line-color': '#818cf8',
-            'target-arrow-color': '#818cf8',
-            'target-arrow-shape': 'triangle',
-            'curve-style': 'bezier',
-            opacity: 0.85,
-          },
-        },
-        {
-          selector: 'edge[?isUnresolved]',
-          style: {
-            'line-color': '#94a3b8',
-            'target-arrow-color': '#94a3b8',
-            'line-style': 'dashed',
-            opacity: 0.6,
-          },
-        },
-        {
-          selector: ':selected',
-          style: {
-            'background-color': '#0f766e',
-            'border-color': '#14b8a6',
-            'border-width': 4,
-          },
-        },
-      ],
-      layout: {
-        name: layoutName,
-        padding: 40,
-      },
-    });
+  const { data: graphData, isLoading, isError, refetch } = useQuery<GraphResponse>({
+    queryKey: ['citationGraph', filters, isMock],
+    queryFn: () => graphApi.getCitationGraph(filters),
+  });
 
-    cy.on('tap', 'node', (evt) => {
-      setSelectedNode(evt.target.data());
-    });
+  const nodes = graphData?.nodes || [];
+  const edges = graphData?.edges || [];
 
-    cy.on('tap', (evt) => {
-      if (evt.target === cy) {
-        setSelectedNode(null);
-      }
-    });
+  const handleSelectNode = (node: GraphNode) => {
+    setSelectedNode(node);
+    setSelectedEdge(null);
+    setIsMobileDetailsOpen(true);
+  };
 
-    cyRef.current = cy;
+  const handleSelectNodeById = (nodeId: string | null) => {
+    if (!nodeId) {
+      setSelectedNode(null);
+      return;
+    }
+    const found = nodes.find((n) => n.id === nodeId);
+    if (found) {
+      setSelectedNode(found);
+      setSelectedEdge(null);
+      setIsMobileDetailsOpen(true);
+    }
+  };
 
-    return () => {
-      cy.destroy();
-    };
-  }, [graphData, layoutName, viewMode]);
+  const handleSelectEdge = (edge: GraphEdge) => {
+    setSelectedEdge(edge);
+    setSelectedNode(null);
+    setIsMobileDetailsOpen(true);
+  };
 
-  const handleZoom = (type: 'in' | 'out' | 'fit') => {
-    if (!cyRef.current) return;
-    if (type === 'in') cyRef.current.zoom(cyRef.current.zoom() * 1.25);
-    if (type === 'out') cyRef.current.zoom(cyRef.current.zoom() * 0.8);
-    if (type === 'fit') cyRef.current.fit();
+  const handleSelectEdgeById = (edgeId: string | null) => {
+    if (!edgeId) {
+      setSelectedEdge(null);
+      return;
+    }
+    const found = edges.find((e) => e.id === edgeId);
+    if (found) {
+      setSelectedEdge(found);
+      setSelectedNode(null);
+      setIsMobileDetailsOpen(true);
+    }
+  };
+
+  const handleDeselect = () => {
+    setSelectedNode(null);
+    setSelectedEdge(null);
+  };
+
+  const handleCenterGraph = (id: string) => {
+    if (canvasRef.current) {
+      canvasRef.current.centerOnNode(id);
+    }
+  };
+
+  const handleFilterConnected = (paperId: string) => {
+    setFilters((prev) => ({ ...prev, paperId }));
+  };
+
+  const handleResetFilters = () => {
+    setFilters({ citationDepth: 1, importedOnly: false });
+    setSelectedNode(null);
+    setSelectedEdge(null);
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-[1720px] mx-auto space-y-6 select-none font-sans">
+      {/* Top Page Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-200/60">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">Citation Network Graph</h1>
-          <p className="text-xs text-slate-500">
-            Interactive citation topology mapping resolved library papers and external scholarly references
-          </p>
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-full bg-white shadow-xs border border-white flex items-center justify-center text-indigo-600">
+              <GitBranch className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl sm:text-2xl font-bold text-[#29282B] tracking-tight">
+                  Bibliographic Citation Graph
+                </h1>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+                  {engine === 'flow' ? 'XYFlow + ELK' : 'Cytoscape Dense'}
+                </span>
+              </div>
+              <p className="text-xs text-[#77747A] mt-0.5 font-medium">
+                Visualizes research papers, incoming and outgoing bibliographic citations, and unresolved reference nodes.
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* View mode toggle */}
-        <div className="flex items-center gap-3">
-          <div className="flex rounded-xl glass-panel p-1 border border-slate-200/80 text-xs shadow-sm">
+        {/* Top Controls & Mobile Toggles */}
+        <div className="flex items-center gap-2 self-start md:self-auto flex-wrap">
+          {/* Engine Selector */}
+          <div className="flex items-center bg-white/80 backdrop-blur-md p-1 rounded-full border border-slate-200 shadow-xs">
             <button
-              onClick={() => setViewMode('graph')}
-              className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium transition ${
-                viewMode === 'graph'
-                  ? 'bg-indigo-600 text-white shadow'
+              onClick={() => setEngine('flow')}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all ${
+                engine === 'flow'
+                  ? 'bg-zinc-900 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <GitBranch className="w-3.5 h-3.5" />
-              <span>Interactive Graph</span>
+              <LayoutGrid className="w-3.5 h-3.5 text-amber-400" />
+              <span>Card Map</span>
             </button>
             <button
-              onClick={() => setViewMode('table')}
-              className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium transition ${
-                viewMode === 'table'
-                  ? 'bg-indigo-600 text-white shadow'
+              onClick={() => setEngine('cytoscape')}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all ${
+                engine === 'cytoscape'
+                  ? 'bg-zinc-900 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Table className="w-3.5 h-3.5" />
-              <span>Accessible Table</span>
+              <Network className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Dense Graph</span>
             </button>
           </div>
+
+          {/* Mobile Filter Toggle */}
+          <button
+            type="button"
+            onClick={() => setIsMobileFiltersOpen(true)}
+            className="md:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 text-xs font-semibold text-[#29282B]"
+          >
+            <Filter className="w-3.5 h-3.5 text-indigo-600" />
+            <span>Filters</span>
+          </button>
+
+          {/* Controls Bar for Cytoscape mode or list mode */}
+          {engine === 'cytoscape' && (
+            <GraphControls
+              onZoomIn={() => canvasRef.current?.zoomIn()}
+              onZoomOut={() => canvasRef.current?.zoomOut()}
+              onFit={() => canvasRef.current?.fit()}
+              onReset={() => canvasRef.current?.reset()}
+              onExportPng={() => canvasRef.current?.exportPng()}
+              layoutName={layoutName}
+              onChangeLayout={setLayoutName}
+              showLabels={showLabels}
+              onToggleLabels={() => setShowLabels(!showLabels)}
+              showArrows={showArrows}
+              onToggleArrows={() => setShowArrows(!showArrows)}
+              viewMode={viewMode}
+              onToggleViewMode={() => setViewMode(viewMode === 'graph' ? 'list' : 'graph')}
+            />
+          )}
         </div>
       </div>
 
-      {isLoading ? (
-        <div className="text-center py-20 text-slate-500 text-xs font-medium">
-          Computing citation network graph layout...
+      {/* Main 3-Column Desktop Grid Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column: Filter Panel (Hidden on mobile, drawer available) */}
+        <div className="hidden lg:block lg:col-span-3">
+          <GraphFilters
+            graphMode="citation"
+            citationFilters={filters}
+            onCitationFiltersChange={setFilters}
+            isMockData={isMock}
+            onToggleMockData={handleToggleMock}
+            onReset={handleResetFilters}
+          />
         </div>
-      ) : viewMode === 'graph' ? (
-        <div className="relative glass-panel rounded-2xl border border-white/80 overflow-hidden shadow-glass h-[650px] flex">
-          {/* Cytoscape Canvas */}
-          <div ref={containerRef} className="w-full h-full bg-[#f8fafc]" />
 
-          {/* Floating Controls */}
-          <div className="absolute top-4 left-4 z-10 flex flex-wrap items-center gap-2 glass-panel-strong p-1.5 rounded-xl border border-white/80 text-xs shadow-md">
-            <span className="text-slate-500 text-[11px] font-medium px-2">Layout:</span>
-            {(['cose', 'concentric', 'circle', 'breadthfirst'] as const).map((l) => (
-              <button
-                key={l}
-                onClick={() => setLayoutName(l)}
-                className={`px-2.5 py-1 rounded-lg capitalize text-[11px] font-semibold transition ${
-                  layoutName === l ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                {l}
-              </button>
-            ))}
-
-            <div className="h-4 w-px bg-slate-300 mx-1" />
-
-            <button
-              onClick={() => handleZoom('in')}
-              className="p-1.5 rounded-lg text-slate-700 hover:bg-slate-200/60 transition"
-              title="Zoom In"
-            >
-              <ZoomIn className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => handleZoom('out')}
-              className="p-1.5 rounded-lg text-slate-700 hover:bg-slate-200/60 transition"
-              title="Zoom Out"
-            >
-              <ZoomOut className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => handleZoom('fit')}
-              className="p-1.5 rounded-lg text-slate-700 hover:bg-slate-200/60 transition"
-              title="Fit View"
-            >
-              <RefreshCw className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Floating Legend */}
-          <div className="absolute bottom-4 left-4 z-10 p-3 rounded-xl glass-panel-strong border border-white/80 text-[11px] space-y-1.5 shadow-md">
-            <div className="font-semibold text-slate-800">Citation Legend</div>
-            <div className="flex items-center gap-2 text-indigo-700 font-medium">
-              <span className="w-2.5 h-2.5 rounded-full bg-indigo-600 border border-indigo-400" />
-              <span>Resolved Indexed Paper</span>
-            </div>
-            <div className="flex items-center gap-2 text-slate-600">
-              <span className="w-2.5 h-2.5 rounded-sm bg-slate-300 border border-dashed border-slate-500" />
-              <span>Unresolved External Reference</span>
-            </div>
-            <div className="flex items-center gap-2 text-slate-600">
-              <span className="w-4 h-0.5 bg-indigo-500" />
-              <span>Direct Citation Edge</span>
-            </div>
-          </div>
-
-          {/* Node Inspector Drawer */}
-          {selectedNode && (
-            <div className="absolute top-4 right-4 z-20 w-80 glass-panel-strong border border-white/90 rounded-2xl p-4 shadow-glass-hover space-y-3 animate-fade-in text-xs">
-              <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
-                <span className="font-bold text-slate-900 text-xs">Paper Inspector</span>
-                <button
-                  onClick={() => setSelectedNode(null)}
-                  className="p-1 text-slate-400 hover:text-slate-700 transition"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+        {/* Center Column: Graph Canvas (Col-span 6 or 9 if no selection) */}
+        <div className="lg:col-span-6 w-full flex flex-col gap-4">
+          <div className="relative rounded-[28px] overflow-hidden min-h-[640px] flex flex-col justify-between shadow-xl border border-zinc-800/80 bg-[#131417]">
+            {isLoading ? (
+              <GraphLoadingState message="Resolving bibliographic citations and computing ELK hierarchical layout..." />
+            ) : nodes.length === 0 ? (
+              <div className="p-8">
+                <GraphEmptyState
+                  title="No Citation Nodes Match Current Filters"
+                  description="Try expanding the year range or enabling 'Fictional Demo Data' to explore sample citation hierarchies."
+                  onResetFilters={handleResetFilters}
+                />
               </div>
-
-              <div className="space-y-1.5">
-                <h4 className="font-semibold text-slate-900 text-sm leading-snug">
-                  {selectedNode.fullTitle || selectedNode.label}
-                </h4>
-                {selectedNode.authors && (
-                  <div className="text-[11px] text-slate-600">
-                    <span className="text-slate-500 font-medium">Authors: </span>
-                    {selectedNode.authors}
-                  </div>
-                )}
-                {selectedNode.year && (
-                  <div className="text-[11px] text-slate-600">
-                    <span className="text-slate-500 font-medium">Year: </span>
-                    {selectedNode.year}
-                  </div>
-                )}
-                {selectedNode.venue && (
-                  <div className="text-[11px] text-slate-600">
-                    <span className="text-slate-500 font-medium">Venue: </span>
-                    {selectedNode.venue}
-                  </div>
-                )}
+            ) : viewMode === 'list' ? (
+              <div className="p-4 bg-white min-h-[640px]">
+                <GraphListView
+                  nodes={nodes}
+                  edges={edges}
+                  onSelectNode={handleSelectNode}
+                  onSelectEdge={handleSelectEdge}
+                />
               </div>
+            ) : engine === 'flow' ? (
+              /* React Flow with ELK.js Hierarchical Card Map */
+              <div className="w-full h-[640px]">
+                <ReactFlowGraphCanvas
+                  data={graphData || { nodes: [], edges: [], metadata: { totalNodes: 0, totalEdges: 0, isTruncated: false, appliedFilters: {} } }}
+                  selectedNodeId={selectedNode?.id}
+                  selectedEdgeId={selectedEdge?.id}
+                  onSelectNode={handleSelectNodeById}
+                  onSelectEdge={handleSelectEdgeById}
+                  searchQuery={searchQuery}
+                  onSearchChange={setSearchQuery}
+                  onToggleCytoscape={() => setEngine('cytoscape')}
+                  isCytoscapeAvailable={true}
+                />
+              </div>
+            ) : (
+              /* Cytoscape.js Dense Graph Mode */
+              <div className="relative w-full h-[640px] bg-slate-50/50">
+                <GraphCanvas
+                  ref={canvasRef}
+                  nodes={nodes}
+                  edges={edges}
+                  selectedNodeId={selectedNode?.id}
+                  selectedEdgeId={selectedEdge?.id}
+                  onSelectNode={handleSelectNode}
+                  onSelectEdge={handleSelectEdge}
+                  onDeselect={handleDeselect}
+                  layoutName={layoutName}
+                  showLabels={showLabels}
+                  showArrows={showArrows}
+                />
 
-              {selectedNode.type === 'PAPER' && (
-                <div className="pt-2">
-                  <a
-                    href={`/papers/${selectedNode.id}`}
-                    className="block w-full py-2 text-center bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold shadow-sm transition"
-                  >
-                    Open Paper Workspace
-                  </a>
+                {/* Floating Bottom Left Legend */}
+                <div className="absolute bottom-3 left-3 z-20 max-w-xs">
+                  <GraphLegend graphMode="citation" />
                 </div>
-              )}
-            </div>
-          )}
-        </div>
-      ) : (
-        /* Accessible Table Alternative */
-        <div className="glass-panel-strong rounded-2xl border border-white/80 overflow-hidden shadow-glass text-xs">
-          <div className="p-4 border-b border-slate-200/80 bg-white/60 font-semibold text-slate-800">
-            Citation Network Relationships Table
+              </div>
+            )}
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-50/80 border-b border-slate-200/80 text-slate-600 font-semibold">
-                  <th className="p-3.5">Source Paper</th>
-                  <th className="p-3.5">Relationship</th>
-                  <th className="p-3.5">Target Reference</th>
-                  <th className="p-3.5">Provenance</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200/60">
-                {graphData?.edges.map((e) => (
-                  <tr key={e.id} className="hover:bg-slate-50/60 transition">
-                    <td className="p-3.5 text-slate-900 font-medium">{e.source}</td>
-                    <td className="p-3.5 text-indigo-700 font-semibold">{e.label}</td>
-                    <td className="p-3.5 text-slate-700">{e.target}</td>
-                    <td className="p-3.5">
-                      <ProvenanceBadge provenance={e.provenance} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        </div>
+
+        {/* Right Column: Details Panel (Desktop) */}
+        <div className="hidden lg:block lg:col-span-3">
+          <GraphDetailsPanel
+            selectedNode={selectedNode}
+            selectedEdge={selectedEdge}
+            onClose={handleDeselect}
+            onCenterGraph={handleCenterGraph}
+            onFilterConnected={handleFilterConnected}
+          />
+        </div>
+      </div>
+
+      {/* Mobile Filters Drawer */}
+      {isMobileFiltersOpen && (
+        <div className="fixed inset-0 z-50 flex lg:hidden">
+          <div
+            className="fixed inset-0 bg-[#29282B]/20 backdrop-blur-xs transition-opacity"
+            onClick={() => setIsMobileFiltersOpen(false)}
+          />
+          <div className="relative w-80 max-w-[85%] bg-white h-full shadow-2xl p-4 overflow-y-auto z-10">
+            <GraphFilters
+              graphMode="citation"
+              citationFilters={filters}
+              onCitationFiltersChange={setFilters}
+              isMockData={isMock}
+              onToggleMockData={handleToggleMock}
+              onReset={handleResetFilters}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Details Drawer */}
+      {isMobileDetailsOpen && (selectedNode || selectedEdge) && (
+        <div className="fixed inset-0 z-50 flex justify-end lg:hidden">
+          <div
+            className="fixed inset-0 bg-[#29282B]/20 backdrop-blur-xs transition-opacity"
+            onClick={() => setIsMobileDetailsOpen(false)}
+          />
+          <div className="relative w-80 max-w-[85%] bg-white h-full shadow-2xl p-4 overflow-y-auto z-10">
+            <GraphDetailsPanel
+              selectedNode={selectedNode}
+              selectedEdge={selectedEdge}
+              onClose={() => {
+                setIsMobileDetailsOpen(false);
+                handleDeselect();
+              }}
+              onCenterGraph={handleCenterGraph}
+              onFilterConnected={handleFilterConnected}
+            />
           </div>
         </div>
       )}

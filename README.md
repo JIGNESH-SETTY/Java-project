@@ -10,7 +10,13 @@
 
 An evidence-backed, non-hallucinatory scholarly knowledge engine built for computer science researchers and academic institutions. This project enables researchers to ingest academic PDFs or import records via official scholarly APIs (Crossref, OpenAlex, arXiv, Semantic Scholar, Unpaywall, Europe PMC), extract structured scientific claims, detect cross-paper contradictions and supporting evidence, explore interactive citation/concept graphs, and generate literature reviews where **every factual sentence is grounded in verbatim chunk citations**.
 
-> **Comprehensive Deployment Guide**: For end-to-end instructions on deploying the application to cloud platforms (Vercel, Render, Railway, Neon, S3/R2) with real AI inference and live scholarly data, see [DEPLOYMENT.md](file:///c:/Users/vinay/Desktop/Java-project/DEPLOYMENT.md).
+> **Documentation & Guides**:
+> - [Graph Architecture & Schema Reference](docs/GRAPH_ARCHITECTURE.md)
+> - [Interactive Graph User Guide & Provenance](docs/GRAPH_USER_GUIDE.md)
+> - [PostgreSQL & Local Database Connection Guide](docs/DATABASE_CONNECTION.md)
+> - [Claim & Evidence Data Model](docs/CLAIM_EVIDENCE_MODEL.md)
+> - [AI Providers & RAG Pipeline](docs/AI_AND_RAG.md)
+> - [Comprehensive Cloud Deployment Guide](DEPLOYMENT.md)
 
 ---
 
@@ -35,7 +41,11 @@ Modern generative AI applications applied to scientific literature suffer from *
 - **Dense + Lexical Hybrid Search**: Combines PostgreSQL `pgvector` cosine similarity with PostgreSQL Full-Text Search (FTS) using weighted rank fusion.
 - **Structured Paper Comparison Matrix**: Compare 2 to 5 papers side-by-side across Research Problem, Methodology, Datasets, Metrics, Findings, and Limitations, with instant click-to-view chunk evidence.
 - **Claims & Evidence Tracking**: Extracts atomic scientific claims and tracks directional relationships (`SUPPORTS`, `CONTRADICTS`, `QUALIFIES`, `EXTENDS`, `DISCUSSES`, `DUPLICATES`) with human review actions.
-- **Interactive Citation & Concept Graphs**: Visualized using Cytoscape.js with light frosted canvas, interactive physics, floating controls, and persistent provenance legends.
+- **Interactive Citation & Concept Graphs**:
+  - **Citation Graph (`/graph/citations`)**: Visualizes multi-hop paper citation trees, identifying seminal papers and external unindexed references with customizable traversal depth (1-3 hops) and physics layouts (`cose`, `concentric`, `breadthfirst`, `circle`).
+  - **Concept & Claim Evidence Graph (`/graph/concepts`)**: Visualizes fine-grained relationships between papers, methods, benchmarks, and claims. Distinguishes directional semantic connections (`SUPPORTS`, `CONTRADICTS`, `QUALIFIES`, `EXTENDS`, `USES_METHOD`, `EVALUATED_ON`) with verbatim chunk backing.
+  - **Strict Provenance & Zero Fabrication**: Every relationship is explicitly tagged (`REPORTED_IN_PAPER`, `AI_INTERPRETATION`, `USER_ASSERTED`, `HUMAN_REVIEWED`). AI proposals are rendered with dashed lines and require human-in-the-loop audit.
+  - **Accessible Data Table & PNG Export**: Instant toggle to an accessible, screen-reader friendly table view and one-click transparent PNG diagram download.
 - **Evidence-Backed Literature Reviews**: RAG pipeline generating multi-paragraph reviews with paragraph-to-chunk provenance mappings, coverage warnings, and Markdown/BibTeX export.
 - **Offline Deterministic Fallback**: Shipped with a built-in deterministic local Mock AI engine so the entire project can be evaluated, tested, and demonstrated offline without GPU hardware or external API keys.
 
