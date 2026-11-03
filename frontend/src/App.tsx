@@ -51,9 +51,9 @@ const ProtectedLayout: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center text-slate-500 bg-slate-50 dark:bg-[#030712]">
+      <div className="h-screen w-screen flex items-center justify-center text-slate-500 bg-slate-50 dark:bg-[#181C22]">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-3 border-[#212832] dark:border-[#DFD1B7] border-t-transparent rounded-full animate-spin" />
           <p className="text-xs font-semibold tracking-wide text-slate-600 dark:text-slate-400">
             Initializing Scholarly Discovery Workspace...
           </p>
@@ -67,12 +67,12 @@ const ProtectedLayout: React.FC = () => {
   }
 
   return (
-    <div className="relative h-screen w-screen flex font-sans antialiased text-slate-900 dark:text-slate-100 selection:bg-blue-600 selection:text-white overflow-hidden bg-slate-50 dark:bg-[#030712] transition-colors duration-200">
+    <div className="relative h-screen w-screen flex font-sans antialiased text-slate-900 dark:text-[#F5EFE6] selection:bg-[#948878] selection:text-white overflow-hidden bg-slate-50 dark:bg-[#181C22] transition-colors duration-200">
       {/* Ambient Aurora Gradient Spheres for Optical Glass Refraction */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
-        <div className="absolute -top-40 -left-20 w-[600px] h-[600px] rounded-full bg-blue-500/10 dark:bg-blue-600/15 blur-[130px] animate-pulse-slow" />
-        <div className="absolute -top-20 -right-20 w-[550px] h-[550px] rounded-full bg-teal-500/10 dark:bg-indigo-600/15 blur-[140px] animate-pulse-slow" />
-        <div className="absolute -bottom-40 left-1/3 w-[650px] h-[450px] rounded-full bg-indigo-500/8 dark:bg-violet-600/12 blur-[150px]" />
+        <div className="absolute -top-40 -left-20 w-[600px] h-[600px] rounded-full bg-[#DFD1B7]/30 dark:bg-[#DFD1B7]/10 blur-[130px] animate-pulse-slow" />
+        <div className="absolute -top-20 -right-20 w-[550px] h-[550px] rounded-full bg-[#948878]/25 dark:bg-[#948878]/15 blur-[140px] animate-pulse-slow" />
+        <div className="absolute -bottom-40 left-1/3 w-[650px] h-[450px] rounded-full bg-[#393D46]/10 dark:bg-[#212832]/35 blur-[150px]" />
       </div>
 
       {/* Persistent Floating Glass Sidebar Command Center */}

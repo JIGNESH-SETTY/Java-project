@@ -51,7 +51,7 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50 dark:bg-[#030712] font-sans text-slate-900 dark:text-slate-100 selection:bg-blue-600 selection:text-white transition-colors">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50 dark:bg-[#181C22] font-sans text-slate-900 dark:text-[#F5EFE6] selection:bg-[#948878] selection:text-white transition-colors">
       <div className="w-full max-w-md space-y-6 relative z-10">
         {/* Brand Logo with 3D Cobalt Prism Lens */}
         <div className="text-center space-y-3">

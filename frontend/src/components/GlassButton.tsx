@@ -25,7 +25,7 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
     primary: 'glass-button-primary',
     secondary: 'glass-button-secondary',
     danger: 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-full shadow-2xs transition-all',
-    ghost: 'bg-transparent hover:bg-slate-100 text-slate-700 hover:text-slate-900 transition-all rounded-full border border-transparent hover:border-slate-200',
+    ghost: 'bg-transparent hover:bg-[#DFD1B7]/20 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 transition-all rounded-full border border-transparent hover:border-[#DFD1B7] dark:hover:border-slate-700',
   }[variant];
 
   const renderIcon = () => {

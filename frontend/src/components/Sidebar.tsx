@@ -89,9 +89,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenCommand
             isCollapsed ? 'justify-center px-2 py-2.5' : 'gap-3 px-3.5 py-2.5'
           } rounded-2xl text-xs font-semibold transition-all duration-200 select-none ${
             isActive
-              ? 'bg-blue-50/90 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 shadow-2xs border border-blue-200/90 dark:border-blue-800'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 border border-transparent'
-          } ${link.highlight && !isActive ? 'text-blue-600 dark:text-blue-400 font-bold' : ''}`
+              ? 'bg-[#DFD1B7]/40 dark:bg-[#DFD1B7]/15 text-[#212832] dark:text-[#DFD1B7] shadow-2xs border border-[#DFD1B7] dark:border-[#948878]/40'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-[#DFD1B7]/20 dark:hover:bg-slate-800/60 border border-transparent'
+          } ${link.highlight && !isActive ? 'text-[#948878] dark:text-[#DFD1B7] font-bold' : ''}`
         }
       >
         {({ isActive }) => (
@@ -99,9 +99,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenCommand
             <Icon
               className={`w-4 h-4 shrink-0 transition-transform duration-200 group-hover:scale-110 ${
                 isActive
-                  ? 'text-blue-600 dark:text-blue-400'
+                  ? 'text-[#212832] dark:text-[#DFD1B7]'
                   : link.highlight
-                  ? 'text-blue-600 dark:text-blue-400'
+                  ? 'text-[#948878] dark:text-[#DFD1B7]'
                   : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300'
               }`}
             />
@@ -133,10 +133,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenCommand
             {!isCollapsed && (
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-extrabold text-slate-900 dark:text-slate-100 text-sm tracking-tight leading-none group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <span className="font-extrabold text-slate-900 dark:text-slate-100 text-sm tracking-tight leading-none group-hover:text-[#948878] dark:group-hover:text-[#DFD1B7] transition-colors">
                     AI Research
                   </span>
-                  <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                  <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-[#DFD1B7]/50 dark:bg-[#393D46] text-[#212832] dark:text-[#DFD1B7] border border-[#DFD1B7] dark:border-[#948878]/30">
                     Engine
                   </span>
                 </div>
@@ -189,13 +189,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenCommand
         {!isCollapsed ? (
           <button
             onClick={onOpenCommandPalette}
-            className="w-full flex items-center justify-between px-3 py-2 rounded-2xl text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100/80 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs hover:border-blue-400/60 dark:hover:border-blue-500/60 transition-all cursor-pointer group"
+            className="w-full flex items-center justify-between px-3 py-2 rounded-2xl text-xs font-medium text-slate-600 dark:text-slate-400 bg-white/70 dark:bg-[#212832]/80 hover:bg-white dark:hover:bg-[#2A323E] border border-[#DFD1B7] dark:border-[#393D46] shadow-2xs hover:border-[#948878] transition-all cursor-pointer group"
           >
             <div className="flex items-center gap-2">
-              <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+              <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#212832] dark:group-hover:text-[#DFD1B7] transition-colors" />
               <span>Quick Jump / Search...</span>
             </div>
-            <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-white dark:bg-slate-900 text-[10px] font-mono text-slate-400 dark:text-slate-500 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+            <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-white dark:bg-[#181C22] text-[10px] font-mono text-slate-400 dark:text-slate-500 border border-[#DFD1B7] dark:border-[#393D46] shadow-2xs">
               <Command className="w-2.5 h-2.5" />
               <span>K</span>
             </div>
@@ -203,7 +203,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenCommand
         ) : (
           <button
             onClick={onOpenCommandPalette}
-            className="w-full flex justify-center p-2 rounded-xl text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-white dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            className="w-full flex justify-center p-2 rounded-xl text-slate-400 hover:text-[#212832] dark:hover:text-[#DFD1B7] hover:bg-white dark:hover:bg-[#212832] transition-colors cursor-pointer"
             title="Open Spotlight Search (Ctrl+K)"
           >
             <Search className="w-4 h-4" />
@@ -300,15 +300,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenCommand
                 className="flex items-center gap-2.5 min-w-0 cursor-pointer group"
                 title="Open Settings"
               >
-                <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform">
+                <div className="w-8 h-8 rounded-xl bg-[#DFD1B7]/40 dark:bg-[#393D46] border border-[#DFD1B7] dark:border-[#948878]/30 text-[#212832] dark:text-[#DFD1B7] flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform">
                   <User className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <div className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate group-hover:text-[#948878] dark:group-hover:text-[#DFD1B7] transition-colors">
                     {user?.displayName || 'Researcher'}
                   </div>
                   <div className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1 font-medium">
-                    <ShieldCheck className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                    <ShieldCheck className="w-3 h-3 text-[#948878] dark:text-[#DFD1B7]" />
                     <span>{user?.role?.replace('ROLE_', '') || 'USER'}</span>
                   </div>
                 </div>

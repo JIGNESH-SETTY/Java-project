@@ -99,7 +99,7 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
           const pngData = cyRef.current.png({
             full: true,
             scale: 2.5,
-            bg: isDark ? '#030712' : '#F8FAFC',
+            bg: isDark ? '#181C22' : '#FAF7F2',
           });
           const link = document.createElement('a');
           link.download = `academic-graph-${Date.now()}.png`;
@@ -228,19 +228,19 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
             selector: 'node',
             style: {
               label: showLabels ? 'data(label)' : '',
-              color: isDark ? '#F8FAFC' : '#0F172A',
+              color: isDark ? '#F5EFE6' : '#212832',
               'font-size': '10px',
               'font-weight': 700,
               'text-valign': 'bottom',
               'text-margin-y': 7,
               'text-max-width': '140px',
               'text-wrap': 'ellipsis',
-              'text-background-color': isDark ? 'rgba(15, 23, 42, 0.90)' : 'rgba(255, 255, 255, 0.92)',
+              'text-background-color': isDark ? 'rgba(33, 40, 50, 0.94)' : 'rgba(255, 255, 255, 0.95)',
               'text-background-opacity': 0.95,
               'text-background-padding': '3px',
               'text-background-shape': 'roundrectangle',
               'text-border-width': 1,
-              'text-border-color': isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(15, 23, 42, 0.12)',
+              'text-border-color': isDark ? 'rgba(223, 209, 183, 0.25)' : 'rgba(148, 136, 120, 0.35)',
               'text-border-opacity': 1,
               width: 'data(size)',
               height: 'data(size)',
@@ -250,13 +250,13 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
             },
           },
 
-          // Primary Indexed Paper Node (Cobalt / Blue)
+          // Primary Indexed Paper Node (Charcoal / Cream)
           {
             selector: 'node[type = "PAPER"]',
             style: {
-              'background-color': isDark ? '#2563EB' : '#3B82F6',
+              'background-color': isDark ? '#DFD1B7' : '#212832',
               shape: 'round-rectangle',
-              'border-color': isDark ? '#60A5FA' : '#93C5FD',
+              'border-color': isDark ? '#FAF7F2' : '#393D46',
               'border-width': 2.5,
             },
           },
@@ -595,10 +595,10 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
               transform: 'translate(-50%, -100%)',
               pointerEvents: 'none',
             }}
-            className="z-50 px-3 py-2 rounded-xl bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800 shadow-xl backdrop-blur-md text-xs min-w-[160px] max-w-xs animate-scale-up"
+            className="z-50 px-3 py-2 rounded-xl bg-white/95 dark:bg-[#212832]/95 border border-[#DFD1B7] dark:border-[#393D46] shadow-xl backdrop-blur-md text-xs min-w-[160px] max-w-xs animate-scale-up"
           >
             <div className="flex items-center justify-between gap-2 mb-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#212832] dark:text-[#DFD1B7]">
                 {hoverInfo.type}
               </span>
               <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500">

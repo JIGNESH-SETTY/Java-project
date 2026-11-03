@@ -209,10 +209,10 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ isOpen
       />
 
       {/* Floating Spotlight Glass Island */}
-      <div className="relative w-full max-w-xl rounded-3xl backdrop-blur-2xl bg-white/90 dark:bg-slate-900/90 border border-slate-200/90 dark:border-white/10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.25)] dark:shadow-[0_30px_70px_-15px_rgba(0,0,0,0.8)] overflow-hidden z-10 animate-scale-up">
+      <div className="relative w-full max-w-xl rounded-3xl backdrop-blur-2xl bg-white/92 dark:bg-[#212832]/95 border border-[#DFD1B7] dark:border-[#393D46] shadow-[0_25px_60px_-15px_rgba(33,40,50,0.20)] dark:shadow-[0_30px_70px_-15px_rgba(0,0,0,0.85)] overflow-hidden z-10 animate-scale-up">
         {/* Search Input Bar */}
-        <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-100 dark:border-slate-800/80">
-          <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200/60 dark:border-blue-800 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+        <div className="flex items-center gap-3 px-5 py-4 border-b border-[#E6DDCF] dark:border-[#393D46]">
+          <div className="w-8 h-8 rounded-xl bg-[#DFD1B7]/40 dark:bg-[#393D46] border border-[#DFD1B7] dark:border-[#948878]/30 text-[#212832] dark:text-[#DFD1B7] flex items-center justify-center shrink-0">
             <Search className="w-4 h-4" />
           </div>
           <input
@@ -221,7 +221,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ isOpen
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Type a command, search papers, or jump to view..."
-            className="flex-1 bg-transparent text-sm sm:text-base font-medium text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"
+            className="flex-1 bg-transparent text-sm sm:text-base font-medium text-slate-900 dark:text-[#F5EFE6] placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"
           />
           {query ? (
             <button
@@ -232,7 +232,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ isOpen
               <X className="w-4 h-4" />
             </button>
           ) : (
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-[10px] font-mono text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-[#181C22] text-[10px] font-mono text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
               <Command className="w-3 h-3" />
               <span>K</span>
             </div>
@@ -247,7 +247,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ isOpen
                 No commands matching "{query}"
               </p>
               <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
-                Press <span className="font-mono font-semibold text-blue-600 dark:text-blue-400">Enter</span> to run a full hybrid semantic search for this query across all ingested papers.
+                Press <span className="font-mono font-semibold text-[#212832] dark:text-[#DFD1B7]">Enter</span> to run a full hybrid semantic search for this query across all ingested papers.
               </p>
             </div>
           ) : (
@@ -261,7 +261,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ isOpen
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-left transition-all duration-150 cursor-pointer ${
                     isSelected
-                      ? 'bg-blue-50/90 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/80 shadow-2xs'
+                      ? 'bg-[#DFD1B7]/40 dark:bg-[#DFD1B7]/15 border border-[#DFD1B7] dark:border-[#948878]/40 shadow-2xs'
                       : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/40 border border-transparent'
                   }`}
                 >
@@ -269,7 +269,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ isOpen
                     <div
                       className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
                         isSelected
-                          ? 'bg-blue-600 text-white shadow-2xs'
+                          ? 'bg-[#212832] dark:bg-[#DFD1B7] text-[#FAF7F2] dark:text-[#181C22] shadow-2xs'
                           : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                       }`}
                     >
@@ -279,7 +279,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ isOpen
                       <div
                         className={`text-xs font-semibold truncate ${
                           isSelected
-                            ? 'text-blue-700 dark:text-blue-300'
+                            ? 'text-[#212832] dark:text-[#DFD1B7]'
                             : 'text-slate-800 dark:text-slate-200'
                         }`}
                       >
@@ -300,7 +300,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ isOpen
                     <ArrowRight
                       className={`w-3.5 h-3.5 transition-transform ${
                         isSelected
-                          ? 'text-blue-600 dark:text-blue-400 translate-x-0.5'
+                          ? 'text-[#212832] dark:text-[#DFD1B7] translate-x-0.5'
                           : 'text-slate-300 dark:text-slate-600'
                       }`}
                     />
