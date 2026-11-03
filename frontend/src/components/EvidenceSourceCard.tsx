@@ -25,17 +25,17 @@ export const EvidenceSourceCard: React.FC<EvidenceSourceCardProps> = ({
   className = '',
 }) => {
   return (
-    <div className={`p-4 rounded-xl border border-white/80 bg-white/75 shadow-sm backdrop-blur-md flex flex-col gap-3 transition-all hover:border-indigo-200 hover:shadow-md ${className}`}>
+    <div className={`p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs flex flex-col gap-3 transition-all hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-xs ${className}`}>
       <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2 text-xs font-semibold text-indigo-700 min-w-0">
-          <BookOpen className="w-3.5 h-3.5 shrink-0" />
+        <div className="flex items-center gap-2 text-xs font-semibold text-blue-700 dark:text-blue-400 min-w-0">
+          <BookOpen className="w-3.5 h-3.5 shrink-0 text-blue-600 dark:text-blue-400" />
           <span className="truncate" title={paperTitle}>
             {paperTitle}
           </span>
         </div>
         <div className="shrink-0 flex items-center gap-2">
           {sectionName && (
-            <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
+            <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-full">
               <MapPin className="w-3 h-3 text-slate-400" />
               {sectionName}
               {pageNumber ? ` • p. ${pageNumber}` : ''}
@@ -45,8 +45,8 @@ export const EvidenceSourceCard: React.FC<EvidenceSourceCardProps> = ({
         </div>
       </div>
 
-      <div className="relative pl-3 border-l-2 border-indigo-400/60 text-xs text-slate-700 font-serif leading-relaxed italic bg-indigo-50/20 py-1 pr-2 rounded-r">
-        <Quote className="w-3 h-3 text-indigo-300 absolute -top-1 -left-1.5 fill-current" />
+      <div className="relative pl-3.5 border-l-2 border-blue-500 text-xs text-slate-700 dark:text-slate-300 font-serif leading-relaxed italic bg-blue-50/40 dark:bg-blue-950/40 py-2 pr-3 rounded-r-xl">
+        <Quote className="w-3.5 h-3.5 text-blue-400 dark:text-blue-500 absolute -top-1 -left-1.5 fill-current" />
         "{content}"
       </div>
 

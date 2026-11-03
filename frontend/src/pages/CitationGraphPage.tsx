@@ -55,7 +55,7 @@ export const CitationGraphPage: React.FC = () => {
     refetch();
   };
 
-  const { data: graphData, isLoading, isError, refetch } = useQuery<GraphResponse>({
+  const { data: graphData, isLoading, refetch } = useQuery<GraphResponse>({
     queryKey: ['citationGraph', filters, isMock],
     queryFn: () => graphApi.getCitationGraph(filters),
   });
@@ -125,22 +125,22 @@ export const CitationGraphPage: React.FC = () => {
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-[1720px] mx-auto space-y-6 select-none font-sans">
       {/* Top Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-200/60">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-200 dark:border-slate-800">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full bg-white shadow-xs border border-white flex items-center justify-center text-indigo-600">
+            <div className="w-9 h-9 rounded-full bg-white dark:bg-slate-900 shadow-2xs border border-slate-200 dark:border-slate-800 flex items-center justify-center text-blue-600 dark:text-blue-400">
               <GitBranch className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-bold text-[#29282B] tracking-tight">
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
                   Bibliographic Citation Graph
                 </h1>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                   {engine === 'flow' ? 'XYFlow + ELK' : 'Cytoscape Dense'}
                 </span>
               </div>
-              <p className="text-xs text-[#77747A] mt-0.5 font-medium">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
                 Visualizes research papers, incoming and outgoing bibliographic citations, and unresolved reference nodes.
               </p>
             </div>
@@ -150,27 +150,27 @@ export const CitationGraphPage: React.FC = () => {
         {/* Top Controls & Mobile Toggles */}
         <div className="flex items-center gap-2 self-start md:self-auto flex-wrap">
           {/* Engine Selector */}
-          <div className="flex items-center bg-white/80 backdrop-blur-md p-1 rounded-full border border-slate-200 shadow-xs">
+          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-full border border-slate-200 dark:border-slate-700 shadow-2xs">
             <button
               onClick={() => setEngine('flow')}
               className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all ${
                 engine === 'flow'
-                  ? 'bg-zinc-900 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white dark:bg-blue-600 text-slate-900 dark:text-white shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
               }`}
             >
-              <LayoutGrid className="w-3.5 h-3.5 text-amber-400" />
+              <LayoutGrid className="w-3.5 h-3.5 text-blue-600 dark:text-amber-400" />
               <span>Card Map</span>
             </button>
             <button
               onClick={() => setEngine('cytoscape')}
               className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all ${
                 engine === 'cytoscape'
-                  ? 'bg-zinc-900 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white dark:bg-blue-600 text-slate-900 dark:text-white shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
               }`}
             >
-              <Network className="w-3.5 h-3.5 text-indigo-400" />
+              <Network className="w-3.5 h-3.5 text-teal-600 dark:text-blue-400" />
               <span>Dense Graph</span>
             </button>
           </div>
@@ -179,9 +179,9 @@ export const CitationGraphPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsMobileFiltersOpen(true)}
-            className="md:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 text-xs font-semibold text-[#29282B]"
+            className="xl:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 shadow-2xs"
           >
-            <Filter className="w-3.5 h-3.5 text-indigo-600" />
+            <Filter className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
             <span>Filters</span>
           </button>
 
@@ -206,10 +206,10 @@ export const CitationGraphPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Main 3-Column Desktop Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column: Filter Panel (Hidden on mobile, drawer available) */}
-        <div className="hidden lg:block lg:col-span-3">
+      {/* Main Responsive Grid Layout */}
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+        {/* Left Column: Filter Panel */}
+        <div className="hidden xl:block xl:col-span-3 min-w-0">
           <GraphFilters
             graphMode="citation"
             citationFilters={filters}
@@ -220,11 +220,11 @@ export const CitationGraphPage: React.FC = () => {
           />
         </div>
 
-        {/* Center Column: Graph Canvas (Col-span 6 or 9 if no selection) */}
-        <div className="lg:col-span-6 w-full flex flex-col gap-4">
-          <div className="relative rounded-[28px] overflow-hidden min-h-[640px] flex flex-col justify-between shadow-xl border border-zinc-800/80 bg-[#131417]">
+        {/* Center Column: Graph Canvas (Expands to 9 cols when no inspector open) */}
+        <div className={`${(selectedNode || selectedEdge) ? 'xl:col-span-6' : 'xl:col-span-9'} w-full min-w-0 flex flex-col gap-4 transition-all duration-300`}>
+          <div className="relative rounded-[28px] overflow-hidden min-h-[720px] flex flex-col justify-between shadow-sm border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
             {isLoading ? (
-              <GraphLoadingState message="Resolving bibliographic citations and computing ELK hierarchical layout..." />
+              <GraphLoadingState message="Resolving bibliographic citations and computing layout..." />
             ) : nodes.length === 0 ? (
               <div className="p-8">
                 <GraphEmptyState
@@ -234,7 +234,7 @@ export const CitationGraphPage: React.FC = () => {
                 />
               </div>
             ) : viewMode === 'list' ? (
-              <div className="p-4 bg-white min-h-[640px]">
+              <div className="p-4 bg-white dark:bg-slate-900 min-h-[720px]">
                 <GraphListView
                   nodes={nodes}
                   edges={edges}
@@ -244,7 +244,7 @@ export const CitationGraphPage: React.FC = () => {
               </div>
             ) : engine === 'flow' ? (
               /* React Flow with ELK.js Hierarchical Card Map */
-              <div className="w-full h-[640px]">
+              <div className="w-full h-[720px]">
                 <ReactFlowGraphCanvas
                   data={graphData || { nodes: [], edges: [], metadata: { totalNodes: 0, totalEdges: 0, isTruncated: false, appliedFilters: {} } }}
                   selectedNodeId={selectedNode?.id}
@@ -259,7 +259,7 @@ export const CitationGraphPage: React.FC = () => {
               </div>
             ) : (
               /* Cytoscape.js Dense Graph Mode */
-              <div className="relative w-full h-[640px] bg-slate-50/50">
+              <div className="relative w-full h-[720px] bg-slate-50 dark:bg-slate-950">
                 <GraphCanvas
                   ref={canvasRef}
                   nodes={nodes}
@@ -283,26 +283,28 @@ export const CitationGraphPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: Details Panel (Desktop) */}
-        <div className="hidden lg:block lg:col-span-3">
-          <GraphDetailsPanel
-            selectedNode={selectedNode}
-            selectedEdge={selectedEdge}
-            onClose={handleDeselect}
-            onCenterGraph={handleCenterGraph}
-            onFilterConnected={handleFilterConnected}
-          />
-        </div>
+        {/* Right Column: Details Panel (Desktop - Smoothly displays when entity selected) */}
+        {(selectedNode || selectedEdge) && (
+          <div className="hidden xl:block xl:col-span-3 min-w-0 animate-scale-up">
+            <GraphDetailsPanel
+              selectedNode={selectedNode}
+              selectedEdge={selectedEdge}
+              onClose={handleDeselect}
+              onCenterGraph={handleCenterGraph}
+              onFilterConnected={handleFilterConnected}
+            />
+          </div>
+        )}
       </div>
 
       {/* Mobile Filters Drawer */}
       {isMobileFiltersOpen && (
-        <div className="fixed inset-0 z-50 flex lg:hidden">
+        <div className="fixed inset-0 z-50 flex xl:hidden">
           <div
-            className="fixed inset-0 bg-[#29282B]/20 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity"
             onClick={() => setIsMobileFiltersOpen(false)}
           />
-          <div className="relative w-80 max-w-[85%] bg-white h-full shadow-2xl p-4 overflow-y-auto z-10">
+          <div className="relative w-80 max-w-[85%] bg-white dark:bg-slate-900 h-full shadow-2xl p-4 overflow-y-auto z-10 border-r border-slate-200 dark:border-slate-800">
             <GraphFilters
               graphMode="citation"
               citationFilters={filters}
@@ -317,12 +319,12 @@ export const CitationGraphPage: React.FC = () => {
 
       {/* Mobile Details Drawer */}
       {isMobileDetailsOpen && (selectedNode || selectedEdge) && (
-        <div className="fixed inset-0 z-50 flex justify-end lg:hidden">
+        <div className="fixed inset-0 z-50 flex justify-end xl:hidden">
           <div
-            className="fixed inset-0 bg-[#29282B]/20 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity"
             onClick={() => setIsMobileDetailsOpen(false)}
           />
-          <div className="relative w-80 max-w-[85%] bg-white h-full shadow-2xl p-4 overflow-y-auto z-10">
+          <div className="relative w-80 max-w-[85%] bg-white dark:bg-slate-900 h-full shadow-2xl p-4 overflow-y-auto z-10 border-l border-slate-200 dark:border-slate-800">
             <GraphDetailsPanel
               selectedNode={selectedNode}
               selectedEdge={selectedEdge}

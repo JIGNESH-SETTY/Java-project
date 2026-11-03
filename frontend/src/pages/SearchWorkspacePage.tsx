@@ -7,15 +7,11 @@ import { Link } from 'react-router-dom';
 import {
   Search,
   SlidersHorizontal,
-  FileText,
-  Sparkles,
   ExternalLink,
   BookOpen,
-  Layers,
   ChevronDown,
   ChevronUp,
   MapPin,
-  CheckCircle2,
   Quote,
 } from 'lucide-react';
 import { ProvenanceBadge } from '../components/ProvenanceBadge';
@@ -88,14 +84,14 @@ export const SearchWorkspacePage: React.FC = () => {
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 text-indigo-700 text-xs font-semibold uppercase tracking-wider mb-1">
+        <div className="flex items-center gap-2 text-blue-700 dark:text-blue-400 text-xs font-semibold uppercase tracking-wider mb-1">
           <Search className="w-4 h-4" />
           <span>Evidence Retrieval</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
           Hybrid Semantic Search
         </h1>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
+        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl">
           Combines dense pgvector cosine distance (384-dimensional embeddings) with PostgreSQL full-text search (tsvector/tsquery) using reciprocal rank fusion.
         </p>
       </div>
@@ -104,16 +100,16 @@ export const SearchWorkspacePage: React.FC = () => {
       <GlassPanel className="p-6 space-y-4">
         <form onSubmit={handleSearch} className="space-y-4">
           <div className="relative flex items-center">
-            <Search className="w-5 h-5 absolute left-4 text-indigo-600 pointer-events-none" />
+            <Search className="w-5 h-5 absolute left-4 text-blue-600 dark:text-blue-400 pointer-events-none" />
             <input
               type="text"
               required
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Ask a technical research question or query methodology..."
-              className="glass-input w-full pl-12 pr-32 py-3.5 text-sm text-slate-900 placeholder:text-slate-400 bg-white/80 focus:bg-white shadow-xs"
+              className="glass-input w-full !pl-12 !pr-36 py-3.5 text-sm font-medium text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 bg-white dark:bg-slate-900 focus:bg-white dark:focus:bg-slate-900 shadow-xs"
             />
-            <div className="absolute right-2 flex items-center gap-1.5">
+            <div className="absolute right-2.5 flex items-center gap-1.5">
               <GlassButton
                 type="submit"
                 variant="primary"
@@ -126,14 +122,14 @@ export const SearchWorkspacePage: React.FC = () => {
 
           {/* Mode Selector and Filter Toggle */}
           <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200">
+            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
               <button
                 type="button"
                 onClick={() => setSearchMode('HYBRID')}
                 className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
                   searchMode === 'HYBRID'
-                    ? 'bg-white text-indigo-700 font-semibold shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 font-semibold shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
                 }`}
               >
                 Hybrid (Vector + FTS)
@@ -143,8 +139,8 @@ export const SearchWorkspacePage: React.FC = () => {
                 onClick={() => setSearchMode('SEMANTIC')}
                 className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
                   searchMode === 'SEMANTIC'
-                    ? 'bg-white text-indigo-700 font-semibold shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 font-semibold shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
                 }`}
               >
                 Dense Vector
@@ -154,8 +150,8 @@ export const SearchWorkspacePage: React.FC = () => {
                 onClick={() => setSearchMode('LEXICAL')}
                 className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
                   searchMode === 'LEXICAL'
-                    ? 'bg-white text-indigo-700 font-semibold shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 font-semibold shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
                 }`}
               >
                 Lexical Keywords
@@ -165,9 +161,9 @@ export const SearchWorkspacePage: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/70 border border-slate-200 text-slate-700 hover:bg-white font-medium transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 font-medium transition"
             >
-              <SlidersHorizontal className="w-3.5 h-3.5 text-slate-500" />
+              <SlidersHorizontal className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
               <span>Advanced Filters</span>
               {showFilters ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
             </button>
@@ -175,7 +171,7 @@ export const SearchWorkspacePage: React.FC = () => {
 
           {/* Collapsible Filter Panel */}
           {showFilters && (
-            <div className="pt-4 border-t border-slate-200/80 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="pt-4 border-t border-slate-200/80 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <GlassInput
                 label="Year From"
                 type="number"
@@ -207,8 +203,8 @@ export const SearchWorkspacePage: React.FC = () => {
         </form>
 
         {/* Preset Query Chips */}
-        <div className="pt-2 border-t border-slate-200/60 flex flex-wrap items-center gap-2">
-          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+        <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 flex flex-wrap items-center gap-2">
+          <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
             Curated Prompts:
           </span>
           {presetQueries.map((q) => (
@@ -218,7 +214,7 @@ export const SearchWorkspacePage: React.FC = () => {
                 setQuery(q);
                 searchMutation.mutate({ query: q, searchMode, semanticWeight, topK: 15 });
               }}
-              className="text-xs px-2.5 py-1 rounded-lg bg-indigo-50/70 hover:bg-indigo-100 text-indigo-700 border border-indigo-200/60 transition text-left"
+              className="text-xs px-2.5 py-1 rounded-lg bg-blue-50/70 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800 transition text-left"
             >
               {q}
             </button>
@@ -232,9 +228,9 @@ export const SearchWorkspacePage: React.FC = () => {
       {/* Results List */}
       <div className="space-y-4">
         {results.length > 0 && (
-          <div className="flex items-center justify-between text-xs text-slate-500 px-1 font-medium">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 px-1 font-medium">
             <span>
-              Found <strong className="text-slate-800">{results.length}</strong> ranked evidence chunks for this query
+              Found <strong className="text-slate-800 dark:text-slate-200">{results.length}</strong> ranked evidence chunks for this query
             </span>
             <span>Mode: {searchMode}</span>
           </div>
@@ -245,25 +241,25 @@ export const SearchWorkspacePage: React.FC = () => {
           return (
             <GlassPanelStrong
               key={`${res.chunkId}-${index}`}
-              className="p-5 space-y-3 hover:border-indigo-300 transition-all shadow-xs"
+              className="p-5 space-y-3 hover:border-blue-300 dark:hover:border-blue-600 transition-all shadow-xs"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="w-6 h-6 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold flex items-center justify-center shrink-0">
+                  <span className="w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 font-bold flex items-center justify-center shrink-0">
                     #{index + 1}
                   </span>
                   <Link
                     to={`/papers/${res.paperId}`}
-                    className="font-bold text-slate-900 hover:text-indigo-600 transition flex items-center gap-1.5"
+                    className="font-bold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition flex items-center gap-1.5"
                   >
-                    <BookOpen className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                    <BookOpen className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                     <span>{res.paperTitle}</span>
                   </Link>
                 </div>
 
                 <div className="flex items-center gap-2 self-start sm:self-auto">
-                  <span className="text-[11px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md flex items-center gap-1">
-                    <MapPin className="w-3 h-3 text-slate-400" />
+                  <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md flex items-center gap-1">
+                    <MapPin className="w-3 h-3 text-slate-400 dark:text-slate-500" />
                     {res.sectionName || 'Body'}
                     {res.pageNumber ? ` • p. ${res.pageNumber}` : ''}
                   </span>
@@ -272,18 +268,18 @@ export const SearchWorkspacePage: React.FC = () => {
               </div>
 
               {/* Verbatim Snippet */}
-              <div className="relative pl-3.5 border-l-2 border-indigo-500 text-xs text-slate-700 font-serif leading-relaxed italic bg-indigo-50/20 p-2.5 rounded-r-xl">
-                <Quote className="w-3.5 h-3.5 text-indigo-300 absolute -top-1 -left-1.5 fill-current" />
+              <div className="relative pl-3.5 border-l-2 border-blue-500 text-xs text-slate-700 dark:text-slate-300 font-serif leading-relaxed italic bg-blue-50/20 dark:bg-blue-950/20 p-2.5 rounded-r-xl">
+                <Quote className="w-3.5 h-3.5 text-blue-300 dark:text-blue-400 absolute -top-1 -left-1.5 fill-current" />
                 "{res.snippet}"
               </div>
 
               {/* Relevance Explanation & Inspect Action */}
-              <div className="pt-2 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                <div className="text-slate-500 flex items-center gap-2">
-                  <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div className="text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                  <span className="text-emerald-700 dark:text-emerald-300 font-semibold bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
                     Match Confidence: {confidence}%
                   </span>
-                  <span className="hidden md:inline text-[11px] text-slate-400">
+                  <span className="hidden md:inline text-[11px] text-slate-400 dark:text-slate-500">
                     pgvector cosine & lexical FTS rank fusion
                   </span>
                 </div>

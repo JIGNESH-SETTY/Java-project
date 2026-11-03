@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Table,
-  BookOpen,
   ArrowRight,
-  ExternalLink,
-  GitCommit,
-  Layers,
   Search,
 } from 'lucide-react';
 import { GraphNode, GraphEdge } from '../../types/graph';
@@ -46,18 +41,18 @@ export const GraphListView: React.FC<GraphListViewProps> = ({
 
   return (
     <div
-      className={`p-6 rounded-[28px] bg-white/90 border border-white/95 shadow-[0_12px_32px_-8px_rgba(41,40,43,0.06)] backdrop-blur-md space-y-5 text-xs select-none ${className}`}
+      className={`p-6 rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5 text-xs select-none ${className}`}
     >
       {/* Top Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setActiveTab('nodes')}
             className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${
               activeTab === 'nodes'
-                ? 'bg-indigo-600 text-white shadow-xs'
-                : 'bg-slate-100 text-[#615E65] hover:bg-slate-200'
+                ? 'bg-blue-600 text-white shadow-xs'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
             }`}
           >
             Entities / Nodes ({nodes.length})
@@ -67,8 +62,8 @@ export const GraphListView: React.FC<GraphListViewProps> = ({
             onClick={() => setActiveTab('edges')}
             className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${
               activeTab === 'edges'
-                ? 'bg-indigo-600 text-white shadow-xs'
-                : 'bg-slate-100 text-[#615E65] hover:bg-slate-200'
+                ? 'bg-blue-600 text-white shadow-xs'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
             }`}
           >
             Relationships / Edges ({edges.length})
@@ -77,13 +72,13 @@ export const GraphListView: React.FC<GraphListViewProps> = ({
 
         {/* Local Search Input */}
         <div className="relative w-full sm:w-64">
-          <Search className="w-3.5 h-3.5 text-[#8E8B92] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <Search className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
             placeholder="Search list..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 rounded-full text-xs bg-slate-50 border border-slate-200 text-[#29282B] placeholder:text-[#8E8B92] focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            className="w-full pl-9 pr-3 py-1.5 rounded-full text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
           />
         </div>
       </div>
@@ -107,14 +102,14 @@ export const GraphListView: React.FC<GraphListViewProps> = ({
                   <span
                     className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                       n.type === 'PAPER'
-                        ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                        ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
                         : n.type === 'CLAIM'
-                        ? 'bg-purple-50 text-purple-700 border border-purple-200'
+                        ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
                         : n.type === 'METHOD'
-                        ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                        ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800'
                         : n.type === 'DATASET'
-                        ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                        : 'bg-teal-50 text-teal-700 border border-teal-200'
+                        ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
+                        : 'bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800'
                     }`}
                   >
                     {n.type}
@@ -123,7 +118,7 @@ export const GraphListView: React.FC<GraphListViewProps> = ({
                 <GlassTableCell className="font-semibold max-w-xs truncate">
                   {n.data.title || n.label}
                 </GlassTableCell>
-                <GlassTableCell className="text-[#8E8B92]">
+                <GlassTableCell className="text-slate-500 dark:text-slate-400">
                   {n.data.year || n.data.conceptType || '—'}
                 </GlassTableCell>
                 <GlassTableCell>
@@ -136,7 +131,7 @@ export const GraphListView: React.FC<GraphListViewProps> = ({
                       e.stopPropagation();
                       onSelectNode(n);
                     }}
-                    className="p-1 rounded-full text-indigo-600 hover:bg-indigo-50"
+                    className="p-1 rounded-full text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40"
                     title="Inspect details"
                   >
                     <ArrowRight className="w-4 h-4" />
@@ -166,10 +161,10 @@ export const GraphListView: React.FC<GraphListViewProps> = ({
                 <GlassTableCell>
                   <RelationBadge type={e.type as any} />
                 </GlassTableCell>
-                <GlassTableCell className="font-medium max-w-xs truncate text-[#615E65]">
+                <GlassTableCell className="font-medium max-w-xs truncate text-slate-700 dark:text-slate-300">
                   {e.source}
                 </GlassTableCell>
-                <GlassTableCell className="font-medium max-w-xs truncate text-[#615E65]">
+                <GlassTableCell className="font-medium max-w-xs truncate text-slate-700 dark:text-slate-300">
                   {e.target}
                 </GlassTableCell>
                 <GlassTableCell>
@@ -185,7 +180,7 @@ export const GraphListView: React.FC<GraphListViewProps> = ({
                       eEvent.stopPropagation();
                       onSelectEdge(e);
                     }}
-                    className="p-1 rounded-full text-indigo-600 hover:bg-indigo-50"
+                    className="p-1 rounded-full text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40"
                     title="Inspect relationship"
                   >
                     <ArrowRight className="w-4 h-4" />
@@ -199,4 +194,3 @@ export const GraphListView: React.FC<GraphListViewProps> = ({
     </div>
   );
 };
-

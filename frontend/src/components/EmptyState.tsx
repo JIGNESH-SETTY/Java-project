@@ -20,19 +20,15 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   return (
     <div
-      className={`glass-panel p-10 flex flex-col items-center justify-center text-center max-w-lg mx-auto my-8 rounded-[28px] border border-white/90 shadow-[0_12px_32px_-8px_rgba(41,40,43,0.04)] ${className}`}
-      style={{
-        background: 'rgba(255, 255, 255, 0.75)',
-        backdropFilter: 'blur(20px)',
-      }}
+      className={`p-10 flex flex-col items-center justify-center text-center max-w-lg mx-auto my-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs bg-white dark:bg-slate-900 ${className}`}
     >
       {icon && (
-        <div className="w-14 h-14 rounded-full bg-white border border-white/95 flex items-center justify-center text-[#FF6F61] mb-4 shadow-[0_4px_16px_rgba(41,40,43,0.04)]">
+        <div className="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-800 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4 shadow-2xs">
           {icon}
         </div>
       )}
-      <h3 className="text-base font-bold text-[#29282B] tracking-tight">{title}</h3>
-      <p className="text-xs text-[#77747A] mt-1.5 mb-6 max-w-sm leading-relaxed">{description}</p>
+      <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 tracking-tight">{title}</h3>
+      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 mb-6 max-w-sm leading-relaxed">{description}</p>
       {actionLabel && onAction && (
         <GlassButton variant="primary" onClick={onAction}>
           {actionLabel}

@@ -47,14 +47,14 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
 }) => {
   return (
     <div
-      className={`flex items-center gap-1.5 p-2 rounded-2xl bg-white/95 border border-white/90 shadow-[0_4px_20px_rgba(41,40,43,0.08)] backdrop-blur-md ${className}`}
+      className={`flex items-center gap-1.5 p-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm ${className}`}
     >
       {/* Zoom and Fit */}
-      <div className="flex items-center gap-1 pr-1.5 border-r border-slate-200/80">
+      <div className="flex items-center gap-1 pr-1.5 border-r border-slate-200/80 dark:border-slate-800">
         <button
           type="button"
           onClick={onZoomIn}
-          className="p-1.5 rounded-xl text-[#29282B] hover:bg-slate-100 hover:text-indigo-600 transition"
+          className="p-1.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition"
           title="Zoom In"
           aria-label="Zoom in"
         >
@@ -63,7 +63,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
         <button
           type="button"
           onClick={onZoomOut}
-          className="p-1.5 rounded-xl text-[#29282B] hover:bg-slate-100 hover:text-indigo-600 transition"
+          className="p-1.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition"
           title="Zoom Out"
           aria-label="Zoom out"
         >
@@ -72,7 +72,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
         <button
           type="button"
           onClick={onFit}
-          className="p-1.5 rounded-xl text-[#29282B] hover:bg-slate-100 hover:text-indigo-600 transition"
+          className="p-1.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition"
           title="Fit Graph to Viewport"
           aria-label="Fit graph"
         >
@@ -81,7 +81,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
         <button
           type="button"
           onClick={onReset}
-          className="p-1.5 rounded-xl text-[#29282B] hover:bg-slate-100 hover:text-indigo-600 transition"
+          className="p-1.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition"
           title="Reset Layout & Positions"
           aria-label="Reset layout"
         >
@@ -90,30 +90,30 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
       </div>
 
       {/* Layout Selection */}
-      <div className="flex items-center gap-1 px-1.5 border-r border-slate-200/80">
-        <Layers className="w-3.5 h-3.5 text-[#8E8B92]" />
+      <div className="flex items-center gap-1 px-1.5 border-r border-slate-200/80 dark:border-slate-800">
+        <Layers className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
         <select
           value={layoutName}
           onChange={(e) => onChangeLayout(e.target.value as any)}
-          className="bg-transparent text-xs font-semibold text-[#29282B] outline-none cursor-pointer pr-1"
+          className="bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-200 outline-none cursor-pointer pr-1"
           aria-label="Graph layout algorithm"
         >
-          <option value="cose">Force-Directed (CoSE)</option>
-          <option value="concentric">Concentric Hierarchy</option>
-          <option value="circle">Circular Radial</option>
-          <option value="breadthfirst">Breadth-First Tree</option>
+          <option value="cose" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">Force-Directed (CoSE)</option>
+          <option value="concentric" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">Concentric Hierarchy</option>
+          <option value="circle" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">Circular Radial</option>
+          <option value="breadthfirst" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">Breadth-First Tree</option>
         </select>
       </div>
 
       {/* Visual Toggles */}
-      <div className="flex items-center gap-1 px-1.5 border-r border-slate-200/80">
+      <div className="flex items-center gap-1 px-1.5 border-r border-slate-200/80 dark:border-slate-800">
         <button
           type="button"
           onClick={onToggleLabels}
           className={`p-1.5 rounded-xl transition flex items-center gap-1 text-xs font-medium ${
             showLabels
-              ? 'bg-indigo-50 text-indigo-700 border border-indigo-200/80'
-              : 'text-[#8E8B92] hover:bg-slate-100 hover:text-[#29282B]'
+              ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
+              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200'
           }`}
           title="Toggle Labels"
           aria-label="Toggle node labels"
@@ -126,8 +126,8 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
           onClick={onToggleArrows}
           className={`p-1.5 rounded-xl transition flex items-center gap-1 text-xs font-medium ${
             showArrows
-              ? 'bg-indigo-50 text-indigo-700 border border-indigo-200/80'
-              : 'text-[#8E8B92] hover:bg-slate-100 hover:text-[#29282B]'
+              ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
+              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200'
           }`}
           title="Toggle Directional Arrows"
           aria-label="Toggle arrows"
@@ -143,7 +143,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
           <button
             type="button"
             onClick={onExportPng}
-            className="p-1.5 rounded-xl text-[#29282B] hover:bg-slate-100 hover:text-indigo-600 transition"
+            className="p-1.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition"
             title="Export High-Res PNG"
             aria-label="Export graph image"
           >
@@ -155,8 +155,8 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
           onClick={onToggleViewMode}
           className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition ${
             viewMode === 'list'
-              ? 'bg-indigo-600 text-white shadow-sm'
-              : 'bg-slate-100 text-[#29282B] hover:bg-slate-200/80'
+              ? 'bg-blue-600 text-white shadow-xs'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
           }`}
           title={viewMode === 'graph' ? 'Switch to Accessible List View' : 'Switch to Graph View'}
           aria-label="Toggle list/graph view"
@@ -168,4 +168,3 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
     </div>
   );
 };
-

@@ -3,11 +3,10 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { paperApi } from '../api/paperApi';
 import { comparisonApi } from '../api/comparisonApi';
 import { ComparisonResult, DocumentChunk } from '../types';
-import { Scale, Sparkles, Check, FileText, AlertCircle, Info, ExternalLink, BookOpen, Quote } from 'lucide-react';
+import { Scale, Sparkles, Check, Info, ExternalLink } from 'lucide-react';
 import { ProvenanceBadge } from '../components/ProvenanceBadge';
 import { ChunkViewerModal } from '../components/ChunkViewerModal';
 import { GlassPanel, GlassPanelStrong } from '../components/GlassPanel';
-import { GlassButton } from '../components/GlassButton';
 
 export const ComparisonPage: React.FC = () => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -72,14 +71,14 @@ export const ComparisonPage: React.FC = () => {
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 text-indigo-700 text-xs font-semibold uppercase tracking-wider mb-1">
+        <div className="flex items-center gap-2 text-blue-700 dark:text-blue-400 text-xs font-semibold uppercase tracking-wider mb-1">
           <Scale className="w-4 h-4" />
           <span>Structured Multi-Paper Analysis</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
           Cross-Paper Comparison Matrix
         </h1>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
+        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl">
           Side-by-side evidence matrix comparing research problems, architectures, metrics, empirical findings, and limitations. Every cell links directly to chunk citations.
         </p>
       </div>
@@ -87,10 +86,10 @@ export const ComparisonPage: React.FC = () => {
       {/* Paper Selector Card */}
       <GlassPanel className="p-5 space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-slate-800">
+          <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">
             Select 2 to 5 papers to compare ({selectedIds.length} active):
           </span>
-          <span className="text-[11px] text-slate-500 font-medium">Min 2, Max 5 papers</span>
+          <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Min 2, Max 5 papers</span>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -102,8 +101,8 @@ export const ComparisonPage: React.FC = () => {
                 onClick={() => toggleSelectPaper(p.paper.id)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1.5 border ${
                   isSelected
-                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
-                    : 'bg-white/80 text-slate-700 border-slate-200 hover:bg-white hover:border-slate-300'
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                    : 'bg-white/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-700'
                 }`}
               >
                 {isSelected && <Check className="w-3.5 h-3.5" />}
@@ -117,8 +116,8 @@ export const ComparisonPage: React.FC = () => {
 
       {/* Loading state */}
       {compareMutation.isPending && (
-        <div className="glass-panel p-12 text-center text-slate-500 text-xs">
-          <div className="w-8 h-8 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+        <div className="glass-panel p-12 text-center text-slate-500 dark:text-slate-400 text-xs">
+          <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
           <p>Synthesizing multi-paper aspect matrix & cross-verifying evidence...</p>
         </div>
       )}
@@ -126,18 +125,18 @@ export const ComparisonPage: React.FC = () => {
       {/* Comparison Matrix Table */}
       {!compareMutation.isPending && comparisonResult && (
         <div className="space-y-6">
-          <div className="w-full overflow-x-auto rounded-2xl border border-white/80 shadow-sm bg-white/75 backdrop-blur-md">
+          <div className="w-full overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-900">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="border-b border-slate-200/80 bg-slate-50/80">
-                  <th className="p-4 w-48 font-bold text-slate-700 uppercase tracking-wider text-[11px]">
+                <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+                  <th className="p-4 w-48 font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[11px]">
                     Aspect / Dimension
                   </th>
                   {comparisonResult.papers.map((p) => (
-                    <th key={p.paper.id} className="p-4 min-w-[280px] font-bold text-slate-900 border-l border-slate-200/60">
+                    <th key={p.paper.id} className="p-4 min-w-[280px] font-bold text-slate-900 dark:text-slate-100 border-l border-slate-200 dark:border-slate-800">
                       <div className="space-y-1">
                         <div className="text-sm line-clamp-2 leading-snug">{p.paper.title}</div>
-                        <div className="text-[11px] text-slate-500 font-normal">
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 font-normal">
                           {p.paper.publicationYear} • {p.paper.venue || 'Scholarly Publication'}
                         </div>
                       </div>
@@ -145,10 +144,10 @@ export const ComparisonPage: React.FC = () => {
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {(comparisonResult.rows && comparisonResult.rows.length > 0 ? comparisonResult.rows : rows.map(r => ({ aspectKey: r.key, aspectLabel: r.label, cells: {} }))).map((row) => (
-                  <tr key={row.aspectKey} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-4 font-bold text-slate-800 bg-slate-50/50 align-top">
+                  <tr key={row.aspectKey} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors">
+                    <td className="p-4 font-bold text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-950 align-top">
                       {row.aspectLabel}
                     </td>
                     {comparisonResult.papers.map((p) => {
@@ -156,10 +155,10 @@ export const ComparisonPage: React.FC = () => {
                       const cell = cellsMap[p.paper.id];
                       const hasText = cell && cell.content && cell.content.trim().length > 0;
                       return (
-                        <td key={p.paper.id} className="p-4 align-top border-l border-slate-100 space-y-2">
-                          <p className="text-slate-800 font-sans leading-relaxed text-xs">
+                        <td key={p.paper.id} className="p-4 align-top border-l border-slate-100 dark:border-slate-800 space-y-2">
+                          <p className="text-slate-800 dark:text-slate-200 font-sans leading-relaxed text-xs">
                             {hasText ? cell.content : (
-                              <span className="text-slate-400 italic">
+                              <span className="text-slate-400 dark:text-slate-500 italic">
                                 Not clearly reported in the available text
                               </span>
                             )}
@@ -170,7 +169,7 @@ export const ComparisonPage: React.FC = () => {
                               {cell.evidenceChunkIds && cell.evidenceChunkIds.length > 0 && (
                                 <button
                                   onClick={() => handleInspectEvidence(cell.evidenceChunkIds[0])}
-                                  className="text-[11px] text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1"
+                                  className="text-[11px] text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-semibold flex items-center gap-1"
                                 >
                                   <span>View Evidence</span>
                                   <ExternalLink className="w-3 h-3" />
@@ -188,23 +187,23 @@ export const ComparisonPage: React.FC = () => {
           </div>
 
           {/* AI Cross-Paper Synthesis Section */}
-          <GlassPanelStrong className="p-6 border-indigo-200/80 shadow-md space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-indigo-100">
+          <GlassPanelStrong className="p-6 border-blue-200/80 dark:border-blue-800/80 shadow-md space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-blue-100 dark:border-blue-900/50">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-purple-600" />
-                <h2 className="font-bold text-slate-900 text-sm">
+                <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <h2 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
                   AI Cross-Paper Comparative Synthesis
                 </h2>
               </div>
               <ProvenanceBadge provenance="AI_INTERPRETATION" />
             </div>
 
-            <div className="p-4 rounded-xl bg-purple-50/40 border border-purple-100 text-xs text-slate-700 leading-relaxed font-sans space-y-3 whitespace-pre-wrap">
+            <div className="p-4 rounded-xl bg-blue-50/30 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/50 text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-sans space-y-3 whitespace-pre-wrap">
               {comparisonResult.aiSynthesis?.synthesisMarkdown || 'No comparative synthesis generated.'}
             </div>
 
-            <div className="flex items-center gap-2 text-[11px] text-slate-500 font-medium">
-              <Info className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+            <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+              <Info className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400 shrink-0" />
               <span>
                 Distinction Principle: The synthesis above is an AI interpretation. Always verify factual claims against individual paper chunk excerpts.
               </span>

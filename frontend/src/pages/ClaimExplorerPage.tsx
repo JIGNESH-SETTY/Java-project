@@ -7,19 +7,10 @@ import {
   GitCommit,
   CheckCircle2,
   XCircle,
-  AlertTriangle,
   Plus,
-  Filter,
   FileText,
   Search,
-  MessageSquare,
   Sparkles,
-  User,
-  ArrowRight,
-  ShieldCheck,
-  Quote,
-  Layers,
-  BookOpen,
 } from 'lucide-react';
 import { ProvenanceBadge } from '../components/ProvenanceBadge';
 import { RelationBadge, ReviewStatusBadge } from '../components/RelationBadge';
@@ -141,14 +132,14 @@ export const ClaimExplorerPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-indigo-700 text-xs font-semibold uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-blue-700 dark:text-blue-400 text-xs font-semibold uppercase tracking-wider mb-1">
             <GitCommit className="w-4 h-4" />
             <span>Directional Claim Graph & Auditing</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
             Claims & Evidence Explorer
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
             Track atomic scientific claims and review directional relationships (Supports, Contradicts, Qualifies, Extends).
           </p>
         </div>
@@ -174,13 +165,13 @@ export const ClaimExplorerPage: React.FC = () => {
       {/* Main Filter & Tabs Header */}
       <GlassPanel className="p-4 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2 w-full md:w-auto">
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs font-medium">
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-medium">
             <button
               onClick={() => setActiveTab('relations')}
               className={`px-3 py-1.5 rounded-lg transition-all ${
                 activeTab === 'relations'
-                  ? 'bg-white text-indigo-700 font-semibold shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 font-semibold shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
               }`}
             >
               Cross-Paper Relations ({relations.length})
@@ -189,8 +180,8 @@ export const ClaimExplorerPage: React.FC = () => {
               onClick={() => setActiveTab('claims')}
               className={`px-3 py-1.5 rounded-lg transition-all ${
                 activeTab === 'claims'
-                  ? 'bg-white text-indigo-700 font-semibold shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 font-semibold shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
               }`}
             >
               Atomic Claims ({claims.length})
@@ -248,8 +239,8 @@ export const ClaimExplorerPage: React.FC = () => {
                   onClick={() => setSelectedRelation(rel)}
                   className={`p-4 cursor-pointer transition-all space-y-2 border ${
                     isSelected
-                      ? 'border-indigo-400 bg-white ring-2 ring-indigo-100 shadow-md'
-                      : 'hover:border-slate-300'
+                      ? 'border-blue-500 bg-white dark:bg-slate-900 ring-2 ring-blue-100 dark:ring-blue-900/50 shadow-md'
+                      : 'border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
@@ -257,11 +248,11 @@ export const ClaimExplorerPage: React.FC = () => {
                     <ReviewStatusBadge status={rel.reviewStatus} />
                   </div>
 
-                  <p className="text-xs text-slate-800 line-clamp-2 font-serif italic">
+                  <p className="text-xs text-slate-800 dark:text-slate-200 line-clamp-2 font-serif italic">
                     "{rel.rationale}"
                   </p>
 
-                  <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
                     <ProvenanceBadge provenance={rel.provenanceType} confidence={rel.confidence} />
                     <span>{rel.evidenceChunkIds?.length || 0} chunks</span>
                   </div>
@@ -270,7 +261,7 @@ export const ClaimExplorerPage: React.FC = () => {
             })}
 
             {filteredRelations.length === 0 && (
-              <div className="p-8 text-center glass-panel text-xs text-slate-500">
+              <div className="p-8 text-center glass-panel text-xs text-slate-500 dark:text-slate-400">
                 No claim relationships match current filters.
               </div>
             )}
@@ -279,10 +270,10 @@ export const ClaimExplorerPage: React.FC = () => {
           {/* Right Column: Detailed Relation Audit View */}
           <div className="lg:col-span-7 sticky top-24">
             {activeRelation ? (
-              <GlassPanelStrong className="p-6 space-y-5 border-white/90 shadow-md">
-                <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-200">
+              <GlassPanelStrong className="p-6 space-y-5 shadow-md">
+                <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
                   <div className="space-y-1">
-                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       Selected Relationship
                     </div>
                     <div className="flex items-center gap-2 pt-0.5">
@@ -300,7 +291,7 @@ export const ClaimExplorerPage: React.FC = () => {
                       onClick={() =>
                         updateStatusMutation.mutate({ id: activeRelation.id, status: 'CONFIRMED' })
                       }
-                      icon={<CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
+                      icon={<CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />}
                     >
                       Confirm
                     </GlassButton>
@@ -311,7 +302,7 @@ export const ClaimExplorerPage: React.FC = () => {
                       onClick={() =>
                         updateStatusMutation.mutate({ id: activeRelation.id, status: 'REJECTED' })
                       }
-                      icon={<XCircle className="w-3.5 h-3.5 text-red-600" />}
+                      icon={<XCircle className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />}
                     >
                       Reject
                     </GlassButton>
@@ -320,10 +311,10 @@ export const ClaimExplorerPage: React.FC = () => {
 
                 {/* Synthesis Rationale */}
                 <div className="space-y-2">
-                  <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
                     Scientific Synthesis & Rationale
                   </span>
-                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 font-serif leading-relaxed">
+                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 text-xs text-slate-800 dark:text-slate-200 font-serif leading-relaxed">
                     "{activeRelation.rationale}"
                   </div>
                 </div>
@@ -331,7 +322,7 @@ export const ClaimExplorerPage: React.FC = () => {
                 {/* Grounded Evidence Chunks */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
                       Verbatim Grounded Evidence ({activeRelation.evidenceChunkIds?.length || 0})
                     </span>
                     <ProvenanceBadge provenance={activeRelation.provenanceType} confidence={activeRelation.confidence} />
@@ -341,15 +332,15 @@ export const ClaimExplorerPage: React.FC = () => {
                     {activeRelation.evidenceChunkIds?.map((chunkId, idx) => (
                       <div
                         key={chunkId}
-                        className="p-3 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between text-xs"
+                        className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-xs"
                       >
-                        <div className="flex items-center gap-2 text-slate-700">
-                          <FileText className="w-4 h-4 text-indigo-500" />
+                        <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                          <FileText className="w-4 h-4 text-blue-500 dark:text-blue-400" />
                           <span className="font-mono text-[11px]">Chunk Ref #{idx + 1} ({chunkId.substring(0, 8)}...)</span>
                         </div>
                         <button
                           onClick={() => inspectEvidence(chunkId)}
-                          className="text-xs font-semibold text-indigo-600 hover:text-indigo-800"
+                          className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
                         >
                           Open Chunk Text
                         </button>
@@ -359,7 +350,7 @@ export const ClaimExplorerPage: React.FC = () => {
                 </div>
               </GlassPanelStrong>
             ) : (
-              <div className="p-12 text-center glass-panel text-xs text-slate-500">
+              <div className="p-12 text-center glass-panel text-xs text-slate-500 dark:text-slate-400">
                 Select a claim relation from the list to inspect grounded evidence and audit status.
               </div>
             )}
@@ -379,64 +370,71 @@ export const ClaimExplorerPage: React.FC = () => {
                   onClick={() => setSelectedClaim(claim)}
                   className={`p-4 cursor-pointer transition-all space-y-2 border ${
                     isSelected
-                      ? 'border-indigo-400 bg-white ring-2 ring-indigo-100 shadow-md'
-                      : 'hover:border-slate-300'
+                      ? 'border-blue-500 bg-white dark:bg-slate-900 ring-2 ring-blue-100 dark:ring-blue-900/50 shadow-md'
+                      : 'border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                       {claim.claimType}
                     </span>
                     <ProvenanceBadge provenance={claim.provenanceType} confidence={claim.extractionConfidence} />
                   </div>
-                  <p className="text-xs text-slate-900 font-semibold line-clamp-2">
+
+                  <p className="text-xs text-slate-800 dark:text-slate-200 line-clamp-2 font-serif font-medium">
                     "{claim.normalizedText || claim.sourceText}"
                   </p>
                 </GlassPanelStrong>
               );
             })}
+
+            {filteredClaims.length === 0 && (
+              <div className="p-8 text-center glass-panel text-xs text-slate-500 dark:text-slate-400">
+                No atomic claims match current filters.
+              </div>
+            )}
           </div>
 
           <div className="lg:col-span-7 sticky top-24">
             {activeClaim ? (
-              <GlassPanelStrong className="p-6 space-y-4">
-                <div className="flex items-start justify-between pb-3 border-b border-slate-200">
+              <GlassPanelStrong className="p-6 space-y-5 shadow-md">
+                <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
                   <div className="space-y-1">
-                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       Selected Claim
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    </div>
+                    <div className="flex items-center gap-2 pt-0.5">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                         {activeClaim.claimType}
                       </span>
+                      <ProvenanceBadge provenance={activeClaim.provenanceType} confidence={activeClaim.extractionConfidence} />
                     </div>
                   </div>
-                  <ProvenanceBadge provenance={activeClaim.provenanceType} confidence={activeClaim.extractionConfidence} />
                 </div>
 
                 <div className="space-y-2">
-                  <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                    Claim Statement
+                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+                    Normalized Claim Text
                   </span>
-                  <p className="text-sm font-semibold text-slate-900 leading-snug">
+                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 text-xs text-slate-800 dark:text-slate-200 font-sans leading-relaxed">
                     "{activeClaim.normalizedText || activeClaim.sourceText}"
-                  </p>
+                  </div>
                 </div>
 
                 {activeClaim.sourceText && (
                   <div className="space-y-2">
-                    <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                      Verbatim Source Excerpt
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+                      Original Source Text
                     </span>
-                    <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-700 font-serif italic leading-relaxed">
+                    <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 font-serif italic leading-relaxed">
                       "{activeClaim.sourceText}"
                     </div>
                   </div>
                 )}
               </GlassPanelStrong>
             ) : (
-              <div className="p-12 text-center glass-panel text-xs text-slate-500">
-                Select a claim to inspect its verbatim source excerpt.
+              <div className="p-12 text-center glass-panel text-xs text-slate-500 dark:text-slate-400">
+                Select a claim from the list to inspect details.
               </div>
             )}
           </div>
@@ -447,8 +445,8 @@ export const ClaimExplorerPage: React.FC = () => {
       <GlassModal
         isOpen={isProposeOpen}
         onClose={() => setIsProposeOpen(false)}
-        title="Propose Cross-Paper Claim Relation"
-        subtitle="Formally link two scientific claims with supporting or contradicting evidence"
+        title="Propose Claim Relationship"
+        subtitle="Establish directional link between two atomic claims with grounded rationale"
       >
         <form
           onSubmit={(e) => {
@@ -462,25 +460,12 @@ export const ClaimExplorerPage: React.FC = () => {
             required
             value={sourceClaimId}
             onChange={(e) => setSourceClaimId(e.target.value)}
-          >
-            <option value="">Select source claim...</option>
-            {claims.map((c) => (
-              <option key={c.id} value={c.id}>
-                [{c.claimType}] {(c.normalizedText || c.sourceText).substring(0, 70)}...
-              </option>
-            ))}
-          </GlassSelect>
-
-          <GlassSelect
-            label="Directional Relationship *"
-            value={relationType}
-            onChange={(e) => setRelationType(e.target.value as RelationType)}
             options={[
-              { value: 'SUPPORTS', label: 'SUPPORTS (Corroborating findings)' },
-              { value: 'CONTRADICTS', label: 'CONTRADICTS (Direct empirical conflict)' },
-              { value: 'QUALIFIES', label: 'QUALIFIES (True only under conditions)' },
-              { value: 'EXTENDS', label: 'EXTENDS (Builds on foundation)' },
-              { value: 'DISCUSSES', label: 'DISCUSSES (Related topic without stance)' },
+              { value: '', label: '-- Select source claim --' },
+              ...claims.map((c) => ({
+                value: c.id,
+                label: `[${c.claimType}] ${c.normalizedText || c.sourceText}`.substring(0, 90) + '...',
+              })),
             ]}
           />
 
@@ -489,32 +474,45 @@ export const ClaimExplorerPage: React.FC = () => {
             required
             value={targetClaimId}
             onChange={(e) => setTargetClaimId(e.target.value)}
-          >
-            <option value="">Select target claim...</option>
-            {claims
-              .filter((c) => c.id !== sourceClaimId)
-              .map((c) => (
-                <option key={c.id} value={c.id}>
-                  [{c.claimType}] {(c.normalizedText || c.sourceText).substring(0, 70)}...
-                </option>
-              ))}
-          </GlassSelect>
+            options={[
+              { value: '', label: '-- Select target claim --' },
+              ...claims
+                .filter((c) => c.id !== sourceClaimId)
+                .map((c) => ({
+                  value: c.id,
+                  label: `[${c.claimType}] ${c.normalizedText || c.sourceText}`.substring(0, 90) + '...',
+                })),
+            ]}
+          />
+
+          <GlassSelect
+            label="Directional Relationship Type *"
+            value={relationType}
+            onChange={(e) => setRelationType(e.target.value as RelationType)}
+            options={[
+              { value: 'SUPPORTS', label: 'SUPPORTS - Empirical or logical confirmation' },
+              { value: 'CONTRADICTS', label: 'CONTRADICTS - Conflicting findings or irreproducibility' },
+              { value: 'QUALIFIES', label: 'QUALIFIES - Adds conditional bounds or limits scope' },
+              { value: 'EXTENDS', label: 'EXTENDS - Generalizes or expands methodology' },
+              { value: 'DISCUSSES', label: 'DISCUSSES - Neutral thematic citation' },
+            ]}
+          />
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-700 tracking-wide uppercase">
-              Scientific Rationale *
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 tracking-wide uppercase">
+              Scientific Synthesis Rationale *
             </label>
             <textarea
               rows={3}
               required
-              placeholder="Explain why this directional relationship exists based on reported data..."
+              className="glass-input w-full font-serif text-xs leading-relaxed"
+              placeholder="State precisely how source claim supports, contradicts, or qualifies target claim..."
               value={rationale}
               onChange={(e) => setRationale(e.target.value)}
-              className="glass-input w-full text-xs font-serif leading-relaxed"
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-4 border-t border-slate-200">
+          <div className="flex justify-end gap-2 pt-4 border-t border-slate-200 dark:border-slate-800">
             <GlassButton type="button" variant="secondary" onClick={() => setIsProposeOpen(false)}>
               Cancel
             </GlassButton>
@@ -523,7 +521,7 @@ export const ClaimExplorerPage: React.FC = () => {
               variant="primary"
               disabled={createRelationMutation.isPending || !sourceClaimId || !targetClaimId || !rationale.trim()}
             >
-              {createRelationMutation.isPending ? 'Proposing...' : 'Submit Proposed Relation'}
+              {createRelationMutation.isPending ? 'Saving...' : 'Propose Relationship'}
             </GlassButton>
           </div>
         </form>
@@ -533,8 +531,8 @@ export const ClaimExplorerPage: React.FC = () => {
       <GlassModal
         isOpen={isAssertOpen}
         onClose={() => setIsAssertOpen(false)}
-        title="Assert New Scientific Claim"
-        subtitle="Manually anchor an atomic claim to document excerpts"
+        title="Assert Atomic Scientific Claim"
+        subtitle="Manually declare a claim directly tied to evidence excerpt"
       >
         <form
           onSubmit={(e) => {
@@ -544,50 +542,56 @@ export const ClaimExplorerPage: React.FC = () => {
           className="space-y-4"
         >
           <GlassInput
-            label="Claim Statement (Normalized) *"
+            label="Normalized Claim Text *"
             required
-            placeholder="e.g. Multi-head attention allows parallel sequence processing"
+            placeholder="e.g. FlashAttention reduces memory footprint by avoiding materialize intermediate attention matrix."
             value={newNormalizedText}
             onChange={(e) => setNewNormalizedText(e.target.value)}
           />
 
           <GlassSelect
-            label="Claim Type *"
+            label="Claim Classification *"
             value={newClaimType}
             onChange={(e) => setNewClaimType(e.target.value as ClaimType)}
             options={[
-              { value: 'FINDING', label: 'FINDING (Reported experimental result)' },
-              { value: 'HYPOTHESIS', label: 'HYPOTHESIS (Proposed theory)' },
-              { value: 'METHOD_ASSERTION', label: 'METHOD_ASSERTION (Architecture or algorithm)' },
-              { value: 'LIMITATION', label: 'LIMITATION (Boundaries or failure cases)' },
-              { value: 'DATASET_ASSERTION', label: 'DATASET_ASSERTION (Data distribution)' },
+              { value: 'FINDING', label: 'FINDING - Empirical experimental discovery' },
+              { value: 'HYPOTHESIS', label: 'HYPOTHESIS - Theoretical conjecture to be tested' },
+              { value: 'METHOD_ASSERTION', label: 'METHOD_ASSERTION - Algorithmic or architectural claim' },
+              { value: 'LIMITATION', label: 'LIMITATION - Explicit caveat or boundary' },
             ]}
           />
 
+          <GlassInput
+            label="Section Name"
+            placeholder="e.g. Results, Discussion, Methodology"
+            value={newSection}
+            onChange={(e) => setNewSection(e.target.value)}
+          />
+
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-700 tracking-wide uppercase">
-              Exact Source Text Excerpt *
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 tracking-wide uppercase">
+              Verbatim Evidence Excerpt *
             </label>
             <textarea
               rows={3}
               required
-              placeholder="Verbatim sentence or paragraph from source PDF..."
+              className="glass-input w-full font-serif text-xs leading-relaxed"
+              placeholder="Paste exact excerpt from paper text that verifies this claim..."
               value={newSourceText}
               onChange={(e) => setNewSourceText(e.target.value)}
-              className="glass-input w-full text-xs font-serif leading-relaxed"
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-4 border-t border-slate-200">
+          <div className="flex justify-end gap-2 pt-4 border-t border-slate-200 dark:border-slate-800">
             <GlassButton type="button" variant="secondary" onClick={() => setIsAssertOpen(false)}>
               Cancel
             </GlassButton>
             <GlassButton
               type="submit"
               variant="primary"
-              disabled={createClaimMutation.isPending || !newNormalizedText.trim()}
+              disabled={createClaimMutation.isPending || !newNormalizedText.trim() || !newSourceText.trim()}
             >
-              {createClaimMutation.isPending ? 'Saving...' : 'Assert Claim'}
+              {createClaimMutation.isPending ? 'Asserting...' : 'Assert Claim'}
             </GlassButton>
           </div>
         </form>
@@ -597,7 +601,7 @@ export const ClaimExplorerPage: React.FC = () => {
       {selectedChunk && (
         <ChunkViewerModal
           chunk={selectedChunk}
-          paperTitle="Claim Evidence Chunk"
+          paperTitle="Claim Evidence Document"
           onClose={() => setSelectedChunk(null)}
         />
       )}

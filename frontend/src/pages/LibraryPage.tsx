@@ -14,9 +14,6 @@ import {
   Layers,
   GitCommit,
   ArrowRight,
-  ExternalLink,
-  ShieldCheck,
-  FileText,
 } from 'lucide-react';
 import { GlassPanel, GlassPanelStrong } from '../components/GlassPanel';
 import { GlassButton } from '../components/GlassButton';
@@ -104,14 +101,14 @@ export const LibraryPage: React.FC = () => {
       {/* Top Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-indigo-700 text-xs font-semibold uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-blue-700 dark:text-blue-400 text-xs font-semibold uppercase tracking-wider mb-1">
             <BookOpen className="w-4 h-4" />
             <span>Curated Research Collection</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
             Scientific Paper Library
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
             {papers.length} scholarly papers indexed with verbatim chunk citations and claim mappings.
           </p>
         </div>
@@ -146,15 +143,15 @@ export const LibraryPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs font-medium">
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-medium">
             {['ALL', 'COMPLETED', 'METADATA_ONLY'].map((status) => (
               <button
                 key={status}
                 onClick={() => setStatusFilter(status)}
                 className={`px-3 py-1 rounded-lg transition-all ${
                   statusFilter === status
-                    ? 'bg-white text-indigo-700 font-semibold shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 font-semibold shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
                 }`}
               >
                 {status === 'ALL' ? 'All' : status === 'COMPLETED' ? 'Vectorized' : 'Metadata Only'}
@@ -162,13 +159,13 @@ export const LibraryPage: React.FC = () => {
             ))}
           </div>
 
-          <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100 border border-slate-200">
+          <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
             <button
               onClick={() => setViewMode('grid')}
               className={`p-1.5 rounded-lg transition-all ${
                 viewMode === 'grid'
-                  ? 'bg-white text-indigo-700 shadow-xs'
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-xs'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
               title="Grid View"
               aria-label="Grid view"
@@ -179,8 +176,8 @@ export const LibraryPage: React.FC = () => {
               onClick={() => setViewMode('list')}
               className={`p-1.5 rounded-lg transition-all ${
                 viewMode === 'list'
-                  ? 'bg-white text-indigo-700 shadow-xs'
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-xs'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
               title="List View"
               aria-label="List view"
@@ -217,53 +214,53 @@ export const LibraryPage: React.FC = () => {
             return (
               <GlassPanelStrong
                 key={p.paper.id}
-                className="p-6 flex flex-col justify-between hover:border-indigo-300 hover:shadow-md transition-all gap-5 group"
+                className="p-6 flex flex-col justify-between hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md transition-all gap-5 group"
               >
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <StatusBadge status={p.paper.processingStatus} />
                     {p.paper.publicationYear && (
-                      <span className="text-xs text-slate-500 font-semibold flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                      <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold flex items-center gap-1">
+                        <Calendar className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
                         {p.paper.publicationYear}
                       </span>
                     )}
                   </div>
 
                   <Link to={`/papers/${p.paper.id}`} className="block">
-                    <h2 className="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors leading-snug line-clamp-2">
+                    <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug line-clamp-2">
                       {p.paper.title}
                     </h2>
                   </Link>
 
                   {authorsText && (
-                    <p className="text-xs text-slate-600 line-clamp-1 font-medium">{authorsText}</p>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-1 font-medium">{authorsText}</p>
                   )}
 
                   {p.paper.venue && (
-                    <p className="text-[11px] text-slate-500 italic line-clamp-1">{p.paper.venue}</p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 italic line-clamp-1">{p.paper.venue}</p>
                   )}
 
-                  <p className="text-xs text-slate-600 font-serif line-clamp-3 bg-slate-50/70 p-3 rounded-xl border border-slate-100 leading-relaxed">
+                  <p className="text-xs text-slate-600 dark:text-slate-300 font-serif line-clamp-3 bg-slate-50/70 dark:bg-slate-900/60 p-3 rounded-xl border border-slate-100 dark:border-slate-800 leading-relaxed">
                     {p.paper.abstractText || 'No abstract text reported.'}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-slate-200/70 flex items-center justify-between">
+                <div className="pt-3 border-t border-slate-200/70 dark:border-slate-800 flex items-center justify-between">
                   {/* Evidence Available Indicators */}
-                  <div className="flex items-center gap-3 text-xs text-slate-500 font-medium">
+                  <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 font-medium">
                     <span
                       className="flex items-center gap-1"
                       title={`${p.chunkCount || 0} vectorized chunks`}
                     >
-                      <Layers className="w-3.5 h-3.5 text-indigo-500" />
+                      <Layers className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
                       <span>{p.chunkCount || 0} chunks</span>
                     </span>
                     <span
                       className="flex items-center gap-1"
                       title={`${p.claimCount || 0} extracted claims`}
                     >
-                      <GitCommit className="w-3.5 h-3.5 text-emerald-500" />
+                      <GitCommit className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
                       <span>{p.claimCount || 0} claims</span>
                     </span>
                   </div>
@@ -271,7 +268,7 @@ export const LibraryPage: React.FC = () => {
                   <div className="flex items-center gap-1">
                     <Link
                       to={`/papers/${p.paper.id}`}
-                      className="p-1.5 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 transition"
+                      className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition"
                       title="Open Paper Details"
                     >
                       <ArrowRight className="w-4 h-4" />
@@ -282,7 +279,7 @@ export const LibraryPage: React.FC = () => {
                           deleteMutation.mutate(p.paper.id);
                         }
                       }}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition"
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition"
                       title="Delete Paper"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -303,18 +300,18 @@ export const LibraryPage: React.FC = () => {
             return (
               <GlassPanelStrong
                 key={p.paper.id}
-                className="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 hover:border-indigo-300 transition-all"
+                className="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 hover:border-blue-300 dark:hover:border-blue-600 transition-all"
               >
                 <div className="space-y-1 min-w-0 flex-1">
                   <div className="flex items-center gap-2.5">
                     <Link to={`/papers/${p.paper.id}`}>
-                      <h2 className="text-sm font-bold text-slate-900 hover:text-indigo-600 transition-colors truncate">
+                      <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate">
                         {p.paper.title}
                       </h2>
                     </Link>
                     <StatusBadge status={p.paper.processingStatus} />
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-slate-600">
+                  <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
                     <span className="truncate max-w-md">{authorsText || 'Unknown Authors'}</span>
                     <span>•</span>
                     <span>{p.paper.venue || 'Scholarly Publication'}</span>
@@ -324,13 +321,13 @@ export const LibraryPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-4 shrink-0 self-end md:self-center">
-                  <div className="flex items-center gap-3 text-xs text-slate-500 font-medium">
+                  <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 font-medium">
                     <span className="flex items-center gap-1">
-                      <Layers className="w-3.5 h-3.5 text-indigo-500" />
+                      <Layers className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
                       <span>{p.chunkCount || 0} chunks</span>
                     </span>
                     <span className="flex items-center gap-1">
-                      <GitCommit className="w-3.5 h-3.5 text-emerald-500" />
+                      <GitCommit className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
                       <span>{p.claimCount || 0} claims</span>
                     </span>
                   </div>
@@ -396,7 +393,7 @@ export const LibraryPage: React.FC = () => {
           />
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-700 tracking-wide uppercase">
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 tracking-wide uppercase">
               Abstract Text
             </label>
             <textarea
@@ -408,7 +405,7 @@ export const LibraryPage: React.FC = () => {
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-4 border-t border-slate-200">
+          <div className="flex justify-end gap-2 pt-4 border-t border-slate-200 dark:border-slate-800">
             <GlassButton
               type="button"
               variant="secondary"

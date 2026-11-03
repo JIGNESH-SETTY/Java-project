@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useImperativeHandle, forwardRef } from 'react';
 import cytoscape, { Core, EventObject } from 'cytoscape';
 import { GraphNode, GraphEdge } from '../../types/graph';
+import { useTheme } from '../../context/ThemeContext';
 
 export interface GraphCanvasHandle {
   zoomIn: () => void;
@@ -42,6 +43,9 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
     },
     ref
   ) => {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
+
     const containerRef = useRef<HTMLDivElement>(null);
     const cyRef = useRef<Core | null>(null);
     const [hoverInfo, setHoverInfo] = useState<{
@@ -56,35 +60,49 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
     useImperativeHandle(ref, () => ({
       zoomIn: () => {
         if (cyRef.current) {
-          cyRef.current.zoom(cyRef.current.zoom() * 1.25);
+          cyRef.current.zoom({
+            level: cyRef.current.zoom() * 1.3,
+            renderedPosition: {
+              x: cyRef.current.width() / 2,
+              y: cyRef.current.height() / 2,
+            },
+          });
         }
       },
       zoomOut: () => {
         if (cyRef.current) {
-          cyRef.current.zoom(cyRef.current.zoom() * 0.8);
+          cyRef.current.zoom({
+            level: cyRef.current.zoom() * 0.75,
+            renderedPosition: {
+              x: cyRef.current.width() / 2,
+              y: cyRef.current.height() / 2,
+            },
+          });
         }
       },
       fit: () => {
         if (cyRef.current) {
-          cyRef.current.fit(undefined, 35);
+          cyRef.current.fit(undefined, 50);
         }
       },
       reset: () => {
         if (cyRef.current) {
           const layout = cyRef.current.layout(getLayoutConfig(layoutName));
           layout.run();
-          cyRef.current.fit(undefined, 35);
+          setTimeout(() => {
+            if (cyRef.current) cyRef.current.fit(undefined, 50);
+          }, 350);
         }
       },
       exportPng: () => {
         if (cyRef.current) {
           const pngData = cyRef.current.png({
             full: true,
-            scale: 2,
-            bg: '#F9FAFC',
+            scale: 2.5,
+            bg: isDark ? '#030712' : '#F8FAFC',
           });
           const link = document.createElement('a');
-          link.download = `research-graph-${Date.now()}.png`;
+          link.download = `academic-graph-${Date.now()}.png`;
           link.href = pngData;
           link.click();
         }
@@ -96,7 +114,7 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
             cyRef.current.animate({
               center: { eles: ele },
               zoom: 1.4,
-              duration: 400,
+              duration: 500,
             });
             ele.select();
           }
@@ -111,41 +129,46 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
             name: 'concentric',
             concentric: (node: any) => node.degree(),
             levelWidth: () => 2,
-            padding: 30,
+            padding: 60,
+            spacingFactor: 1.5,
             animate: true,
-            animationDuration: 500,
+            animationDuration: 600,
           } as any;
         case 'circle':
           return {
             name: 'circle',
-            padding: 30,
+            padding: 60,
+            spacingFactor: 1.4,
             animate: true,
-            animationDuration: 500,
+            animationDuration: 600,
           };
         case 'breadthfirst':
           return {
             name: 'breadthfirst',
             directed: true,
-            padding: 30,
-            spacingFactor: 1.2,
+            padding: 60,
+            spacingFactor: 1.6,
             animate: true,
-            animationDuration: 500,
+            animationDuration: 600,
           };
         case 'cose':
         default:
           return {
             name: 'cose',
             animate: true,
-            animationDuration: 600,
-            padding: 35,
-            nodeOverlap: 25,
-            idealEdgeLength: 80,
-            edgeElasticity: 100,
-            nestingFactor: 5,
-            gravity: 80,
-            numIter: 800,
-            initialTemp: 200,
-            coolingFactor: 0.95,
+            animationDuration: 800,
+            padding: 60,
+            nodeOverlap: 4,
+            nodeRepulsion: (node: any) => 450000,
+            idealEdgeLength: (edge: any) => 140,
+            edgeElasticity: (edge: any) => 32,
+            nestingFactor: 1.2,
+            gravity: 30,
+            numIter: 1000,
+            initialTemp: 300,
+            coolingFactor: 0.98,
+            minTemp: 1.0,
+            randomize: false,
           } as any;
       }
     };
@@ -156,21 +179,20 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
 
       const elements: cytoscape.ElementDefinition[] = [
         ...nodes.map((n) => {
-          // Moderate sizing based on citation count / importance
-          let size = 34;
+          let size = 36;
           if (n.data.citationCount) {
-            size = Math.min(54, Math.max(34, 30 + Math.log10(n.data.citationCount + 1) * 5));
+            size = Math.min(60, Math.max(38, 32 + Math.log10(n.data.citationCount + 1) * 8));
           } else if (n.type === 'PAPER') {
-            size = 38;
+            size = 44;
           } else if (n.type === 'CHUNK') {
-            size = 24;
+            size = 26;
           }
 
           return {
             group: 'nodes' as const,
             data: {
               id: n.id,
-              label: n.label.length > 26 ? n.label.substring(0, 26) + '...' : n.label,
+              label: n.label.length > 28 ? n.label.substring(0, 28) + '...' : n.label,
               fullTitle: n.label,
               type: n.type,
               size,
@@ -206,53 +228,60 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
             selector: 'node',
             style: {
               label: showLabels ? 'data(label)' : '',
-              color: '#29282B',
+              color: isDark ? '#F8FAFC' : '#0F172A',
               'font-size': '10px',
-              'font-weight': 600,
+              'font-weight': 700,
               'text-valign': 'bottom',
-              'text-margin-y': 5,
-              'text-max-width': '120px',
+              'text-margin-y': 7,
+              'text-max-width': '140px',
               'text-wrap': 'ellipsis',
+              'text-background-color': isDark ? 'rgba(15, 23, 42, 0.90)' : 'rgba(255, 255, 255, 0.92)',
+              'text-background-opacity': 0.95,
+              'text-background-padding': '3px',
+              'text-background-shape': 'roundrectangle',
+              'text-border-width': 1,
+              'text-border-color': isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(15, 23, 42, 0.12)',
+              'text-border-opacity': 1,
               width: 'data(size)',
               height: 'data(size)',
-              'border-width': 2,
-              'transition-property': 'background-color, border-color, border-width, width, height',
-              'transition-duration': 200,
+              'border-width': 2.5,
+              'transition-property': 'background-color, border-color, border-width, width, height, shadow-blur',
+              'transition-duration': 250,
             },
           },
 
-          // Paper Node
+          // Primary Indexed Paper Node (Cobalt / Blue)
           {
             selector: 'node[type = "PAPER"]',
             style: {
-              'background-color': '#4F46E5',
+              'background-color': isDark ? '#2563EB' : '#3B82F6',
               shape: 'round-rectangle',
-              'border-color': '#818CF8',
-              'border-width': 2,
+              'border-color': isDark ? '#60A5FA' : '#93C5FD',
+              'border-width': 2.5,
             },
           },
-          // User Imported Paper Node
+          // User-Imported Paper
           {
             selector: 'node[type = "PAPER"][?isImported]',
             style: {
-              'border-color': '#0D9488',
-              'border-width': 3,
+              'border-color': '#10B981',
+              'border-width': 3.5,
             },
           },
-          // Unresolved Paper
+          // Unresolved External Reference
           {
             selector: 'node[?isUnresolved], node[type = "UNRESOLVED_PAPER"]',
             style: {
-              'background-color': '#E2E8F0',
-              'border-color': '#94A3B8',
+              'background-color': isDark ? '#1E293B' : '#E2E8F0',
+              'border-color': isDark ? '#64748B' : '#94A3B8',
               'border-style': 'dashed',
               'border-width': 2,
               shape: 'rectangle',
-              color: '#64748B',
+              color: isDark ? '#94A3B8' : '#64748B',
             },
           },
 
-          // Concept Node (Circle, Teal)
+          // Concept Node (Teal / Emerald Circle)
           {
             selector: 'node[type = "CONCEPT"]',
             style: {
@@ -262,7 +291,7 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
             },
           },
 
-          // Claim Node (Hexagon, Violet)
+          // Claim Node (Purple Hexagon)
           {
             selector: 'node[type = "CLAIM"]',
             style: {
@@ -272,17 +301,17 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
             },
           },
 
-          // Method Node (Diamond, Blue)
+          // Method Node (Cyan Diamond)
           {
             selector: 'node[type = "METHOD"]',
             style: {
-              'background-color': '#2563EB',
+              'background-color': '#0284C7',
               shape: 'diamond',
-              'border-color': '#93C5FD',
+              'border-color': '#7DD3FC',
             },
           },
 
-          // Dataset Node (Rounded Rectangle, Amber)
+          // Dataset Node (Amber Rounded Rectangle)
           {
             selector: 'node[type = "DATASET"]',
             style: {
@@ -292,38 +321,38 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
             },
           },
 
-          // AI Interpretation Node (Dashed Purple)
+          // AI Interpretation Node (Dashed Blue Pill)
           {
             selector: 'node[type = "AI_INTERPRETATION"]',
             style: {
-              'background-color': '#F3E8FF',
-              'border-color': '#9333EA',
+              'background-color': isDark ? '#1E3A8A' : '#EFF6FF',
+              'border-color': '#3B82F6',
               'border-style': 'dashed',
-              'border-width': 2,
+              'border-width': 2.5,
               shape: 'round-rectangle',
-              color: '#581C87',
+              color: isDark ? '#93C5FD' : '#1D4ED8',
             },
           },
 
-          // Evidence Chunk (Small Document Slate)
+          // Evidence Chunk (Subtle Slate Rectangle)
           {
             selector: 'node[type = "CHUNK"]',
             style: {
-              'background-color': '#475569',
-              'border-color': '#94A3B8',
+              'background-color': isDark ? '#334155' : '#64748B',
+              'border-color': isDark ? '#64748B' : '#94A3B8',
               shape: 'rectangle',
-              width: 22,
-              height: 22,
+              width: 24,
+              height: 24,
               'font-size': '8px',
             },
           },
 
-          // Node Selection State
+          // Node Selection State (Elevated Glow)
           {
             selector: 'node:selected',
             style: {
-              'border-color': '#FF6F61',
-              'border-width': 4,
+              'border-color': '#2563EB',
+              'border-width': 4.5,
               'border-opacity': 1,
             },
           },
@@ -333,26 +362,30 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
             selector: 'edge',
             style: {
               width: 2,
-              'line-color': '#64748B',
-              'target-arrow-color': '#64748B',
+              'line-color': isDark ? '#475569' : '#94A3B8',
+              'target-arrow-color': isDark ? '#475569' : '#94A3B8',
               'target-arrow-shape': showArrows ? 'triangle' : 'none',
+              'arrow-scale': 1.1,
               'curve-style': 'bezier',
+              'control-point-step-size': 40,
               opacity: 0.85,
               'font-size': '9px',
+              'font-weight': 600,
               'text-rotation': 'autorotate',
-              'text-margin-y': -6,
-              color: '#475569',
+              'text-margin-y': -8,
+              color: isDark ? '#CBD5E1' : '#475569',
               'transition-property': 'line-color, width, opacity',
               'transition-duration': 200,
             },
           },
 
-          // Edge Types
+          // Semantic Edge Types
           {
             selector: 'edge[type = "CITES"]',
             style: {
-              'line-color': '#64748B',
-              'target-arrow-color': '#64748B',
+              'line-color': isDark ? '#64748B' : '#64748B',
+              'target-arrow-color': isDark ? '#64748B' : '#64748B',
+              width: 2,
             },
           },
           {
@@ -360,13 +393,14 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
             style: {
               'line-color': '#2563EB',
               'target-arrow-color': '#2563EB',
+              width: 2.5,
             },
           },
           {
             selector: 'edge[type = "HAS_EVIDENCE"]',
             style: {
-              'line-color': '#94A3B8',
-              'target-arrow-color': '#94A3B8',
+              'line-color': isDark ? '#64748B' : '#94A3B8',
+              'target-arrow-color': isDark ? '#64748B' : '#94A3B8',
               'line-style': 'dotted',
               width: 1.5,
             },
@@ -376,6 +410,7 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
             style: {
               'line-color': '#0891B2',
               'target-arrow-color': '#0891B2',
+              width: 2,
             },
           },
           {
@@ -383,6 +418,7 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
             style: {
               'line-color': '#D97706',
               'target-arrow-color': '#D97706',
+              width: 2,
             },
           },
           {
@@ -390,10 +426,9 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
             style: {
               'line-color': '#059669',
               'target-arrow-color': '#059669',
-              width: 2.5,
+              width: 3,
             },
           },
-          // CONTRADICTS: Prominent Solid Red + Stronger Width
           {
             selector: 'edge[type = "CONTRADICTS"], edge[?isContradiction]',
             style: {
@@ -411,6 +446,7 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
               'line-color': '#EA580C',
               'target-arrow-color': '#EA580C',
               'line-style': 'dashed',
+              width: 2.5,
             },
           },
           {
@@ -419,23 +455,23 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
               'line-color': '#7C3AED',
               'target-arrow-color': '#7C3AED',
               'line-style': 'dashed',
+              width: 2,
             },
           },
           {
             selector: 'edge[type = "DISCUSSES"]',
             style: {
-              'line-color': '#64748B',
-              'target-arrow-color': '#64748B',
+              'line-color': isDark ? '#475569' : '#64748B',
+              'target-arrow-color': isDark ? '#475569' : '#64748B',
               'line-style': 'dotted',
               width: 1.5,
             },
           },
-          // AI Proposed: Dashed Violet with clear label
           {
             selector: 'edge[type = "AI_PROPOSED"], edge[?isAiProposed]',
             style: {
-              'line-color': '#9333EA',
-              'target-arrow-color': '#9333EA',
+              'line-color': '#2563EB',
+              'target-arrow-color': '#2563EB',
               'line-style': 'dashed',
               width: 2,
             },
@@ -445,10 +481,15 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
           {
             selector: 'edge:selected',
             style: {
-              width: 4,
-              'line-color': '#FF6F61',
-              'target-arrow-color': '#FF6F61',
+              width: 4.5,
+              'line-color': '#2563EB',
+              'target-arrow-color': '#2563EB',
               label: 'data(label)',
+              'text-background-color': isDark ? '#0F172A' : '#FFFFFF',
+              'text-background-opacity': 0.9,
+              'text-background-padding': '3px',
+              'text-border-width': 1,
+              'text-border-color': '#2563EB',
             },
           },
         ],
@@ -456,9 +497,15 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
 
       cyRef.current = cy;
 
-      // Run initial layout
+      // Run layout and fit
       const layout = cy.layout(getLayoutConfig(layoutName));
       layout.run();
+
+      setTimeout(() => {
+        if (cyRef.current) {
+          cyRef.current.fit(undefined, 50);
+        }
+      }, 400);
 
       // Selection Handlers
       cy.on('tap', 'node', (evt: EventObject) => {
@@ -492,7 +539,7 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
         if (orig) {
           setHoverInfo({
             x: pos.x,
-            y: pos.y - 30,
+            y: pos.y - 34,
             title: orig.data.title || orig.label,
             subtitle: orig.data.year ? String(orig.data.year) : orig.type,
             type: orig.type,
@@ -508,7 +555,7 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
         cy.destroy();
         cyRef.current = null;
       };
-    }, [nodes, edges, layoutName, showLabels, showArrows]);
+    }, [nodes, edges, layoutName, showLabels, showArrows, isDark]);
 
     // Handle external selectedNodeId changes
     useEffect(() => {
@@ -535,33 +582,32 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
     }, [selectedEdgeId]);
 
     return (
-      <div className={`relative w-full h-full min-h-[540px] overflow-hidden select-none ${className}`}>
-        {/* Cytoscape Container */}
-        <div
-          ref={containerRef}
-          className="w-full h-full rounded-[26px]"
-          style={{
-            background:
-              'radial-gradient(circle at 15% 20%, rgba(240, 245, 255, 0.8) 0%, rgba(248, 246, 255, 0.7) 50%, rgba(245, 248, 252, 0.9) 100%)',
-          }}
-        />
+      <div className={`relative w-full h-full min-h-[640px] select-none ${className}`}>
+        <div ref={containerRef} className="w-full h-full min-h-[640px]" />
 
-        {/* Floating Node Hover Tooltip */}
+        {/* Hover Tooltip Card */}
         {hoverInfo && (
           <div
-            className="absolute z-30 pointer-events-none transform -translate-x-1/2 -translate-y-full px-3 py-1.5 rounded-xl bg-slate-900/90 text-white shadow-lg backdrop-blur-xs text-[11px] max-w-xs transition-opacity duration-150"
             style={{
+              position: 'absolute',
               left: `${hoverInfo.x}px`,
               top: `${hoverInfo.y}px`,
+              transform: 'translate(-50%, -100%)',
+              pointerEvents: 'none',
             }}
+            className="z-50 px-3 py-2 rounded-xl bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800 shadow-xl backdrop-blur-md text-xs min-w-[160px] max-w-xs animate-scale-up"
           >
-            <div className="font-bold truncate leading-tight">{hoverInfo.title}</div>
-            <div className="text-[10px] text-slate-300 mt-0.5 flex items-center gap-1.5">
-              <span className="uppercase text-[9px] px-1 rounded bg-white/20 font-semibold">
+            <div className="flex items-center justify-between gap-2 mb-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                 {hoverInfo.type}
               </span>
-              <span>{hoverInfo.subtitle}</span>
+              <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500">
+                {hoverInfo.subtitle}
+              </span>
             </div>
+            <p className="font-semibold text-slate-800 dark:text-slate-100 line-clamp-2 leading-tight">
+              {hoverInfo.title}
+            </p>
           </div>
         )}
       </div>

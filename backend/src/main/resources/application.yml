@@ -6,6 +6,8 @@ server:
 spring:
   application:
     name: ai-research-discovery-engine
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:research_discovery}
     username: ${DB_USER:postgres}
