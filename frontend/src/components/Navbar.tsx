@@ -60,11 +60,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, onOpenCommandPa
           className="flex items-center gap-3 cursor-pointer select-none group"
         >
           {/* Photorealistic 3D Cobalt Prism Lens Emblem */}
-          <div className="sense-orb-icon w-9 h-9 group-hover:scale-105 group-hover:rotate-6 transition-all duration-300" />
+          <img src="/logo.png" alt="RINNE Logo" className="w-9 h-9 rounded-xl object-contain group-hover:scale-105 group-hover:rotate-3 transition-all duration-300 shadow-xs" />
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <span className="font-extrabold text-slate-900 dark:text-slate-100 text-sm tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                AI Research Engine
+                RINNE Engine
               </span>
               <span className="hidden xl:inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-50/90 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800">
                 <Sparkles className="w-2.5 h-2.5 text-blue-600 dark:text-blue-400" />

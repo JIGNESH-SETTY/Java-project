@@ -73,7 +73,7 @@ export const DashboardPage: React.FC = () => {
           </div>
 
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
-            AI Research Discovery & Evidence Engine
+            RINNE &mdash; AI Research Discovery & Evidence Engine
           </h1>
 
           <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed max-w-2xl font-normal">

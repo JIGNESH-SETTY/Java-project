@@ -129,12 +129,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenCommand
             onClick={() => { navigate('/'); onClose?.(); }}
             className={`flex items-center ${isCollapsed ? 'justify-center w-full' : 'gap-2.5'} cursor-pointer select-none group`}
           >
-            <div className="sense-orb-icon w-8 h-8 group-hover:scale-105 transition-transform" />
+            <img src="/logo.png" alt="RINNE Logo" className="w-8 h-8 rounded-xl object-contain group-hover:scale-105 transition-transform shadow-xs" />
             {!isCollapsed && (
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
                   <span className="font-extrabold text-slate-900 dark:text-slate-100 text-sm tracking-tight leading-none group-hover:text-[#948878] dark:group-hover:text-[#DFD1B7] transition-colors">
-                    AI Research
+                    RINNE
                   </span>
                   <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-[#DFD1B7]/50 dark:bg-[#393D46] text-[#212832] dark:text-[#DFD1B7] border border-[#DFD1B7] dark:border-[#948878]/30">
                     Engine

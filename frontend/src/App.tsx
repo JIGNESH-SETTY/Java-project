@@ -95,9 +95,9 @@ const ProtectedLayout: React.FC = () => {
               <Menu className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2">
-              <div className="sense-orb-icon w-6 h-6" />
+              <img src="/logo.png" alt="RINNE Logo" className="w-6 h-6 rounded-lg object-contain shadow-2xs" />
               <span className="font-extrabold text-xs text-slate-900 dark:text-slate-100">
-                AI Research Engine
+                RINNE
               </span>
             </div>
           </div>

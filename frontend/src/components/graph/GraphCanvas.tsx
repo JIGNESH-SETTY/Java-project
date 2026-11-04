@@ -272,7 +272,7 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
           {
             selector: 'node[?isUnresolved], node[type = "UNRESOLVED_PAPER"]',
             style: {
-              'background-color': isDark ? '#1E293B' : '#E2E8F0',
+              'background-color': isDark ? '#393D46' : '#E2E8F0',
               'border-color': isDark ? '#64748B' : '#94A3B8',
               'border-style': 'dashed',
               'border-width': 2,
@@ -485,7 +485,7 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
               'line-color': '#2563EB',
               'target-arrow-color': '#2563EB',
               label: 'data(label)',
-              'text-background-color': isDark ? '#0F172A' : '#FFFFFF',
+              'text-background-color': isDark ? '#212832' : '#FFFFFF',
               'text-background-opacity': 0.9,
               'text-background-padding': '3px',
               'text-border-width': 1,

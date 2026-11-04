@@ -197,7 +197,7 @@ export const ReactFlowGraphCanvas: React.FC<ReactFlowGraphCanvasProps> = ({
   }, [nodes, searchQuery, isDark]);
 
   return (
-    <div className="relative w-full h-full bg-slate-50 dark:bg-[#030712] overflow-hidden select-none transition-colors duration-200">
+    <div className="relative w-full h-full bg-slate-50 dark:bg-[#181C22] overflow-hidden select-none transition-colors duration-200">
       {/* Top Floating Glass Control Bar */}
       <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between pointer-events-none">
         {/* Left: Search input */}
@@ -296,8 +296,8 @@ export const ReactFlowGraphCanvas: React.FC<ReactFlowGraphCanvasProps> = ({
           variant={BackgroundVariant.Dots}
           gap={24}
           size={1.5}
-          color={isDark ? '#334155' : '#CBD5E1'}
-          className="bg-slate-50 dark:bg-[#030712]"
+          color={isDark ? '#393D46' : '#CBD5E1'}
+          className="bg-slate-50 dark:bg-[#181C22]"
         />
 
         {/* Floating Zoom / Pan Controls */}

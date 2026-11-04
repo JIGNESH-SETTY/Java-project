@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { Lock, Mail, ArrowRight } from 'lucide-react';
 import { GlassButton } from '../components/GlassButton';
+import { ScienceBackground } from '../components/ScienceBackground';
 
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
@@ -33,19 +34,22 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50 dark:bg-[#181C22] font-sans text-slate-900 dark:text-[#F5EFE6] selection:bg-[#948878] selection:text-white transition-colors">
+    <div className="relative min-h-screen flex items-center justify-center p-4 font-sans text-[#212832] dark:text-[#F5EFE6] selection:bg-[#948878] selection:text-white transition-colors overflow-hidden">
+      {/* Science Illustration SVG Background (Auth Pages Only) */}
+      <ScienceBackground />
+
       <div className="w-full max-w-md space-y-6 relative z-10">
-        {/* Brand Logo with 3D Cobalt Prism Lens */}
+        {/* Brand Logo with Image */}
         <div className="text-center space-y-3">
           <div className="flex justify-center">
-            <div className="sense-orb-icon w-12 h-12 shadow-md" />
+            <img src="/logo.png" alt="RINNE Logo" className="w-14 h-14 rounded-2xl shadow-lg object-contain hover:scale-105 transition-transform" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">AI Research Discovery</h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Evidence-Backed Scholarly Knowledge Engine</p>
+          <h1 className="text-2xl font-bold text-[#212832] dark:text-[#F5EFE6] tracking-tight">RINNE</h1>
+          <p className="text-xs text-[#7C7162] dark:text-[#948878] font-medium">AI Research Discovery & Evidence Engine</p>
         </div>
 
-        {/* Card */}
-        <div className="p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md space-y-6 bg-white dark:bg-slate-900">
+        {/* Floating Glass Card */}
+        <div className="p-8 rounded-3xl border border-[#DFD1B7]/80 dark:border-[#393D46] shadow-xl space-y-6 bg-white/90 dark:bg-[#212832]/90 backdrop-blur-md">
           <form onSubmit={handleSubmit} className="space-y-4 text-xs">
             {error && (
               <div className="p-3.5 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 text-xs font-medium">
@@ -54,31 +58,31 @@ export const LoginPage: React.FC = () => {
             )}
 
             <div>
-              <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1.5 px-1">Email Address</label>
+              <label className="block text-[#393D46] dark:text-[#DFD1B7] font-semibold mb-1.5 px-1">Email Address</label>
               <div className="relative flex items-center">
-                <Mail className="w-4 h-4 absolute left-4 text-slate-400 dark:text-slate-500" />
+                <Mail className="w-4 h-4 absolute left-4 text-[#948878] dark:text-[#948878]" />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="researcher@university.edu"
-                  className="w-full pl-11 pr-4 py-2.5 rounded-full text-xs text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-2xs focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium"
+                  className="w-full pl-11 pr-4 py-2.5 rounded-full text-xs text-[#212832] dark:text-[#F5EFE6] placeholder:text-[#948878] bg-[#FAF7F2] dark:bg-[#181C22] border border-[#DFD1B7] dark:border-[#393D46] shadow-2xs focus:bg-white dark:focus:bg-[#212832] focus:outline-none focus:ring-2 focus:ring-[#948878]/30 focus:border-[#948878] font-medium transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1.5 px-1">Password</label>
+              <label className="block text-[#393D46] dark:text-[#DFD1B7] font-semibold mb-1.5 px-1">Password</label>
               <div className="relative flex items-center">
-                <Lock className="w-4 h-4 absolute left-4 text-slate-400 dark:text-slate-500" />
+                <Lock className="w-4 h-4 absolute left-4 text-[#948878] dark:text-[#948878]" />
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="w-full pl-11 pr-4 py-2.5 rounded-full text-xs text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-2xs focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium"
+                  className="w-full pl-11 pr-4 py-2.5 rounded-full text-xs text-[#212832] dark:text-[#F5EFE6] placeholder:text-[#948878] bg-[#FAF7F2] dark:bg-[#181C22] border border-[#DFD1B7] dark:border-[#393D46] shadow-2xs focus:bg-white dark:focus:bg-[#212832] focus:outline-none focus:ring-2 focus:ring-[#948878]/30 focus:border-[#948878] font-medium transition-all"
                 />
               </div>
             </div>
@@ -89,16 +93,16 @@ export const LoginPage: React.FC = () => {
               size="lg"
               icon={ArrowRight}
               disabled={loading}
-              className="w-full mt-3 rounded-full"
+              className="w-full mt-3 rounded-full cursor-pointer"
             >
               {loading ? 'Authenticating...' : 'Sign In to Workspace'}
             </GlassButton>
           </form>
         </div>
 
-        <div className="text-center text-xs text-slate-500 dark:text-slate-400">
+        <div className="text-center text-xs text-[#7C7162] dark:text-[#948878]">
           Need a new account?{' '}
-          <Link to="/register" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline font-semibold transition">
+          <Link to="/register" className="text-[#393D46] dark:text-[#DFD1B7] hover:underline font-semibold transition">
             Register here
           </Link>
         </div>
