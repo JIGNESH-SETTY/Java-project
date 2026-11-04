@@ -128,18 +128,20 @@ export const ClaimExplorerPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-6 max-w-7xl mx-auto space-y-6 smooth-page-load">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-blue-700 dark:text-blue-400 text-xs font-semibold uppercase tracking-wider mb-1">
-            <GitCommit className="w-4 h-4" />
-            <span>Directional Claim Graph & Auditing</span>
+          <div className="mb-2">
+            <span className="pill">
+              <GitCommit className="w-3.5 h-3.5 text-[#0F4C5C] dark:text-[#38BDF8]" />
+              <span>Directional Claim Graph &amp; Auditing</span>
+            </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
-            Claims & Evidence Explorer
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#0B2A33] dark:text-[#E0F2F6] tracking-tight">
+            Claims &amp; Evidence Explorer
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs sm:text-sm text-[#475569] dark:text-[#8EB3C2] mt-0.5">
             Track atomic scientific claims and review directional relationships (Supports, Contradicts, Qualifies, Extends).
           </p>
         </div>
@@ -163,25 +165,25 @@ export const ClaimExplorerPage: React.FC = () => {
       </div>
 
       {/* Main Filter & Tabs Header */}
-      <GlassPanel className="p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="card p-4 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2 w-full md:w-auto">
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-medium">
+          <div className="flex items-center gap-1.5 p-1 rounded-[10px] bg-[#EEF2F6] dark:bg-[#0D222B] border border-[#D9E1E9] dark:border-[#1E4656] text-xs font-semibold">
             <button
               onClick={() => setActiveTab('relations')}
-              className={`px-3 py-1.5 rounded-lg transition-all ${
+              className={`px-3 py-1.5 rounded-[8px] transition-all ${
                 activeTab === 'relations'
-                  ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 font-semibold shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  ? 'bg-[#0F4C5C] text-white shadow-xs'
+                  : 'text-[#475569] dark:text-[#8EB3C2] hover:text-[#0B2A33] dark:hover:text-[#E0F2F6]'
               }`}
             >
               Cross-Paper Relations ({relations.length})
             </button>
             <button
               onClick={() => setActiveTab('claims')}
-              className={`px-3 py-1.5 rounded-lg transition-all ${
+              className={`px-3 py-1.5 rounded-[8px] transition-all ${
                 activeTab === 'claims'
-                  ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 font-semibold shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  ? 'bg-[#0F4C5C] text-white shadow-xs'
+                  : 'text-[#475569] dark:text-[#8EB3C2] hover:text-[#0B2A33] dark:hover:text-[#E0F2F6]'
               }`}
             >
               Atomic Claims ({claims.length})
@@ -224,7 +226,7 @@ export const ClaimExplorerPage: React.FC = () => {
             />
           )}
         </div>
-      </GlassPanel>
+      </div>
 
       {/* Side-by-Side Explorer Split */}
       {activeTab === 'relations' && (
@@ -234,13 +236,13 @@ export const ClaimExplorerPage: React.FC = () => {
             {filteredRelations.map((rel) => {
               const isSelected = activeRelation?.id === rel.id;
               return (
-                <GlassPanelStrong
+                <div
                   key={rel.id}
                   onClick={() => setSelectedRelation(rel)}
-                  className={`p-4 cursor-pointer transition-all space-y-2 border ${
+                  className={`card p-4 cursor-pointer transition-all space-y-2 border ${
                     isSelected
-                      ? 'border-blue-500 bg-white dark:bg-slate-900 ring-2 ring-blue-100 dark:ring-blue-900/50 shadow-md'
-                      : 'border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                      ? 'border-[#0F4C5C] dark:border-[#38BDF8] ring-2 ring-[#0F4C5C]/20 bg-[#DCEBEE]/30 dark:bg-[#1B4A59]/30 shadow-md'
+                      : 'border-[#D9E1E9] dark:border-[#1E4656] hover:border-[#0F4C5C] dark:hover:border-[#38BDF8]'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
@@ -256,7 +258,7 @@ export const ClaimExplorerPage: React.FC = () => {
                     <ProvenanceBadge provenance={rel.provenanceType} confidence={rel.confidence} />
                     <span>{rel.evidenceChunkIds?.length || 0} chunks</span>
                   </div>
-                </GlassPanelStrong>
+                </div>
               );
             })}
 
@@ -365,13 +367,13 @@ export const ClaimExplorerPage: React.FC = () => {
             {filteredClaims.map((claim) => {
               const isSelected = activeClaim?.id === claim.id;
               return (
-                <GlassPanelStrong
+                <div
                   key={claim.id}
                   onClick={() => setSelectedClaim(claim)}
-                  className={`p-4 cursor-pointer transition-all space-y-2 border ${
+                  className={`card p-4 cursor-pointer transition-all space-y-2 border ${
                     isSelected
-                      ? 'border-blue-500 bg-white dark:bg-slate-900 ring-2 ring-blue-100 dark:ring-blue-900/50 shadow-md'
-                      : 'border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                      ? 'border-[#0F4C5C] dark:border-[#38BDF8] ring-2 ring-[#0F4C5C]/20 bg-[#DCEBEE]/30 dark:bg-[#1B4A59]/30 shadow-md'
+                      : 'border-[#D9E1E9] dark:border-[#1E4656] hover:border-[#0F4C5C] dark:hover:border-[#38BDF8]'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
@@ -384,7 +386,7 @@ export const ClaimExplorerPage: React.FC = () => {
                   <p className="text-xs text-slate-800 dark:text-slate-200 line-clamp-2 font-serif font-medium">
                     "{claim.normalizedText || claim.sourceText}"
                   </p>
-                </GlassPanelStrong>
+                </div>
               );
             })}
 

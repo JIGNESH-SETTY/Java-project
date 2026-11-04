@@ -9,7 +9,7 @@ export const SettingsPage: React.FC = () => {
   const { theme, toggleTheme, setTheme } = useTheme();
 
   return (
-    <div className="p-6 md:p-8 max-w-5xl mx-auto space-y-6">
+    <div className="p-6 md:p-8 max-w-5xl mx-auto space-y-6 smooth-page-load">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">System & AI Settings</h1>
@@ -39,22 +39,22 @@ export const SettingsPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setTheme('light')}
-            className={`p-4 rounded-2xl border text-left flex items-start gap-3 transition-all ${
+            className={`p-4 rounded-[12px] border text-left flex items-start gap-3 transition-all cursor-pointer ${
               theme === 'light'
-                ? 'bg-blue-50/70 border-blue-600 ring-2 ring-blue-500/20 text-blue-950 shadow-sm'
-                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
+                ? 'bg-[#DCEBEE]/50 border-[#0F4C5C] ring-2 ring-[#0F4C5C]/20 text-[#0B2A33] shadow-xs'
+                : 'bg-white dark:bg-[#122B36] border-[#D9E1E9] dark:border-[#1E4656] text-[#334155] dark:text-[#C4DDE5] hover:border-[#0F4C5C]'
             }`}
           >
-            <div className={`p-2 rounded-xl shrink-0 ${theme === 'light' ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}`}>
+            <div className={`p-2 rounded-[9px] shrink-0 ${theme === 'light' ? 'bg-[#0F4C5C] text-white' : 'bg-[#EEF2F6] dark:bg-[#0D222B] text-[#5B6B7D]'}`}>
               <Sun className="w-5 h-5" />
             </div>
             <div>
               <div className="font-bold text-xs flex items-center gap-1.5">
-                <span>Light Academic Mode</span>
-                {theme === 'light' && <span className="text-[10px] font-semibold text-blue-600">● Selected</span>}
+                <span>Frost White (Light Mode)</span>
+                {theme === 'light' && <span className="text-[10px] font-semibold text-[#0F4C5C]">● Active</span>}
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
-                Clean academic titanium aesthetic with high contrast and optimal daylight readability.
+              <p className="text-[11px] text-[#5B6B7D] dark:text-[#8EB3C2] mt-0.5 leading-relaxed">
+                Frost White canvas with Pearl Mist sidebar and Deep Teal primary accents for optimal daylight clarity.
               </p>
             </div>
           </button>
@@ -62,22 +62,22 @@ export const SettingsPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setTheme('dark')}
-            className={`p-4 rounded-2xl border text-left flex items-start gap-3 transition-all ${
+            className={`p-4 rounded-[12px] border text-left flex items-start gap-3 transition-all cursor-pointer ${
               theme === 'dark'
-                ? 'bg-blue-950/40 border-blue-500 ring-2 ring-blue-500/30 text-blue-100 shadow-sm'
-                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
+                ? 'bg-[#1B4A59]/40 border-[#38BDF8] ring-2 ring-[#38BDF8]/20 text-white shadow-xs'
+                : 'bg-white dark:bg-[#122B36] border-[#D9E1E9] dark:border-[#1E4656] text-[#334155] dark:text-[#C4DDE5] hover:border-[#38BDF8]'
             }`}
           >
-            <div className={`p-2 rounded-xl shrink-0 ${theme === 'dark' ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}`}>
+            <div className={`p-2 rounded-[9px] shrink-0 ${theme === 'dark' ? 'bg-[#0F4C5C] text-white' : 'bg-[#EEF2F6] dark:bg-[#0D222B] text-[#5B6B7D]'}`}>
               <Moon className="w-5 h-5" />
             </div>
             <div>
               <div className="font-bold text-xs flex items-center gap-1.5">
-                <span>Dark Obsidian Mode</span>
-                {theme === 'dark' && <span className="text-[10px] font-semibold text-blue-400">● Selected</span>}
+                <span>Obsidian Petrol (Dark Mode)</span>
+                {theme === 'dark' && <span className="text-[10px] font-semibold text-[#38BDF8]">● Active</span>}
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
-                Deep obsidian and sapphire palette engineered for focused night sessions and low eye fatigue.
+              <p className="text-[11px] text-[#5B6B7D] dark:text-[#8EB3C2] mt-0.5 leading-relaxed">
+                Deep Petrol and obsidian dark canvas engineered for focused night sessions without eye fatigue.
               </p>
             </div>
           </button>

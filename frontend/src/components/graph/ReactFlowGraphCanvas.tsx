@@ -11,7 +11,6 @@ import {
   type Edge,
   type OnNodesChange,
   type OnEdgesChange,
-  type OnConnect,
   type NodeMouseHandler,
   type EdgeMouseHandler,
   Panel,
@@ -24,16 +23,10 @@ import { getElkLayout, type LayoutOptions } from './layout/elkLayout';
 import type { GraphResponse, GraphNode, GraphEdge } from '../../types/graph';
 import { useTheme } from '../../context/ThemeContext';
 import {
-  ZoomIn,
-  ZoomOut,
-  Maximize2,
   RefreshCw,
   Search,
   ArrowDownCircle,
   ArrowRightCircle,
-  Eye,
-  SlidersHorizontal,
-  Download,
   Share2,
 } from 'lucide-react';
 
@@ -81,88 +74,126 @@ export const ReactFlowGraphCanvas: React.FC<ReactFlowGraphCanvasProps> = ({
 }) => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const [layoutDirection, setLayoutDirection] = useState<'DOWN' | 'RIGHT'>('DOWN');
-  const [isLayouting, setIsLayouting] = useState<boolean>(false);
-  const [collapsedNodes, setCollapsedNodes] = useState<Set<string>>(new Set());
+  const [isLayouting, setIsLayouting] = useState(false);
 
-  // 1. Transform raw graph data into React Flow nodes and edges
-  const initialElements = useMemo(() => {
-    const rawNodes = data.nodes || [];
-    const rawEdges = data.edges || [];
-
-    const rfNodes: Node[] = rawNodes.map((n) => ({
-      id: n.id,
-      type: mapNodeType(n.type),
+  // Transform GraphResponse to React Flow format
+  const initialNodes: Node[] = useMemo(() => {
+    return (data.nodes || []).map((node: GraphNode) => ({
+      id: node.id,
+      type: mapNodeType(node.type),
       position: { x: 0, y: 0 },
       data: {
-        ...n.data,
-        label: n.label,
-        type: n.type,
+        ...node,
+        isSelected: selectedNodeId === node.id,
       },
-      selected: n.id === selectedNodeId,
     }));
+  }, [data.nodes, selectedNodeId]);
 
-    const rfEdges: Edge[] = rawEdges.map((e) => ({
-      id: e.id,
-      source: e.source,
-      target: e.target,
-      type: 'flowEdge',
+  const initialEdges: Edge[] = useMemo(() => {
+    return (data.edges || []).map((edge: GraphEdge) => ({
+      id: edge.id,
+      source: edge.source,
+      target: edge.target,
+      type: 'scholarly',
       data: {
-        ...e.data,
-        label: e.data?.label || e.type,
-        type: e.type,
-        provenance: e.data?.provenance,
+        ...edge,
+        isSelected: selectedEdgeId === edge.id,
       },
-      selected: e.id === selectedEdgeId,
     }));
+  }, [data.edges, selectedEdgeId]);
 
-    return { rfNodes, rfEdges };
-  }, [data, selectedNodeId, selectedEdgeId]);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-  // 2. Run ELK layout whenever raw graph data or direction changes
+  // Apply ELK hierarchical layout
   const applyLayout = useCallback(
-    async (dir: 'DOWN' | 'RIGHT') => {
+    async (direction: 'DOWN' | 'RIGHT') => {
+      if (initialNodes.length === 0) return;
       setIsLayouting(true);
       try {
-        const { nodes: layoutedNodes, edges: layoutedEdges } = await getElkLayout(
-          initialElements.rfNodes,
-          initialElements.rfEdges,
-          { direction: dir, nodeSpacing: 60, layerSpacing: 90 }
-        );
-
-        setNodes(layoutedNodes);
-        setEdges(layoutedEdges);
+        const layoutOptions: LayoutOptions = {
+          direction,
+          nodeSpacing: 50,
+          layerSpacing: 80,
+        };
+        const layouted = await getElkLayout(initialNodes, initialEdges, layoutOptions);
+        setNodes(layouted.nodes);
+        setEdges(layouted.edges);
       } catch (err) {
-        console.error('Error computing ELK layout:', err);
+        console.error('ELK layout computation failed:', err);
+        setNodes(initialNodes);
+        setEdges(initialEdges);
       } finally {
         setIsLayouting(false);
       }
     },
-    [initialElements, setNodes, setEdges]
+    [initialNodes, initialEdges, setNodes, setEdges]
   );
 
+  // Recalculate layout whenever incoming nodes/edges or direction change
   useEffect(() => {
     applyLayout(layoutDirection);
   }, [applyLayout, layoutDirection]);
 
-  // 3. Selection Handlers
+  // Synchronize selection state in node data
+  useEffect(() => {
+    setNodes((nds) =>
+      nds.map((node) => ({
+        ...node,
+        data: {
+          ...node.data,
+          isSelected: node.id === selectedNodeId,
+        },
+      }))
+    );
+  }, [selectedNodeId, setNodes]);
+
+  // Synchronize selection state in edge data
+  useEffect(() => {
+    setEdges((eds) =>
+      eds.map((edge) => ({
+        ...edge,
+        data: {
+          ...(edge.data || {}),
+          isSelected: edge.id === selectedEdgeId,
+        },
+      }))
+    );
+  }, [selectedEdgeId, setEdges]);
+
+  // Search filtering highlight
+  const filteredNodes = useMemo(() => {
+    if (!searchQuery.trim()) return nodes;
+    const query = searchQuery.toLowerCase();
+    return nodes.map((node) => {
+      const label = (node.data?.label as string) || '';
+      const subtitle = (node.data?.subtitle as string) || '';
+      const matches = label.toLowerCase().includes(query) || subtitle.toLowerCase().includes(query);
+      return {
+        ...node,
+        style: {
+          ...node.style,
+          opacity: matches ? 1 : 0.25,
+          filter: matches ? 'none' : 'grayscale(80%)',
+        },
+      };
+    });
+  }, [nodes, searchQuery]);
+
+  // Click handlers
   const handleNodeClick: NodeMouseHandler = useCallback(
     (_, node) => {
-      onSelectEdge(null);
-      onSelectNode(node.id === selectedNodeId ? null : node.id);
+      onSelectNode(node.id);
     },
-    [onSelectNode, onSelectEdge, selectedNodeId]
+    [onSelectNode]
   );
 
   const handleEdgeClick: EdgeMouseHandler = useCallback(
     (_, edge) => {
-      onSelectNode(null);
-      onSelectEdge(edge.id === selectedEdgeId ? null : edge.id);
+      onSelectEdge(edge.id);
     },
-    [onSelectNode, onSelectEdge, selectedEdgeId]
+    [onSelectEdge]
   );
 
   const handlePaneClick = useCallback(() => {
@@ -170,50 +201,24 @@ export const ReactFlowGraphCanvas: React.FC<ReactFlowGraphCanvasProps> = ({
     onSelectEdge(null);
   }, [onSelectNode, onSelectEdge]);
 
-  // 4. Highlight nodes matching the search query
-  const filteredNodes = useMemo(() => {
-    if (!searchQuery.trim()) return nodes;
-    const q = searchQuery.toLowerCase();
-
-    return nodes.map((node) => {
-      const title = (node.data?.title as string || '').toLowerCase();
-      const label = (node.data?.label as string || '').toLowerCase();
-      const authors = (Array.isArray(node.data?.authors)
-        ? node.data.authors.join(' ')
-        : (node.data?.authors as string) || ''
-      ).toLowerCase();
-
-      const matches = title.includes(q) || label.includes(q) || authors.includes(q);
-
-      return {
-        ...node,
-        style: {
-          ...node.style,
-          opacity: matches ? 1 : 0.25,
-          filter: matches ? (isDark ? 'drop-shadow(0 0 12px rgba(255,255,255,0.4))' : 'drop-shadow(0 0 12px rgba(37,99,235,0.3))') : 'none',
-        },
-      };
-    });
-  }, [nodes, searchQuery, isDark]);
-
   return (
-    <div className="relative w-full h-full bg-slate-50 dark:bg-[#181C22] overflow-hidden select-none transition-colors duration-200">
-      {/* Top Floating Glass Control Bar */}
+    <div className="relative w-full h-full bg-[#F3F6F9] dark:bg-[#091920] overflow-hidden select-none transition-colors duration-200">
+      {/* Top Floating Control Bar */}
       <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between pointer-events-none">
         {/* Left: Search input */}
-        <div className="pointer-events-auto flex items-center gap-2 bg-white/95 dark:bg-slate-900/90 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm max-w-sm w-full transition-colors">
-          <Search className="w-4 h-4 text-slate-400 dark:text-slate-500 shrink-0" />
+        <div className="pointer-events-auto flex items-center gap-2 bg-white/95 dark:bg-[#0D222B]/95 backdrop-blur-md px-3 py-2 rounded-[10px] border border-[#D9E1E9] dark:border-[#1E4656] shadow-sm max-w-sm w-full transition-colors">
+          <Search className="w-4 h-4 text-[#5B6B7D] dark:text-[#6B8F9E] shrink-0" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange?.(e.target.value)}
             placeholder="Search papers, claims, concepts..."
-            className="w-full bg-transparent text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none"
+            className="w-full bg-transparent text-xs text-[#0B2A33] dark:text-[#E0F2F6] placeholder-[#6B7785] dark:placeholder-[#527584] focus:outline-none"
           />
           {searchQuery && (
             <button
               onClick={() => onSearchChange?.('')}
-              className="text-[10px] text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 transition"
+              className="text-[10px] text-[#5B6B7D] hover:text-[#0B2A33] dark:text-[#6B8F9E] dark:hover:text-[#E0F2F6] px-1.5 py-0.5 rounded-[6px] bg-[#EEF2F6] dark:bg-[#122B36] transition"
             >
               Clear
             </button>
@@ -223,29 +228,29 @@ export const ReactFlowGraphCanvas: React.FC<ReactFlowGraphCanvasProps> = ({
         {/* Right: Layout & View Controls */}
         <div className="pointer-events-auto flex items-center gap-2">
           {/* Direction toggle */}
-          <div className="flex items-center bg-white/95 dark:bg-slate-900/90 backdrop-blur-md p-1 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+          <div className="flex items-center bg-white/95 dark:bg-[#0D222B]/95 backdrop-blur-md p-1 rounded-[10px] border border-[#D9E1E9] dark:border-[#1E4656] shadow-sm transition-colors">
             <button
               onClick={() => setLayoutDirection('DOWN')}
               title="Top to Bottom Flow"
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-xs font-semibold transition-all ${
                 layoutDirection === 'DOWN'
-                  ? 'bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 shadow-2xs font-semibold'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 border border-transparent'
+                  ? 'bg-[#0F4C5C] text-white shadow-xs'
+                  : 'text-[#475569] dark:text-[#8EB3C2] hover:text-[#0B2A33] dark:hover:text-[#E0F2F6]'
               }`}
             >
-              <ArrowDownCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <ArrowDownCircle className="w-3.5 h-3.5" />
               <span>Hierarchical</span>
             </button>
             <button
               onClick={() => setLayoutDirection('RIGHT')}
               title="Left to Right Flow"
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-xs font-semibold transition-all ${
                 layoutDirection === 'RIGHT'
-                  ? 'bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 shadow-2xs font-semibold'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 border border-transparent'
+                  ? 'bg-[#0F4C5C] text-white shadow-xs'
+                  : 'text-[#475569] dark:text-[#8EB3C2] hover:text-[#0B2A33] dark:hover:text-[#E0F2F6]'
               }`}
             >
-              <ArrowRightCircle className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+              <ArrowRightCircle className="w-3.5 h-3.5" />
               <span>Horizontal</span>
             </button>
           </div>
@@ -254,10 +259,10 @@ export const ReactFlowGraphCanvas: React.FC<ReactFlowGraphCanvasProps> = ({
           {isCytoscapeAvailable && onToggleCytoscape && (
             <button
               onClick={onToggleCytoscape}
-              className="flex items-center gap-1.5 bg-white/95 hover:bg-slate-50 dark:bg-slate-900/90 dark:hover:bg-slate-800 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-sm transition-all"
+              className="flex items-center gap-1.5 bg-white/95 hover:bg-[#FAFBFD] dark:bg-[#0D222B]/95 dark:hover:bg-[#122B36] backdrop-blur-md px-3 py-2 rounded-[10px] border border-[#D9E1E9] dark:border-[#1E4656] text-xs font-semibold text-[#0B2A33] dark:text-[#E0F2F6] shadow-sm transition-all"
               title="Switch to Cytoscape.js for dense network analysis"
             >
-              <Share2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+              <Share2 className="w-3.5 h-3.5 text-[#0A6A80] dark:text-[#38BDF8]" />
               <span>Dense Network</span>
             </button>
           )}
@@ -266,10 +271,10 @@ export const ReactFlowGraphCanvas: React.FC<ReactFlowGraphCanvasProps> = ({
           <button
             onClick={() => applyLayout(layoutDirection)}
             disabled={isLayouting}
-            className="flex items-center gap-1 bg-white/95 hover:bg-slate-50 dark:bg-slate-900/90 dark:hover:bg-slate-800 backdrop-blur-md p-2 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 shadow-sm transition-all"
+            className="flex items-center gap-1 bg-white/95 hover:bg-[#FAFBFD] dark:bg-[#0D222B]/95 dark:hover:bg-[#122B36] backdrop-blur-md p-2 rounded-[10px] border border-[#D9E1E9] dark:border-[#1E4656] text-[#0B2A33] dark:text-[#E0F2F6] shadow-sm transition-all"
             title="Re-run ELK Layout"
           >
-            <RefreshCw className={`w-4 h-4 ${isLayouting ? 'animate-spin text-emerald-500' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${isLayouting ? 'animate-spin text-[#0F4C5C]' : ''}`} />
           </button>
         </div>
       </div>
@@ -291,59 +296,59 @@ export const ReactFlowGraphCanvas: React.FC<ReactFlowGraphCanvasProps> = ({
         attributionPosition="bottom-left"
         className="touch-none"
       >
-        {/* Responsive Grid Background */}
+        {/* Responsive Dot Grid Background */}
         <Background
           variant={BackgroundVariant.Dots}
           gap={24}
           size={1.5}
-          color={isDark ? '#393D46' : '#CBD5E1'}
-          className="bg-slate-50 dark:bg-[#181C22]"
+          color={isDark ? '#1E4656' : '#D3DCE5'}
+          className="bg-[#F3F6F9] dark:bg-[#091920]"
         />
 
         {/* Floating Zoom / Pan Controls */}
         <Controls
           showInteractive={false}
-          className="!bg-white/95 dark:!bg-slate-900/90 !border !border-slate-200 dark:!border-slate-800 !rounded-2xl !p-1 !shadow-lg [&>button]:!bg-slate-50 dark:[&>button]:!bg-slate-800 [&>button]:!border-slate-200 dark:[&>button]:!border-slate-700 [&>button]:!text-slate-700 dark:[&>button]:!text-slate-200 [&>button:hover]:!bg-slate-100 dark:[&>button:hover]:!bg-slate-700"
+          className="!bg-white/95 dark:!bg-[#0D222B]/90 !border !border-[#D9E1E9] dark:!border-[#1E4656] !rounded-[10px] !p-1 !shadow-sm [&>button]:!bg-[#FAFBFD] dark:[&>button]:!bg-[#122B36] [&>button]:!border-[#D9E1E9] dark:[&>button]:!border-[#1E4656] [&>button]:!text-[#0B2A33] dark:[&>button]:!text-[#E0F2F6] [&>button:hover]:!bg-[#EEF2F6] dark:[&>button:hover]:!bg-[#1A3E4E]"
         />
 
         {/* Themed MiniMap */}
         <MiniMap
-          nodeStrokeWidth={3}
+          nodeStrokeWidth={2}
           nodeColor={(n) => {
             switch (n.type) {
               case 'paper':
-                return isDark ? '#FBBF24' : '#3B82F6';
+                return '#0F4C5C';
               case 'claim':
-                return '#8B5CF6';
+                return '#475569';
               case 'concept':
-                return '#10B981';
+                return '#3E6FA3';
               case 'dataset':
-                return '#0EA5E9';
+                return '#B7791F';
               case 'evidence':
-                return '#F59E0B';
+                return '#1B6B43';
               default:
-                return isDark ? '#64748B' : '#94A3B8';
+                return isDark ? '#6B8F9E' : '#94A3B8';
             }
           }}
-          maskColor={isDark ? 'rgba(3, 7, 18, 0.75)' : 'rgba(248, 250, 252, 0.75)'}
-          className="!bg-white/95 dark:!bg-slate-900/90 !border !border-slate-200 dark:!border-slate-800 !rounded-2xl !shadow-lg overflow-hidden"
+          maskColor={isDark ? 'rgba(9, 25, 32, 0.75)' : 'rgba(247, 249, 251, 0.75)'}
+          className="!bg-white/95 dark:!bg-[#0D222B]/90 !border !border-[#D9E1E9] dark:!border-[#1E4656] !rounded-[10px] !shadow-sm overflow-hidden"
           zoomable
           pannable
         />
 
         {/* Bottom Status Panel */}
         <Panel position="bottom-center" className="mb-3">
-          <div className="flex items-center gap-3 bg-white/95 dark:bg-slate-900/90 backdrop-blur-md px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 text-[11px] text-slate-600 dark:text-slate-400 shadow-md">
+          <div className="flex items-center gap-3 bg-white/95 dark:bg-[#0D222B]/95 backdrop-blur-md px-4 py-1.5 rounded-full border border-[#D9E1E9] dark:border-[#1E4656] text-[11px] text-[#475569] dark:text-[#8EB3C2] shadow-sm">
             <span>
-              <strong className="text-slate-900 dark:text-slate-100 font-semibold">{filteredNodes.length}</strong> cards
+              <strong className="text-[#0B2A33] dark:text-[#E0F2F6] font-semibold">{filteredNodes.length}</strong> cards
             </span>
-            <span className="text-slate-300 dark:text-slate-700">•</span>
+            <span className="text-[#D9E1E9] dark:text-[#1E4656]">•</span>
             <span>
-              <strong className="text-slate-900 dark:text-slate-100 font-semibold">{edges.length}</strong> relations
+              <strong className="text-[#0B2A33] dark:text-[#E0F2F6] font-semibold">{edges.length}</strong> relations
             </span>
-            <span className="text-slate-300 dark:text-slate-700">•</span>
-            <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[#D9E1E9] dark:text-[#1E4656]">•</span>
+            <span className="flex items-center gap-1.5 text-[#1B6B43] dark:text-[#34D399] font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#1B6B43] animate-pulse" />
               ELK Hierarchical Flow
             </span>
           </div>

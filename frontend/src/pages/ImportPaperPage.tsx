@@ -128,32 +128,34 @@ export const ImportPaperPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-8">
+    <div className="p-6 max-w-6xl mx-auto space-y-8 smooth-page-load">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 text-blue-700 dark:text-blue-400 text-xs font-semibold uppercase tracking-wider mb-1">
-          <Globe className="w-4 h-4" />
-          <span>Real Scholarly Data & Ingestion</span>
+        <div className="mb-2">
+          <span className="pill">
+            <Globe className="w-3.5 h-3.5 text-[#0F4C5C] dark:text-[#38BDF8]" />
+            <span>Real Scholarly Data &amp; Ingestion</span>
+          </span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#0B2A33] dark:text-[#E0F2F6] tracking-tight">
           Import Scientific Papers
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl leading-relaxed">
+        <p className="text-sm text-[#475569] dark:text-[#8EB3C2] mt-1 max-w-2xl leading-relaxed">
           Search official scholarly APIs (Crossref, OpenAlex, arXiv, Semantic Scholar, Europe PMC) or enter a DOI. Legal open-access documents are automatically verified and ingested into the vector evidence engine.
         </p>
       </div>
 
       {/* Import Feedback Banner */}
       {importResult && (
-        <div className="p-5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="p-5 rounded-[12px] bg-[#E3F3EA] dark:bg-[#122B36] border border-[#BFE0CC] dark:border-[#1E4656] shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+            <CheckCircle2 className="w-5 h-5 text-[#1B6B43] dark:text-[#34D399] shrink-0 mt-0.5" />
             <div>
-              <div className="text-sm font-semibold text-emerald-900 dark:text-emerald-200">
+              <div className="text-sm font-semibold text-[#0B2A33] dark:text-[#E0F2F6]">
                 Imported: {importResult.title}
               </div>
-              <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-0.5">{importResult.message}</p>
-              <div className="text-[11px] text-emerald-600 dark:text-emerald-400 mt-1 font-mono">{importResult.attribution}</div>
+              <p className="text-xs text-[#1B6B43] dark:text-[#34D399] mt-0.5">{importResult.message}</p>
+              <div className="text-[11px] text-[#5B6B7D] dark:text-[#8EB3C2] mt-1 font-mono">{importResult.attribution}</div>
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
@@ -173,33 +175,33 @@ export const ImportPaperPage: React.FC = () => {
       )}
 
       {/* Workspace Tabs */}
-      <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 max-w-md shadow-xs">
+      <div className="flex items-center gap-1.5 p-1 rounded-[10px] bg-[#EEF2F6] dark:bg-[#0D222B] border border-[#D9E1E9] dark:border-[#1E4656] max-w-md shadow-2xs">
         <button
           onClick={() => setActiveTab('search')}
-          className={`flex-1 py-2 px-3 text-xs font-semibold rounded-xl transition-all ${
+          className={`flex-1 py-1.5 px-3 text-xs font-semibold rounded-[8px] transition-all cursor-pointer ${
             activeTab === 'search'
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+              ? 'bg-[#0F4C5C] text-white shadow-xs'
+              : 'text-[#475569] dark:text-[#8EB3C2] hover:text-[#0B2A33] dark:hover:text-[#E0F2F6]'
           }`}
         >
           API Search
         </button>
         <button
           onClick={() => setActiveTab('doi')}
-          className={`flex-1 py-2 px-3 text-xs font-semibold rounded-xl transition-all ${
+          className={`flex-1 py-1.5 px-3 text-xs font-semibold rounded-[8px] transition-all cursor-pointer ${
             activeTab === 'doi'
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+              ? 'bg-[#0F4C5C] text-white shadow-xs'
+              : 'text-[#475569] dark:text-[#8EB3C2] hover:text-[#0B2A33] dark:hover:text-[#E0F2F6]'
           }`}
         >
           DOI Lookup
         </button>
         <button
           onClick={() => setActiveTab('upload')}
-          className={`flex-1 py-2 px-3 text-xs font-semibold rounded-xl transition-all ${
+          className={`flex-1 py-1.5 px-3 text-xs font-semibold rounded-[8px] transition-all cursor-pointer ${
             activeTab === 'upload'
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+              ? 'bg-[#0F4C5C] text-white shadow-xs'
+              : 'text-[#475569] dark:text-[#8EB3C2] hover:text-[#0B2A33] dark:hover:text-[#E0F2F6]'
           }`}
         >
           PDF File Upload

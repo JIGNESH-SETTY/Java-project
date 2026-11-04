@@ -99,7 +99,7 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
           const pngData = cyRef.current.png({
             full: true,
             scale: 2.5,
-            bg: isDark ? '#181C22' : '#FAF7F2',
+            bg: isDark ? '#091920' : '#F3F6F9',
           });
           const link = document.createElement('a');
           link.download = `academic-graph-${Date.now()}.png`;
@@ -228,19 +228,19 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
             selector: 'node',
             style: {
               label: showLabels ? 'data(label)' : '',
-              color: isDark ? '#F5EFE6' : '#212832',
+              color: isDark ? '#E0F2F6' : '#0B2A33',
               'font-size': '10px',
               'font-weight': 700,
               'text-valign': 'bottom',
               'text-margin-y': 7,
               'text-max-width': '140px',
               'text-wrap': 'ellipsis',
-              'text-background-color': isDark ? 'rgba(33, 40, 50, 0.94)' : 'rgba(255, 255, 255, 0.95)',
+              'text-background-color': isDark ? '#0D222B' : '#FFFFFF',
               'text-background-opacity': 0.95,
               'text-background-padding': '3px',
               'text-background-shape': 'roundrectangle',
               'text-border-width': 1,
-              'text-border-color': isDark ? 'rgba(223, 209, 183, 0.25)' : 'rgba(148, 136, 120, 0.35)',
+              'text-border-color': isDark ? '#1E4656' : '#D9E1E9',
               'text-border-opacity': 1,
               width: 'data(size)',
               height: 'data(size)',
@@ -254,9 +254,9 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
           {
             selector: 'node[type = "PAPER"]',
             style: {
-              'background-color': isDark ? '#DFD1B7' : '#212832',
+              'background-color': isDark ? '#122B36' : '#FFFFFF',
               shape: 'round-rectangle',
-              'border-color': isDark ? '#FAF7F2' : '#393D46',
+              'border-color': isDark ? '#2293B0' : '#0F4C5C',
               'border-width': 2.5,
             },
           },
@@ -391,7 +391,7 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
           {
             selector: 'edge[type = "REPORTS"]',
             style: {
-              'line-color': '#2563EB',
+              'line-color': '#4F46B8',
               'target-arrow-color': '#2563EB',
               width: 2.5,
             },
@@ -424,17 +424,17 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
           {
             selector: 'edge[type = "SUPPORTS"]',
             style: {
-              'line-color': '#059669',
-              'target-arrow-color': '#059669',
+              'line-color': '#1B6B43',
+              'target-arrow-color': '#1B6B43',
               width: 3,
             },
           },
           {
             selector: 'edge[type = "CONTRADICTS"], edge[?isContradiction]',
             style: {
-              'line-color': '#DC2626',
-              'target-arrow-color': '#DC2626',
-              'source-arrow-color': '#DC2626',
+              'line-color': '#B3261E',
+              'target-arrow-color': '#B3261E',
+              'source-arrow-color': '#B3261E',
               'source-arrow-shape': showArrows ? 'triangle' : 'none',
               width: 3.5,
               opacity: 0.95,
@@ -443,8 +443,8 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
           {
             selector: 'edge[type = "QUALIFIES"]',
             style: {
-              'line-color': '#EA580C',
-              'target-arrow-color': '#EA580C',
+              'line-color': '#A8480A',
+              'target-arrow-color': '#A8480A',
               'line-style': 'dashed',
               width: 2.5,
             },
@@ -470,7 +470,7 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
           {
             selector: 'edge[type = "AI_PROPOSED"], edge[?isAiProposed]',
             style: {
-              'line-color': '#2563EB',
+              'line-color': '#4F46B8',
               'target-arrow-color': '#2563EB',
               'line-style': 'dashed',
               width: 2,
@@ -482,7 +482,7 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
             selector: 'edge:selected',
             style: {
               width: 4.5,
-              'line-color': '#2563EB',
+              'line-color': '#4F46B8',
               'target-arrow-color': '#2563EB',
               label: 'data(label)',
               'text-background-color': isDark ? '#212832' : '#FFFFFF',
@@ -595,10 +595,10 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle, GraphCanvasProps>(
               transform: 'translate(-50%, -100%)',
               pointerEvents: 'none',
             }}
-            className="z-50 px-3 py-2 rounded-xl bg-white/95 dark:bg-[#212832]/95 border border-[#DFD1B7] dark:border-[#393D46] shadow-xl backdrop-blur-md text-xs min-w-[160px] max-w-xs animate-scale-up"
+            className="z-50 px-3 py-2 rounded-[10px] bg-white dark:bg-[#122B36] border border-[#D9E1E9] dark:border-[#1E4656] shadow-xl text-xs min-w-[160px] max-w-xs animate-scale-up"
           >
             <div className="flex items-center justify-between gap-2 mb-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#212832] dark:text-[#DFD1B7]">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#0F4C5C] dark:text-[#38BDF8]">
                 {hoverInfo.type}
               </span>
               <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500">

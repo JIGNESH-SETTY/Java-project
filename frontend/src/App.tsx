@@ -51,12 +51,15 @@ const ProtectedLayout: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center text-slate-500 bg-slate-50 dark:bg-[#181C22]">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-3 border-[#212832] dark:border-[#DFD1B7] border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs font-semibold tracking-wide text-slate-600 dark:text-slate-400">
-            Initializing Scholarly Discovery Workspace...
-          </p>
+      <div className="h-screen w-screen flex items-center justify-center bg-[#F7F9FB] dark:bg-[#091920] transition-colors">
+        <div className="flex flex-col items-center gap-3.5 smooth-page-load">
+          <img src="/logo.png" alt="RINNE Logo" className="w-12 h-12 rounded-2xl object-contain shadow-md animate-pulse" />
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 border-2 border-[#0F4C5C] dark:border-[#38BDF8] border-t-transparent rounded-full animate-spin" />
+            <p className="text-xs font-semibold tracking-wide text-[#334155] dark:text-[#8EB3C2]">
+              Initializing RINNE Research Engine...
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -67,15 +70,15 @@ const ProtectedLayout: React.FC = () => {
   }
 
   return (
-    <div className="relative h-screen w-screen flex font-sans antialiased text-slate-900 dark:text-[#F5EFE6] selection:bg-[#948878] selection:text-white overflow-hidden bg-slate-50 dark:bg-[#181C22] transition-colors duration-200">
-      {/* Ambient Aurora Gradient Spheres for Optical Glass Refraction */}
+    <div className="relative h-screen w-screen flex font-sans antialiased text-[#334155] dark:text-[#C4DDE5] selection:bg-[#0F4C5C] selection:text-white overflow-hidden bg-[#F7F9FB] dark:bg-[#091920] transition-colors duration-200">
+      {/* Ambient Lighting for Depth */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
-        <div className="absolute -top-40 -left-20 w-[600px] h-[600px] rounded-full bg-[#DFD1B7]/30 dark:bg-[#DFD1B7]/10 blur-[130px] animate-pulse-slow" />
-        <div className="absolute -top-20 -right-20 w-[550px] h-[550px] rounded-full bg-[#948878]/25 dark:bg-[#948878]/15 blur-[140px] animate-pulse-slow" />
-        <div className="absolute -bottom-40 left-1/3 w-[650px] h-[450px] rounded-full bg-[#393D46]/10 dark:bg-[#212832]/35 blur-[150px]" />
+        <div className="absolute -top-40 -left-20 w-[600px] h-[600px] rounded-full bg-[#0F4C5C]/5 dark:bg-[#197B94]/10 blur-[130px] animate-pulse-slow" />
+        <div className="absolute -top-20 -right-20 w-[550px] h-[550px] rounded-full bg-[#DCEBEE]/50 dark:bg-[#0E2D38]/30 blur-[140px] animate-pulse-slow" />
+        <div className="absolute -bottom-40 left-1/3 w-[650px] h-[450px] rounded-full bg-[#C9A96A]/6 dark:bg-[#C9A96A]/8 blur-[150px]" />
       </div>
 
-      {/* Persistent Floating Glass Sidebar Command Center */}
+      {/* Persistent Floating Sidebar (14px Radius) */}
       <Sidebar
         isOpen={isMobileNavOpen}
         onClose={() => setIsMobileNavOpen(false)}
@@ -85,33 +88,41 @@ const ProtectedLayout: React.FC = () => {
       {/* Main Workspace Stage */}
       <div className="relative flex-1 min-w-0 h-full flex flex-col overflow-hidden z-10">
         {/* Mobile Header Bar (Only visible on small screens < md) */}
-        <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shrink-0">
+        <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-[#D9E1E9] dark:border-[#1E4656] bg-white/80 dark:bg-[#0D222B]/80 backdrop-blur-xl shrink-0">
           <div className="flex items-center gap-2.5">
             <button
               onClick={() => setIsMobileNavOpen(true)}
-              className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
               aria-label="Open menu"
             >
               <Menu className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2">
-              <img src="/logo.png" alt="RINNE Logo" className="w-6 h-6 rounded-lg object-contain shadow-2xs" />
-              <span className="font-extrabold text-xs text-slate-900 dark:text-slate-100">
+              <img src="/logo.png" alt="RINNE Logo" className="w-7 h-7 rounded-lg object-contain shadow-xs" />
+              <span className="font-extrabold text-sm text-[#0B2A33] dark:text-[#E0F2F6]">
                 RINNE
               </span>
+              <span className="tag-engine">ENGINE</span>
             </div>
           </div>
           <button
             onClick={() => setIsCommandPaletteOpen(true)}
-            className="p-2 rounded-xl text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            className="p-1 rounded-lg text-slate-500 hover:text-[#0F4C5C] dark:text-slate-400 dark:hover:text-[#38BDF8] hover:bg-slate-100 dark:hover:bg-slate-800 transition"
             title="Search"
           >
-            <span className="text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700">⌘K</span>
+            <div className="flex items-center gap-1 shrink-0 select-none">
+              <kbd className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-[4px] border border-[#D9E1E9] dark:border-[#1E4656] text-[#5B6B7D] dark:text-[#8EB3C2] bg-[#F7F9FB] dark:bg-[#091920] text-[10px] font-mono font-bold leading-none">
+                ⌘
+              </kbd>
+              <kbd className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-[4px] border border-[#D9E1E9] dark:border-[#1E4656] text-[#5B6B7D] dark:text-[#8EB3C2] bg-[#F7F9FB] dark:bg-[#091920] text-[10px] font-mono font-bold leading-none">
+                K
+              </kbd>
+            </div>
           </button>
         </div>
 
         {/* Viewport Content Area */}
-        <main className="flex-1 min-w-0 h-full overflow-y-auto px-4 sm:px-8 py-5">
+        <main className="flex-1 min-w-0 h-full overflow-y-auto px-4 sm:px-8 py-5 smooth-page-load">
           <Routes>
             <Route path="/" element={<DashboardPage />} />
             <Route path="/library" element={<LibraryPage />} />

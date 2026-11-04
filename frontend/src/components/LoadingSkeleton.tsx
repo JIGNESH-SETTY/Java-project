@@ -15,18 +15,18 @@ export const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({
 
   if (type === 'row') {
     return (
-      <div className={`space-y-3 ${className}`}>
+      <div className={`space-y-2.5 smooth-page-load ${className}`}>
         {items.map((_, i) => (
           <div
             key={i}
-            className="h-14 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-white/70 dark:border-slate-800 animate-pulse flex items-center px-4 gap-4"
+            className="h-14 rounded-[10px] bg-white dark:bg-[#122B36] border border-[#D9E1E9] dark:border-[#1E4656] flex items-center px-4 gap-4"
           >
-            <div className="w-8 h-8 rounded-lg bg-slate-200/80 dark:bg-slate-700/80 shrink-0" />
+            <div className="w-8 h-8 rounded-[8px] shimmer-skeleton shrink-0" />
             <div className="flex-1 space-y-2">
-              <div className="h-3.5 bg-slate-200/80 dark:bg-slate-700/80 rounded w-1/3" />
-              <div className="h-2.5 bg-slate-200/60 dark:bg-slate-700/60 rounded w-1/4" />
+              <div className="h-3.5 shimmer-skeleton rounded-[6px] w-1/3" />
+              <div className="h-2.5 shimmer-skeleton rounded-[6px] w-1/4" />
             </div>
-            <div className="w-20 h-6 bg-slate-200/60 dark:bg-slate-700/60 rounded-full" />
+            <div className="w-20 h-6 shimmer-skeleton rounded-full" />
           </div>
         ))}
       </div>
@@ -35,33 +35,33 @@ export const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({
 
   if (type === 'graph') {
     return (
-      <div className={`h-96 rounded-2xl bg-white/50 dark:bg-slate-900/50 border border-white/70 dark:border-slate-800 animate-pulse flex flex-col items-center justify-center p-6 ${className}`}>
-        <div className="w-16 h-16 rounded-full bg-slate-200/70 dark:bg-slate-700/70 mb-4" />
-        <div className="h-4 bg-slate-200/80 dark:bg-slate-700/80 rounded w-48 mb-2" />
-        <div className="h-3 bg-slate-200/50 dark:bg-slate-700/50 rounded w-64" />
+      <div className={`h-96 rounded-[12px] bg-white dark:bg-[#122B36] border border-[#D9E1E9] dark:border-[#1E4656] flex flex-col items-center justify-center p-6 smooth-page-load ${className}`}>
+        <div className="w-14 h-14 rounded-full shimmer-skeleton mb-4" />
+        <div className="h-4 shimmer-skeleton rounded-[6px] w-48 mb-2.5" />
+        <div className="h-3 shimmer-skeleton rounded-[6px] w-64" />
       </div>
     );
   }
 
   return (
-    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${className}`}>
+    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 smooth-page-load ${className}`}>
       {items.map((_, i) => (
         <div
           key={i}
-          className="glass-panel p-6 space-y-4 animate-pulse flex flex-col justify-between h-48"
+          className="card p-5 space-y-4 flex flex-col justify-between h-48"
         >
           <div className="space-y-2.5">
             <div className="flex justify-between items-center">
-              <div className="h-3 bg-slate-200/70 dark:bg-slate-700/70 rounded w-20" />
-              <div className="h-5 bg-slate-200/60 dark:bg-slate-700/60 rounded-full w-24" />
+              <div className="h-3 shimmer-skeleton rounded-[6px] w-20" />
+              <div className="h-5 shimmer-skeleton rounded-full w-24" />
             </div>
-            <div className="h-4 bg-slate-200/90 dark:bg-slate-700/90 rounded w-3/4" />
-            <div className="h-3 bg-slate-200/60 dark:bg-slate-700/60 rounded w-full" />
-            <div className="h-3 bg-slate-200/60 dark:bg-slate-700/60 rounded w-5/6" />
+            <div className="h-4 shimmer-skeleton rounded-[6px] w-3/4" />
+            <div className="h-3 shimmer-skeleton rounded-[6px] w-full" />
+            <div className="h-3 shimmer-skeleton rounded-[6px] w-5/6" />
           </div>
-          <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800">
-            <div className="h-3 bg-slate-200/70 dark:bg-slate-700/70 rounded w-28" />
-            <div className="h-7 bg-slate-200/80 dark:bg-slate-700/80 rounded-lg w-20" />
+          <div className="flex justify-between items-center pt-2.5 border-t border-[#D9E1E9] dark:border-[#1E4656]">
+            <div className="h-3 shimmer-skeleton rounded-[6px] w-28" />
+            <div className="h-6 shimmer-skeleton rounded-[8px] w-20" />
           </div>
         </div>
       ))}
