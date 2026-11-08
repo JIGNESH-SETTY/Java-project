@@ -58,4 +58,13 @@ public class AuthController {
         UserDto user = authService.getCurrentUser(principal);
         return ResponseEntity.ok(user);
     }
+
+    @GetMapping("/health")
+    @Operation(summary = "Health check endpoint for cloud platforms like Render")
+    public ResponseEntity<java.util.Map<String, String>> healthCheck() {
+        return ResponseEntity.ok(java.util.Map.of(
+                "status", "UP",
+                "timestamp", java.time.Instant.now().toString()
+        ));
+    }
 }

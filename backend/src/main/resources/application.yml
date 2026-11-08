@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
   servlet:
     context-path: /
 
@@ -9,12 +9,12 @@ spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:local}
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:research_discovery}
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:postgres}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:research_discovery}}
+    username: ${SPRING_DATASOURCE_USERNAME:${DB_USER:postgres}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${DB_PASSWORD:postgres}}
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 10
+      maximum-pool-size: ${DB_POOL_SIZE:10}
       minimum-idle: 2
       connection-timeout: 20000
   flyway:
@@ -28,13 +28,13 @@ spring:
 
 app:
   upload:
-    dir: ./uploads/papers
+    dir: ${APP_INGESTION_UPLOAD_DIR:${UPLOAD_DIR:./uploads/papers}}
   jwt:
-    secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+    secret: ${JWT_SECRET:${APP_SECURITY_JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}}
     access-token-expiration-ms: 900000 # 15 minutes
     refresh-token-expiration-ms: 604800000 # 7 days
   ai:
-    provider: ${AI_PROVIDER:MOCK} # Options: MOCK, OLLAMA, OPENAI, GEMINI, ANTHROPIC
+    provider: ${AI_PROVIDER:${APP_AI_PROVIDER:MOCK}} # Options: MOCK, OLLAMA, OPENAI, GEMINI, ANTHROPIC
     embedding:
       model-name: ${EMBEDDING_MODEL:all-minilm-l6-v2}
       dimension: 384
