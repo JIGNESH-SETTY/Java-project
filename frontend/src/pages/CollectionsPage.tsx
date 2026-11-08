@@ -51,12 +51,18 @@ export const CollectionsPage: React.FC = () => {
   });
 
   return (
-    <div className="space-y-6 animate-fade-in p-6 max-w-7xl mx-auto">
+    <div className="space-y-6 smooth-page-load p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">Curated Paper Collections</h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <div className="mb-2">
+            <span className="pill">
+              <FolderKanban className="w-3.5 h-3.5 text-[#0F4C5C] dark:text-[#38BDF8]" />
+              <span>Taxonomy &amp; Research Chapters</span>
+            </span>
+          </div>
+          <h1 className="text-xl sm:text-2xl font-bold text-[#0B2A33] dark:text-[#E0F2F6] tracking-tight">Curated Paper Collections</h1>
+          <p className="text-xs text-[#5B6B7D] dark:text-[#8EB3C2]">
             Group research papers by topic, thesis chapter, or benchmark investigation
           </p>
         </div>

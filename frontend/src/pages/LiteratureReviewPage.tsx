@@ -95,17 +95,23 @@ export const LiteratureReviewPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in p-6 max-w-7xl mx-auto">
+    <div className="space-y-6 smooth-page-load p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
+          <div className="mb-2">
+            <span className="pill">
+              <Sparkles className="w-3.5 h-3.5 text-[#4F46B8] dark:text-[#818CF8]" />
+              <span>Grounded Literature Synthesis</span>
+            </span>
+          </div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">Evidence-Backed Literature Reviews</h1>
-            <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#0B2A33] dark:text-[#E0F2F6] tracking-tight">Evidence-Backed Literature Reviews</h1>
+            <span className="b-ai">
               AI-generated synthesis
             </span>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-[#5B6B7D] dark:text-[#8EB3C2] mt-0.5">
             RAG-driven scholarly review synthesis with audited paragraph-to-chunk provenance
           </p>
         </div>

@@ -221,7 +221,7 @@ export const ConceptGraphPage: React.FC = () => {
 
         {/* Center Column: Graph Canvas (Expands to 9 cols when no inspector open) */}
         <div className={`${(selectedNode || selectedEdge) ? 'xl:col-span-6' : 'xl:col-span-9'} w-full min-w-0 flex flex-col gap-4 transition-all duration-300`}>
-          <div className="relative rounded-[28px] overflow-hidden min-h-[720px] flex flex-col justify-between shadow-sm border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <div className="relative rounded-[14px] overflow-hidden min-h-[720px] flex flex-col justify-between shadow-sm border border-[#D9E1E9] dark:border-[#1E4656] bg-white dark:bg-[#122B36]">
             {isLoading ? (
               <GraphLoadingState message="Resolving conceptual nodes, claim relations, and computing layout..." />
             ) : nodes.length === 0 ? (

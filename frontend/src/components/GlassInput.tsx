@@ -12,29 +12,29 @@ export const GlassInput = React.forwardRef<HTMLInputElement, GlassInputProps>(
     const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, '-') : undefined);
 
     return (
-      <div className="flex flex-col gap-1.5 w-full">
+      <div className="flex flex-col gap-1 w-full">
         {label && (
-          <label htmlFor={inputId} className="text-xs font-semibold text-slate-700 dark:text-slate-300 tracking-wide uppercase">
+          <label htmlFor={inputId} className="text-[11px] font-bold text-[#5B6B7D] dark:text-[#8EB3C2] tracking-[0.08em] uppercase">
             {label}
           </label>
         )}
         <div className="relative flex items-center">
           {icon && (
-            <div className="absolute left-3.5 inset-y-0 text-slate-400 dark:text-slate-500 pointer-events-none flex items-center justify-center">
+            <div className="absolute left-3 inset-y-0 text-[#5B6B7D] dark:text-[#8EB3C2] pointer-events-none flex items-center justify-center">
               {icon}
             </div>
           )}
           <input
             ref={ref}
             id={inputId}
-            className={`glass-input w-full ${icon ? '!pl-11 pr-4' : 'px-4'} py-2.5 text-xs sm:text-sm font-medium ${
-              error ? 'border-red-400 focus:border-red-500 focus:ring-red-200 dark:focus:ring-red-950' : ''
+            className={`glass-input w-full ${icon ? '!pl-9.5 pr-3.5' : 'px-3.5'} py-2 text-xs sm:text-[13px] font-medium ${
+              error ? '!border-[#B3261E] focus:!ring-[#B3261E]/20' : ''
             } ${className}`}
             {...props}
           />
         </div>
-        {error && <span className="text-xs text-red-600 dark:text-red-400 font-medium">{error}</span>}
-        {helperText && !error && <span className="text-xs text-slate-500 dark:text-slate-400">{helperText}</span>}
+        {error && <span className="text-xs text-[#B3261E] font-medium">{error}</span>}
+        {helperText && !error && <span className="text-xs text-[#5B6B7D] dark:text-[#8EB3C2]">{helperText}</span>}
       </div>
     );
   }
@@ -54,17 +54,17 @@ export const GlassSelect = React.forwardRef<HTMLSelectElement, GlassSelectProps>
     const selectId = id || (label ? label.toLowerCase().replace(/\s+/g, '-') : undefined);
 
     return (
-      <div className="flex flex-col gap-1.5 w-full">
+      <div className="flex flex-col gap-1 w-full">
         {label && (
-          <label htmlFor={selectId} className="text-xs font-semibold text-slate-700 dark:text-slate-300 tracking-wide uppercase">
+          <label htmlFor={selectId} className="text-[11px] font-bold text-[#5B6B7D] dark:text-[#8EB3C2] tracking-[0.08em] uppercase">
             {label}
           </label>
         )}
         <select
           ref={ref}
           id={selectId}
-          className={`glass-select w-full px-4 py-2.5 text-xs sm:text-sm font-medium cursor-pointer ${
-            error ? 'border-red-400 focus:border-red-500' : ''
+          className={`glass-select w-full px-3.5 py-2 text-xs sm:text-[13px] font-medium cursor-pointer ${
+            error ? '!border-[#B3261E]' : ''
           } ${className}`}
           {...props}
         >
@@ -73,15 +73,15 @@ export const GlassSelect = React.forwardRef<HTMLSelectElement, GlassSelectProps>
                 <option
                   key={opt.value}
                   value={opt.value}
-                  className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200"
+                  className="bg-white dark:bg-[#122B36] text-[#0B2A33] dark:text-[#E0F2F6]"
                 >
                   {opt.label}
                 </option>
               ))
             : children}
         </select>
-        {error && <span className="text-xs text-red-600 dark:text-red-400 font-medium">{error}</span>}
-        {helperText && !error && <span className="text-xs text-slate-500 dark:text-slate-400">{helperText}</span>}
+        {error && <span className="text-xs text-[#B3261E] font-medium">{error}</span>}
+        {helperText && !error && <span className="text-xs text-[#5B6B7D] dark:text-[#8EB3C2]">{helperText}</span>}
       </div>
     );
   }

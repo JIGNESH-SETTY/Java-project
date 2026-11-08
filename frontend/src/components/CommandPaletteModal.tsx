@@ -209,10 +209,10 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ isOpen
       />
 
       {/* Floating Spotlight Glass Island */}
-      <div className="relative w-full max-w-xl rounded-3xl backdrop-blur-2xl bg-white/92 dark:bg-[#212832]/95 border border-[#DFD1B7] dark:border-[#393D46] shadow-[0_25px_60px_-15px_rgba(33,40,50,0.20)] dark:shadow-[0_30px_70px_-15px_rgba(0,0,0,0.85)] overflow-hidden z-10 animate-scale-up">
+      <div className="relative w-full max-w-xl rounded-[14px] bg-white dark:bg-[#122B36] border border-[#D9E1E9] dark:border-[#1E4656] shadow-[0_20px_50px_-12px_rgba(11,42,51,0.20)] dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden z-10 animate-scale-up">
         {/* Search Input Bar */}
-        <div className="flex items-center gap-3 px-5 py-4 border-b border-[#E6DDCF] dark:border-[#393D46]">
-          <div className="w-8 h-8 rounded-xl bg-[#DFD1B7]/40 dark:bg-[#393D46] border border-[#DFD1B7] dark:border-[#948878]/30 text-[#212832] dark:text-[#DFD1B7] flex items-center justify-center shrink-0">
+        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-[#D9E1E9] dark:border-[#1E4656]">
+          <div className="w-8 h-8 rounded-[8px] bg-[#DCEBEE] dark:bg-[#1B4A59] border border-[#B7D9E2] dark:border-[#2A5A6E] text-[#0F4C5C] dark:text-[#E0F2F6] flex items-center justify-center shrink-0">
             <Search className="w-4 h-4" />
           </div>
           <input
@@ -221,18 +221,18 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ isOpen
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Type a command, search papers, or jump to view..."
-            className="flex-1 bg-transparent text-sm sm:text-base font-medium text-slate-900 dark:text-[#F5EFE6] placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"
+            className="flex-1 bg-transparent text-sm font-medium text-[#0B2A33] dark:text-[#E0F2F6] placeholder:text-[#6B7785] dark:placeholder:text-[#8EB3C2] outline-none"
           />
           {query ? (
             <button
               onClick={() => setQuery('')}
-              className="p-1 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
+              className="p-1 rounded-md text-[#5B6B7D] hover:text-[#0B2A33] dark:hover:text-white transition"
               aria-label="Clear query"
             >
               <X className="w-4 h-4" />
             </button>
           ) : (
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-[#181C22] text-[10px] font-mono text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-[5px] bg-[#F7F9FB] dark:bg-[#091920] text-[10px] font-mono text-[#5B6B7D] dark:text-[#8EB3C2] border border-[#D9E1E9] dark:border-[#1E4656]">
               <Command className="w-3 h-3" />
               <span>K</span>
             </div>
@@ -240,14 +240,14 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ isOpen
         </div>
 
         {/* Command List View */}
-        <div ref={listRef} className="max-h-[360px] overflow-y-auto p-2.5 space-y-1">
+        <div ref={listRef} className="max-h-[360px] overflow-y-auto p-2 space-y-0.5">
           {filtered.length === 0 ? (
             <div className="py-10 text-center px-4">
-              <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <p className="text-xs font-semibold text-[#0B2A33] dark:text-[#E0F2F6]">
                 No commands matching "{query}"
               </p>
-              <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
-                Press <span className="font-mono font-semibold text-[#212832] dark:text-[#DFD1B7]">Enter</span> to run a full hybrid semantic search for this query across all ingested papers.
+              <p className="text-[11px] text-[#5B6B7D] dark:text-[#8EB3C2] mt-1">
+                Press <span className="font-mono font-semibold text-[#0F4C5C] dark:text-[#38BDF8]">Enter</span> to run a full hybrid semantic search for this query across all ingested papers.
               </p>
             </div>
           ) : (
@@ -259,18 +259,18 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ isOpen
                   key={item.id}
                   onClick={item.action}
                   onMouseEnter={() => setSelectedIndex(idx)}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-left transition-all duration-150 cursor-pointer ${
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-[9px] text-left transition-all duration-150 cursor-pointer ${
                     isSelected
-                      ? 'bg-[#DFD1B7]/40 dark:bg-[#DFD1B7]/15 border border-[#DFD1B7] dark:border-[#948878]/40 shadow-2xs'
-                      : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/40 border border-transparent'
+                      ? 'bg-[#DCEBEE] dark:bg-[#1B4A59] border border-[#B7D9E2] dark:border-[#2A5A6E] shadow-2xs'
+                      : 'hover:bg-[#F1F5F9] dark:hover:bg-[#163442] border border-transparent'
                   }`}
                 >
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-center gap-2.5 min-w-0">
                     <div
-                      className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                      className={`w-7 h-7 rounded-[7px] flex items-center justify-center shrink-0 transition-colors ${
                         isSelected
-                          ? 'bg-[#212832] dark:bg-[#DFD1B7] text-[#FAF7F2] dark:text-[#181C22] shadow-2xs'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                          ? 'bg-[#0F4C5C] text-white shadow-2xs'
+                          : 'bg-[#EEF2F6] dark:bg-[#163442] text-[#5B6B7D] dark:text-[#8EB3C2]'
                       }`}
                     >
                       <Icon className="w-3.5 h-3.5" />
@@ -279,13 +279,13 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ isOpen
                       <div
                         className={`text-xs font-semibold truncate ${
                           isSelected
-                            ? 'text-[#212832] dark:text-[#DFD1B7]'
-                            : 'text-slate-800 dark:text-slate-200'
+                            ? 'text-[#0F4C5C] dark:text-[#E0F2F6]'
+                            : 'text-[#334155] dark:text-[#C4DDE5]'
                         }`}
                       >
                         {item.title}
                       </div>
-                      <div className="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-medium">
+                      <div className="text-[10px] text-[#5B6B7D] dark:text-[#8EB3C2] uppercase tracking-[0.08em] font-medium">
                         {item.category}
                       </div>
                     </div>
@@ -293,14 +293,14 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ isOpen
 
                   <div className="flex items-center gap-2 shrink-0">
                     {item.shortcut && (
-                      <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-[10px] font-mono text-slate-500 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700">
+                      <span className="hidden sm:inline-block px-1.5 py-0.5 rounded-[5px] bg-[#F7F9FB] dark:bg-[#091920] text-[10px] font-mono text-[#5B6B7D] dark:text-[#8EB3C2] border border-[#D9E1E9] dark:border-[#1E4656]">
                         {item.shortcut}
                       </span>
                     )}
                     <ArrowRight
                       className={`w-3.5 h-3.5 transition-transform ${
                         isSelected
-                          ? 'text-[#212832] dark:text-[#DFD1B7] translate-x-0.5'
+                          ? 'text-[#0F4C5C] dark:text-[#E0F2F6] translate-x-0.5'
                           : 'text-slate-300 dark:text-slate-600'
                       }`}
                     />
@@ -312,12 +312,12 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({ isOpen
         </div>
 
         {/* Footer Shortcut Helper */}
-        <div className="px-5 py-2.5 bg-slate-50/80 dark:bg-slate-950/60 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+        <div className="px-4 py-2.5 bg-[#EEF2F6] dark:bg-[#0D222B] border-t border-[#D9E1E9] dark:border-[#1E4656] flex items-center justify-between text-[11px] text-[#5B6B7D] dark:text-[#8EB3C2] font-medium">
           <div className="flex items-center gap-3">
-            <span><kbd className="font-mono bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-700 shadow-2xs">↑</kbd> <kbd className="font-mono bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-700 shadow-2xs">↓</kbd> to navigate</span>
-            <span><kbd className="font-mono bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-700 shadow-2xs">↵</kbd> to select</span>
+            <span><kbd className="font-mono bg-white dark:bg-[#122B36] px-1.5 py-0.5 rounded border border-[#D9E1E9] dark:border-[#1E4656] shadow-2xs">↑</kbd> <kbd className="font-mono bg-white dark:bg-[#122B36] px-1.5 py-0.5 rounded border border-[#D9E1E9] dark:border-[#1E4656] shadow-2xs">↓</kbd> to navigate</span>
+            <span><kbd className="font-mono bg-white dark:bg-[#122B36] px-1.5 py-0.5 rounded border border-[#D9E1E9] dark:border-[#1E4656] shadow-2xs">↵</kbd> to select</span>
           </div>
-          <span><kbd className="font-mono bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-700 shadow-2xs">esc</kbd> to close</span>
+          <span><kbd className="font-mono bg-white dark:bg-[#122B36] px-1.5 py-0.5 rounded border border-[#D9E1E9] dark:border-[#1E4656] shadow-2xs">esc</kbd> to close</span>
         </div>
       </div>
     </div>
